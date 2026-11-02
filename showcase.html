@@ -1,0 +1,541 @@
+<title>keiba-ai の成績と使い方</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Zen+Kaku+Gothic+New:wght@500;700;900&family=Noto+Sans+JP:wght@400;500;700&family=JetBrains+Mono:wght@500&display=swap">
+<style>
+/* 成績と使い方: 結論 → 数字の読み方 → 買い方 → アプリでの確認 → 比較 → 検証方法。
+   数字とグラフのデータは scripts/build_showcase.py が埋め込む(const META / TIMING / SERIES の行) */
+:root {
+  --bg: #f6f6f2; --surface: #fcfcfb; --ink: #14150f; --ink-2: #4b4c45; --muted: #7a7b72; --line: #e2e2da; --turf: #1f6b45;
+  --s1: #2a78d6; --s2: #eb6834; --s3: #1baf7a; --s4: #eda100; --s5: #e87ba4; --s6: #008300; --s7: #4a3aa7; --good: #1f6b45; --bad: #b4382c;
+  --display: "Zen Kaku Gothic New", "Hiragino Sans", "Yu Gothic", sans-serif;
+  --body: "Noto Sans JP", "Hiragino Sans", "Yu Gothic", sans-serif;
+  --mono: "JetBrains Mono", ui-monospace, Consolas, monospace;
+}
+@media (prefers-color-scheme: dark) { :root:not([data-theme="light"]) {
+  --bg: #0f100d; --surface: #1a1a19; --ink: #f2f2ec; --ink-2: #c3c2b7; --muted: #8e8e85; --line: #2c2d27; --turf: #5fbf8b;
+  --s1: #3987e5; --s2: #d95926; --s3: #199e70; --s4: #c98500; --s5: #d55181; --s6: #008300; --s7: #9085e9; --good: #5fbf8b; --bad: #ef7b6e; color-scheme: dark; } }
+:root[data-theme="dark"] {
+  --bg: #0f100d; --surface: #1a1a19; --ink: #f2f2ec; --ink-2: #c3c2b7; --muted: #8e8e85; --line: #2c2d27; --turf: #5fbf8b;
+  --s1: #3987e5; --s2: #d95926; --s3: #199e70; --s4: #c98500; --s5: #d55181; --s6: #008300; --s7: #9085e9; --good: #5fbf8b; --bad: #ef7b6e; color-scheme: dark; }
+* { box-sizing: border-box; }
+body { background: var(--bg); color: var(--ink); font: 15px/1.75 var(--body); padding-inline: 18px; padding-block: 28px 64px; margin: 0; }
+.wrap { max-width: 960px; margin: 0 auto; display: flex; flex-direction: column; gap: 44px; }
+h1, h2, h3 { font-family: var(--display); text-wrap: balance; margin: 0; letter-spacing: .01em; }
+h1 { font-size: clamp(28px, 6vw, 44px); font-weight: 900; line-height: 1.2; }
+h2 { font-size: 21px; font-weight: 900; }
+h3 { font-size: 16px; font-weight: 700; }
+p { margin: 0; max-width: 66ch; }
+.num { font-variant-numeric: tabular-nums; }
+.kicker { font-family: var(--mono); font-size: 12px; letter-spacing: .12em; color: var(--turf); text-transform: uppercase; }
+.lead { color: var(--ink-2); font-size: 16px; margin-top: 10px; }
+section { display: flex; flex-direction: column; gap: 14px; min-width: 0; }
+section > header { display: flex; flex-wrap: wrap; gap: 4px 12px; align-items: baseline; border-bottom: 2px solid var(--ink); padding-bottom: 8px; }
+section > header .q { font-family: var(--mono); font-size: 13px; color: var(--muted); }
+.muted { color: var(--muted); } .small { font-size: 13px; }
+.good { color: var(--good); } .bad { color: var(--bad); }
+a { color: var(--turf); text-underline-offset: 4px; }
+a:focus-visible, summary:focus-visible { outline: 2px solid var(--turf); outline-offset: 4px; }
+.topnav, .jumpnav { display: flex; flex-wrap: wrap; gap: 8px 20px; font-size: 13px; }
+.topnav { justify-content: space-between; margin-bottom: 22px; }
+.hero h1 { margin-top: 12px; line-height: 1.45; }
+.hero h1 .headline-line { display: block; }
+.hero h1 .num { color: var(--turf); white-space: nowrap; }
+.hero-note { font-size: 13px; color: var(--ink-2); margin-top: 12px; }
+.return-example { border-left: 3px solid var(--turf); padding: 10px 14px; margin-top: 20px; font-size: 14px; background: var(--surface); }
+.jumpnav { border-bottom: 1px solid var(--line); padding-bottom: 16px; }
+.intro { color: var(--ink-2); }
+.terms { margin: 0; display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 22px; }
+.terms dt { font-weight: 700; margin-bottom: 4px; }
+.terms dd { margin: 0; font-size: 14px; color: var(--ink-2); }
+.plain-note { font-size: 13px; color: var(--ink-2); }
+.subtle-note { background: var(--surface); border-left: 3px solid var(--line); padding: 12px 16px; }
+.course .ci-label { display: block; font-size: 12px; color: var(--muted); margin: 0 0 10px; }
+.course .roi { display: block; margin: 8px 0 2px; }
+.course .who { border-top: 1px solid var(--line); padding-top: 9px; margin-top: 12px; line-height: 1.8; }
+.course .who span { display: block; }
+.course .eyebrow { font-size: 12px; color: var(--turf); }
+.course.star { border-color: var(--turf); }
+.course p { font-size: 14px; }
+.tablewrap:focus-visible { outline: 2px solid var(--turf); outline-offset: 3px; }
+.tablewrap td:first-child { min-width: 235px; max-width: 300px; }
+.technical { border-top: 1px solid var(--line); padding-top: 12px; font-size: 13px; color: var(--ink-2); }
+.technical summary { cursor: pointer; color: var(--ink); font-weight: 700; }
+.technical p { margin-top: 8px; }
+.timeline { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 14px; margin-top: 4px; }
+.timeline div { border-top: 2px solid var(--line); padding-top: 8px; }
+.timeline b, .timeline span { display: block; }
+.timeline span { color: var(--ink-2); font-size: 13px; }
+section[id] { scroll-margin-top: 20px; }
+
+/* 結論の数字 */
+.board { display: grid; grid-template-columns: repeat(auto-fit, minmax(150px, 1fr)); gap: 1px; background: var(--line); border: 1px solid var(--line); border-radius: 12px; overflow: hidden; margin-top: 22px; }
+.cell { background: var(--surface); padding: 14px 16px; display: flex; flex-direction: column; gap: 2px; min-width: 0; }
+.cell .k { font-size: 13px; color: var(--ink-2); font-weight: 500; display: flex; align-items: center; gap: 7px; }
+.cell .v { font-family: var(--display); font-size: 32px; font-weight: 900; line-height: 1.15; font-variant-numeric: tabular-nums; }
+.cell .v small { font-size: 15px; font-weight: 700; margin-left: 2px; }
+.cell .s { font-size: 12px; color: var(--muted); font-variant-numeric: tabular-nums; }
+.sw { width: 10px; height: 10px; border-radius: 3px; flex: none; }
+
+/* 買い方 */
+.steps3 { display: grid; grid-template-columns: repeat(auto-fit, minmax(220px, 1fr)); gap: 10px; }
+.stp { background: var(--surface); border: 1px solid var(--line); border-radius: 12px; padding: 14px 16px; min-width: 0; }
+.stp .no { font-family: var(--mono); font-size: 12px; color: var(--turf); letter-spacing: .1em; }
+.stp h3 { margin: 2px 0 4px; }
+.stp p { font-size: 14px; color: var(--ink-2); }
+.courses { display: grid; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); gap: 10px; }
+.course { border: 2px solid var(--line); border-radius: 12px; padding: 12px 14px; background: var(--surface); min-width: 0; }
+.course.main { border-color: var(--turf); }
+.course .roi { font-family: var(--display); font-weight: 900; font-size: 24px; font-variant-numeric: tabular-nums; }
+.course p { font-size: 13px; color: var(--ink-2); }
+.course .who { font-size: 12px; color: var(--muted); margin-top: 4px; }
+
+/* 条件 */
+.facts { display: grid; grid-template-columns: repeat(auto-fit, minmax(220px, 1fr)); gap: 10px 22px; }
+.fact { border-left: 3px solid var(--turf); padding-left: 12px; min-width: 0; }
+.fact b { display: block; font-family: var(--display); font-size: 18px; }
+.fact span { font-size: 13px; color: var(--ink-2); }
+
+/* 表 */
+.tablewrap { overflow-x: auto; background: var(--surface); border: 1px solid var(--line); border-radius: 12px; }
+table { width: 100%; border-collapse: collapse; font-variant-numeric: tabular-nums; min-width: 600px; }
+th, td { padding: 11px 14px; border-bottom: 1px solid var(--line); text-align: right; white-space: nowrap; }
+th { font-size: 12px; color: var(--muted); font-weight: 700; }
+td:first-child, th:first-child { text-align: left; white-space: normal; }
+tr:last-child td { border-bottom: 0; }
+tr.sep td { border-top: 2px solid var(--line); }
+td .nm { display: flex; align-items: center; gap: 8px; font-weight: 700; }
+td .ds { display: block; font-size: 12px; color: var(--muted); font-weight: 400; margin-left: 18px; }
+td.roi { font-family: var(--display); font-size: 18px; font-weight: 900; }
+th.hl, td.hl { background: color-mix(in srgb, var(--turf) 9%, transparent); }
+td .ci { display: block; font-size: 11.5px; color: var(--muted); font-weight: 400; font-family: var(--body); }
+
+/* グラフ */
+.chartbox { background: var(--surface); border: 1px solid var(--line); border-radius: 12px; padding: 14px 10px 10px; position: relative; }
+.legend { display: flex; flex-wrap: wrap; gap: 6px; padding: 0 8px 10px; }
+.legend button { font: inherit; font-size: 12.5px; display: inline-flex; align-items: center; gap: 6px; padding: 2px 10px; border-radius: 999px;
+  border: 1px solid var(--line); background: var(--surface); color: var(--ink); cursor: pointer; line-height: 1.7; }
+.legend button:hover { border-color: var(--muted); }
+.legend button[aria-pressed="false"] { color: var(--muted); text-decoration: line-through; }
+.legend button[aria-pressed="false"] i { opacity: .25; }
+.legend button:focus-visible { outline: 2px solid var(--turf); outline-offset: 2px; }
+.legend i { width: 18px; height: 3px; border-radius: 2px; display: inline-block; }
+svg { display: block; width: 100%; height: auto; }
+.ax { stroke: var(--line); } .ax.ref { stroke: var(--muted); stroke-dasharray: 4 4; }
+.tk { font: 11px var(--mono); fill: var(--muted); }
+.lbl { font: 700 12px var(--body); fill: var(--ink-2); }
+.cross { stroke: var(--muted); stroke-width: 1; }
+#tip { position: absolute; pointer-events: none; background: var(--ink); color: var(--bg); font-size: 12px; line-height: 1.6; padding: 8px 10px; border-radius: 8px; min-width: 190px; font-variant-numeric: tabular-nums; }
+#tip b { font-weight: 700; } #tip .r { display: flex; justify-content: space-between; gap: 12px; } #tip i { display: inline-block; width: 8px; height: 8px; border-radius: 50%; margin-right: 6px; }
+.tipbox { position: absolute; pointer-events: none; background: var(--ink); color: var(--bg); font-size: 12px; line-height: 1.6; padding: 8px 10px; border-radius: 8px; min-width: 200px; font-variant-numeric: tabular-nums; }
+.tipbox .r { display: flex; justify-content: space-between; gap: 12px; } .tipbox i { display: inline-block; width: 8px; height: 8px; border-radius: 50%; margin-right: 6px; }
+.pband { fill: var(--ink); opacity: .035; } .plbl { font: 700 11.5px var(--body); fill: var(--muted); }
+#wf .tablewrap td:first-child { min-width: 150px; }
+
+/* テストの正しさ */
+.checks { display: grid; gap: 10px; }
+.check { display: grid; grid-template-columns: 28px minmax(0, 1fr); gap: 10px; background: var(--surface); border: 1px solid var(--line); border-radius: 12px; padding: 13px 15px; }
+.check .mk { font-family: var(--display); font-weight: 900; font-size: 18px; line-height: 1.4; text-align: center; }
+.check .mk.ok { color: var(--good); } .check .mk.warn { color: var(--s4); }
+.check p { font-size: 14px; color: var(--ink-2); }
+.check h3 { margin-bottom: 2px; }
+
+/* 買い方の関係 */
+.nest { display: flex; flex-direction: column; }
+.nest .n { border: 2px solid; border-radius: 12px; padding: 10px 12px 12px; background: var(--surface); display: flex; flex-direction: column; gap: 8px; min-width: 0; }
+.nest .n > .hd { display: flex; flex-wrap: wrap; gap: 4px 10px; align-items: baseline; }
+.nest .n b { font-family: var(--display); font-size: 16px; }
+.nest .n .d { font-size: 13px; color: var(--ink-2); flex: 1 1 14em; }
+.nest .n .r { font-family: var(--display); font-weight: 900; font-size: 20px; color: var(--good); font-variant-numeric: tabular-nums; }
+.nest .n .c { font-size: 12px; color: var(--muted); font-variant-numeric: tabular-nums; }
+.nest .n1 { border-color: var(--s1); } .nest .n2 { border-color: var(--s2); } .nest .n3 { border-color: var(--s3); }
+.vnote { display: grid; grid-template-columns: repeat(auto-fit, minmax(230px, 1fr)); gap: 10px; }
+.vnote .check { grid-template-columns: 22px minmax(0, 1fr); }
+.foot { font-size: 12px; color: var(--muted); border-top: 1px solid var(--line); padding-top: 14px; }
+@media (max-width: 640px) {
+  .terms { grid-template-columns: 1fr; gap: 16px; }
+  .hero h1 { font-size: clamp(25px, 6.5vw, 36px); }
+  .board { grid-template-columns: repeat(2, minmax(0, 1fr)); }
+  .courses { grid-template-columns: 1fr; }
+  .timeline { gap: 8px; }
+  .timeline b { font-size: 14px; }
+}
+@media (max-width: 520px) { .cell .v { font-size: 26px; } th, td { padding: 9px 10px; } .wrap { gap: 34px; } }
+</style>
+
+<div class="wrap">
+  <header class="hero">
+    <nav class="topnav" aria-label="アプリへのリンク"><a href="index.html">keiba-ai ホーム</a><a href="explain.html">予測のしくみを見る</a></nav>
+    <div class="kicker">JRA 中央競馬の予測AI / 過去データでの検証結果</div>
+    <h1><span class="headline-line">推奨コースで回収率 <span class="num"><span id="h-rec">110.9</span>%</span>。</span><span class="headline-line">厳選コースなら <span class="num"><span id="h-star">137.2</span>%</span>。</span></h1>
+    <p class="lead" id="lead"></p>
+    <p class="hero-note" id="hero-scope"></p>
+    <p class="hero-note" id="hero-wf" hidden></p>
+    <p class="return-example" id="return-example"></p>
+    <div class="board" id="board"></div>
+  </header>
+
+  <nav class="jumpnav" aria-label="このページの内容"><a href="#basics">数字の読み方</a><a href="#courses-section">3つの買い方</a><a href="#app-guide">アプリでの確認方法</a><a href="#results">詳しい成績</a><a href="#wf" id="wf-jump" hidden>期間を広げた検証</a><a href="#method">検証方法</a></nav>
+
+  <section id="basics">
+    <header><h2>回収率と、当たりやすさの違い</h2></header>
+    <dl class="terms">
+      <div><dt>回収率：使った金額に対する払戻</dt><dd>払戻の合計を、購入額の合計で割った数字です。100%で収支ゼロ。100%を上回った分が利益です。</dd></div>
+      <div><dt>的中率：買った馬券が当たった割合</dt><dd>10%なら、買った100点のうち10点が的中した計算です。少ない的中でも払戻が大きければ、回収率は高くなります。</dd></div>
+      <div><dt>期待値：購入前に見積もる払戻の倍率</dt><dd>的中確率とオッズをもとに計算します。例えば確率20%でオッズ6倍なら、期待値は1.2。100円に対する払戻を平均120円と見積もる考え方です。</dd></div>
+    </dl>
+    <p class="plain-note">期待値はAIの予測、回収率と的中率は過去の結果です。◆厳選は期待値が特に大きい買い目の印で、的中率の高さを示す印ではありません。</p>
+  </section>
+
+  <section id="courses-section">
+    <header><h2>予算と買う回数に合わせた、3つの買い方</h2></header>
+    <p class="intro">アプリは全レースで<b>「買い目リスト」</b>(単勝・複勝・枠連のうち期待値の高い順に5件)を出し、それぞれに<b>◆厳選・推奨・検討</b>の札と金額を付けます。どの札まで買うかで3つのコースに分けています。<b>コース名はこのページでの説明用</b>で、アプリにコースを切り替えるボタンはありません。</p>
+    <div class="courses" id="courses"></div>
+    <p class="plain-note">各コースの「95%信頼区間」は、過去の成績にどの程度のばらつきがあるかを示す目安です。詳しい読み方は<a href="#interval-note">比較表の下</a>にあります。</p>
+    <p class="plain-note subtle-note">厳選の印は<b>「◆厳選」</b>です(レース名の近くにある「信頼度 ★☆☆〜★★★」とは別の表示)。厳選のレースは、レース一覧で青緑の色が付き、レース画面の上に「厳選レース」の帯が出ます。</p>
+  </section>
+
+  <section id="app-guide">
+    <header><h2>アプリでは、この順番で確認</h2><span class="q">3ステップ</span></header>
+    <div class="steps3">
+      <div class="stp"><span class="no">STEP 1</span><h3>「最終予測」の確定を確認</h3><p>直前版のレース画面を開きます。最終予測の目標は発走4分前ごろ。このアプリの締切表示は発走2分前なので、締切のおよそ2分前です。画面の「最終予測 ○:○ 確定」と、使ったオッズの時刻を確認します。</p></div>
+      <div class="stp"><span class="no">STEP 2</span><h3>「買い目リスト」を見る</h3><p>期待値の高い順に5件と、札(◆厳選・推奨・検討)、金額が並びます。買い目とは券種と馬番号(または枠番号)の組み合わせで、例えば「単勝 6番」や「枠連 3−8」が1点です。「検討」は推奨の条件に届かない参考で、買いません。</p></div>
+      <div class="stp"><span class="no">STEP 3</span><h3>選んだコースの札だけ買う</h3><p>厳選コースは「◆厳選」の1点だけ、推奨コースは「◆厳選」と「推奨」を全部、表示の金額で。毎レース1位コースは、リストの1位を「毎レース1位コースなら○円」の金額で毎レース買います。</p></div>
+    </div>
+    <div class="timeline" aria-label="発走15時のレースの予定例"><div><b>14:56ごろ</b><span>最終予測の目標</span></div><div><b>14:58</b><span>アプリの締切表示</span></div><div><b>15:00</b><span>レース発走</span></div></div>
+    <p class="plain-note">上は15時発走の場合の例です。更新処理の状況で確定時刻は変わります。確定前の買い目は暫定で、オッズの更新により変わることがあります。</p>
+  </section>
+
+  <section>
+    <header><h2>3つのコースの関係</h2></header>
+    <p class="intro">◆厳選は推奨の中の1点なので、<b>厳選コースは推奨コースの中に入ります</b>。毎レース1位コースは別の切り口で、推奨のないレースも買います。<b>推奨と厳選はアプリの金額(◆厳選 100円か1000円・推奨 100円)、毎レース1位は1位が◆厳選なら1000円・ほかは100円、大穴枠は100円か1000円</b>で集計しています。</p>
+    <div class="nest" id="nest"></div>
+    <div class="vnote">
+      <div class="check"><span class="mk ok">1</span><div><h3>札が回収率を分けています</h3><p id="vn1"></p></div></div>
+      <div class="check"><span class="mk ok">2</span><div><h3>「大穴枠」は別の集計です</h3><p id="vn2"></p></div></div>
+    </div>
+  </section>
+
+  <section>
+    <header><h2>この成績の集計条件</h2></header>
+    <div class="facts">
+      <div class="fact"><b>発走6分前までのオッズ</b><span>その時点までに公表された最後のオッズで選び、実際の払戻金で精算。本番の最終予測に近い時点を再現しています。</span></div>
+      <div class="fact"><b id="f-period">2022/1/5 〜 2026/10/4</b><span id="f-races"></span></div>
+      <div class="fact"><b>単勝、複勝、枠連が対象</b><span>購入前のオッズ履歴がある3券種で検証しています。アプリの買い目リストもこの3券種です。</span></div>
+    </div>
+    <p class="plain-note">各年を前年までのデータで予測しています。ただし、方式の改善にはこの期間の成績も参照しています。完全に独立した最終テストではありません。</p>
+  </section>
+
+  <section id="results">
+    <header><h2>買い方ごとの成績を比較</h2><span class="q">発走6分前までの情報で判断</span></header>
+    <p class="plain-note">的中率は馬券1点ごとの割合です。「購入レース数」は、対象の全レースのうち、その買い方で実際に購入したレース数を示します。横に長い表は左右にスクロールできます。</p>
+    <div class="tablewrap" tabindex="0" role="region" aria-label="買い方ごとの成績比較"><table>
+      <thead><tr><th scope="col">買い方</th><th scope="col">回収率</th><th scope="col">95%信頼区間</th><th scope="col">的中率</th><th scope="col">購入レース数</th><th scope="col">購入点数</th></tr></thead>
+      <tbody id="rows"></tbody>
+    </table></div>
+    <div class="subtle-note" id="interval-note"><h3>95%信頼区間の読み方</h3><p class="plain-note">過去の開催日を単位としてデータを繰り返し抽出し直し、回収率のばらつきから求めた区間です。例えば厳選コースの<span id="ci-star">110〜168%</span>は、結果のばらつきが大きいことを示します。将来の回収率がこの範囲に収まる保証ではなく、方式を選んだ影響も含んでいません。</p></div>
+    <p class="plain-note">推奨コースと厳選コースはアプリの金額(◆厳選は100円、そのうち期待値が特に高い上位10%は1000円。推奨は100円)、毎レース1位コースは1位が◆厳選なら1000円・ほかは100円、大穴枠は100円(大穴枠の中でも期待値が上位15%なら1000円)、ほかの買い方は1点100円です。ランダムの比較は、各レースで1頭を同じ確率で選んだ場合の平均払戻を計算しています。</p>
+    <details class="technical"><summary>購入金額と券種の補足</summary><p>アプリの金額は、100〜1000円の17通りの決め方(一律100円・期待値で3段階や5段階・期待値に比例・ケリー基準など)を、2011年からの3つの期間の検証用データとテストで比べて選びました。期待値が特に高い◆厳選ほど回収率が高い傾向が、どの期間でも見られたためです。参考に載せた「ケリーの金額」は、資金10万円を基準に、予測した確率と払戻の見込みから購入額を決める「ケリー基準」の4分の1(1レース上限1万円)。回収率は下がりますが、金額が大きいぶん利益の額は大きくなります。</p><p>単勝は選んだ馬の1着、複勝は選んだ馬の3着以内（発売時の頭数が7頭以下なら2着以内）、枠連は1着と2着の枠番号の組み合わせを当てる馬券です。</p></details>
+  </section>
+
+  <section>
+    <header><h2>予測する時刻で、成績はどう変わるか</h2></header>
+    <p class="plain-note">時刻ごとに、その時点の情報と専用の補正を使って買い目を選び直した結果です。同じ馬券のオッズだけを比べた表ではありません。各欄は回収率、95%信頼区間、購入点数の順です。</p>
+    <div class="tablewrap" tabindex="0" role="region" aria-label="判断時刻ごとの成績比較"><table>
+      <thead id="t-head"></thead>
+      <tbody id="t-rows"></tbody>
+    </table></div>
+    <div class="checks">
+      <div class="check"><span class="mk ok">1</span><div><h3>今回の検証では、20分前より6分前が好成績</h3>
+        <p>直前には投票が進み、オッズが変化します。この検証では20分前と6分前で同じ馬の能力予測を使い、オッズとその時点向けの補正を変えています。</p></div></div>
+      <div class="check"><span class="mk ok">2</span><div><h3>確定オッズの列は、比較用の参考値</h3>
+        <p>締切後に分かるオッズで選び直すと、推奨コースの回収率は <span id="g-final">99</span>% でした。購入対象も変わるため、確率予測が正確になることと、回収率が上がることは別です。実際の購入判断には使えない時点です。</p></div></div>
+      <div class="check"><span class="mk warn">!</span><div><h3>前日版は、翌日のレースを検討するために</h3>
+        <p>前日21時のオッズは発走までに大きく動くことがあります。この検証で前日版の推奨コースは <span id="g-prev">92</span>%。冒頭の<span id="g-hl">110.9%と137.2%</span>は、直前の情報で判断した成績です。</p></div></div>
+    </div>
+    <p class="plain-note">表の「確率予測の誤差（logloss）」は、各馬に付けた勝率と結果のずれを測る指標です。小さいほど良く、回収率や的中率とは別の尺度です。前日版と直前版では対象レース数が異なります。</p>
+  </section>
+
+  <section>
+    <header><h2>レースを重ねるごとの回収率</h2><span class="q">直前(6分前)</span></header>
+    <p class="intro">横軸は対象レースを日付順に並べた通し番号、縦軸はその時点までの累計回収率です。見送ったレースも横軸に含みます。購入が少ない時期は一度の的中で線が大きく動き、購入を重ねると一度の結果の影響は小さくなります。</p>
+    <p class="plain-note">名前を押すと線の表示を切り替えられます。グラフにマウスを重ねるかタップすると数値が出ます。点線の100%が収支ゼロです。最初の200レース未満の線は省略し、表示範囲は40〜200%に収めています。</p>
+    <div class="chartbox">
+      <div class="legend" id="legend"></div>
+      <svg id="chart" viewBox="0 0 820 400" role="img" aria-label="買い方ごとの累計回収率の推移"></svg>
+      <div id="tip" hidden></div>
+    </div>
+  </section>
+
+  <section id="wf" hidden>
+    <header><h2 id="wf-title">期間を広げた検証</h2><span class="q" id="wf-q"></span></header>
+    <p class="intro" id="wf-intro"></p>
+    <div class="tablewrap" tabindex="0" role="region" aria-label="期間ごとの成績"><table>
+      <thead id="wf-head"></thead>
+      <tbody id="wf-rows"></tbody>
+    </table></div>
+    <p class="plain-note">各欄は回収率、95%信頼区間、購入点数の順です。どの期間も、上の成績と同じ発走6分前までの情報で判断し、確定した払戻金で精算しています。</p>
+    <div class="chartbox">
+      <div class="legend" id="wf-legend"></div>
+      <svg id="wf-chart" viewBox="0 0 820 320" role="img" aria-label="年ごとの回収率"></svg>
+      <div id="wf-tip" class="tipbox" hidden></div>
+    </div>
+    <details class="technical"><summary>年ごとの数字を表で見る</summary>
+      <div class="tablewrap" tabindex="0" role="region" aria-label="年ごとの回収率" style="margin-top:10px"><table>
+        <thead><tr><th scope="col">年</th><th scope="col">対象レース</th><th scope="col">厳選コース（◆）</th><th scope="col">推奨コース</th><th scope="col">毎レース1位コース</th></tr></thead>
+        <tbody id="wf-years"></tbody>
+      </table></div>
+    </details>
+    <div class="checks" id="wf-notes"></div>
+  </section>
+
+  <section id="method">
+    <header><h2>検証方法と、この数字から分かる範囲</h2></header>
+    <div class="checks">
+      <div class="check"><span class="mk ok">✓</span><div><h3>未来のデータを見ていない</h3>
+        <p>年ごとに「その年より前のデータだけ」で学習し直したモデルで、その年を予測しています(ウォークフォワード)。2024年のレースは、2023年までのデータで作ったモデルが予測した結果です。</p></div></div>
+      <div class="check"><span class="mk ok">✓</span><div><h3>予測時点で分かる情報を使う</h3>
+        <p>馬の過去成績や騎手の勝率は前日までの結果から計算。当日の情報は、そのレースより前に終わったレースの内外の傾向や、判断時点までのオッズを使います。対象レースの結果は予測に入れず、精算に使います。</p></div></div>
+      <div class="check"><span class="mk ok">✓</span><div><h3>係数・基準はテスト年より前の年で決めた</h3>
+        <p>AIの予測とオッズの組み合わせ方、買い目の補正、最終オッズの予測、◆厳選の線、金額の段階は、各テスト年より前のデータから決めています。◆厳選の線は、過去の検証用データで「買い目リストの1位」の期待値が上位10%となる水準です。</p></div></div>
+      <div class="check"><span class="mk ok">✓</span><div><h3>本番でできないことはテストでもしない</h3>
+        <p>ここでの集計は、購入前のオッズ履歴がある単勝、複勝、枠連に限定。当日の馬場の偏りも、本番で取得できる内外の項目だけを使っています。オッズの更新間隔によって、実際の発表時刻は判断時刻より前になることがあります。</p></div></div>
+      <div class="check"><span class="mk warn">!</span><div><h3>一部はテスト期間を見ながら決めた</h3>
+        <p>予測方式の改善や買い目の絞り方(◆厳選を1レース1点までにしたことなど)には、この期間の成績も参照しています。◆厳選の金額(期待値が上位10%なら1000円)も、2011年からの3つの期間の検証用データとテストの成績を見て選びました。したがって、すべての設定を固定してから初めて試した成績ではありません。今後の成績は、これまでに参照していないレースで確かめます。</p></div></div>
+      <div class="check"><span class="mk warn">!</span><div><h3>このページは過去検証、実運用は別に集計</h3>
+        <p>このページの数字は、過去のレースで同じ買い方をした場合の結果です。買い遅れや、自分の購入でオッズが下がる影響は含めていません。運用開始後の予測の答え合わせは、アプリの<a href="index.html">「成績」ページ</a>で確認できます。</p></div></div>
+    </div>
+  </section>
+
+  <p class="foot" id="foot">回収率 = 払戻の合計 ÷ 購入額の合計。結果は過去の検証で、将来の利益を約束するものではありません。</p>
+</div>
+
+<script>
+const META = {"races":16153,"period":"2022/1/5 〜 2026/10/25","generated":"2026-11-02","cats":{"pick":{"name":"厳選コース（◆）","short":"厳選（◆）","desc":"推奨のうち、期待値が過去の上位10%の線を越えた1点(1レース1点まで)。金額は100円、◆厳選の中でも期待値が上位10%のものは1000円","roi":1.417402733964248,"ci":[0.9638745820791833,1.9342482374268797],"hit":0.09426462237365134,"bets":1761,"races":1761,"per13":{"races":1.4172599517117563,"bets":1.4172599517117563,"stake":306.14746486720736}},"pick_flat":{"name":"厳選コース（一律100円の場合）","short":"厳選100円","desc":"同じ◆厳選の買い目を、金額を変えずに1点100円ずつ買った場合(参考)","roi":1.372174900624645,"ci":[1.159344995613784,1.602240824973159],"hit":0.09426462237365134,"bets":1761,"races":1761,"per13":{"races":1.4172599517117563,"bets":1.4172599517117563,"stake":141.72599517117564}},"rec":{"name":"推奨コース","short":"推奨","desc":"推奨の買い目をすべて、アプリの金額で購入(◆厳選は100円か1000円、ほかは100円)。1レースに複数点のことも","roi":1.1618660157309466,"ci":[1.093239862810129,1.2342262773498895],"hit":0.12315593924161294,"bets":27453,"races":11790,"per13":{"races":9.488639881136631,"bets":22.09428589116573,"stake":2373.8500588126044}},"rec_flat":{"name":"推奨コース（一律100円の場合）","short":"推奨100円","desc":"同じ推奨の買い目を、1点100円ずつ買った場合(参考)","roi":1.1399482752340364,"ci":[1.0952741527975214,1.1860448498210927],"hit":0.12315593924161294,"bets":27453,"races":11790,"per13":{"races":9.488639881136631,"bets":22.09428589116573,"stake":2209.4285891165728}},"rec_kelly":{"name":"推奨をケリーの金額で（参考）","short":"ケリー","desc":"同じ推奨の買い目を、資金10万円・1/4ケリー基準の金額で購入(1レース上限1万円)。回収率は下がるが、金額が大きいぶん利益の額は大きい","roi":1.142630353153667,"ci":[1.1007571281823458,1.18556039991231],"hit":0.12315593924161294,"bets":27453,"races":11790,"per13":{"races":9.488639881136631,"bets":22.09428589116573,"stake":15239.045378567449}},"top1":{"name":"毎レース1位コース","short":"毎レース1位","desc":"推奨のないレースも含め、全レースで買い目リストの1位(期待値が最も高い1点)を、1位が◆厳選なら1000円、推奨・検討なら100円で購入","roi":1.2253890381851134,"ci":[1.104991614103724,1.3544272338727046],"hit":0.12053488516065128,"bets":16153,"races":16153,"per13":{"races":13.0,"bets":13.0,"stake":2575.5339565405807}},"top1_flat":{"name":"毎レース1位コース（一律100円の場合）","short":"1位100円","desc":"同じ1位を、金額を変えずに毎レース100円ずつ買った場合(参考)","roi":1.0813656905837925,"ci":[1.02773770374255,1.1347476587680176],"hit":0.12053488516065128,"bets":16153,"races":16153,"per13":{"races":13.0,"bets":13.0,"stake":1300.0}},"top1_rec":{"name":"1位に札があるときだけ（参考）","short":"1位・札あり","desc":"リストの1位に◆厳選か推奨の札があるレースだけ、アプリの金額(◆厳選100円か1000円・推奨100円)で購入。検討の1位は見送り","roi":1.1732719228258504,"ci":[1.04359509944798,1.3211041188826698],"hit":0.1094175749318801,"bets":11744,"races":11744,"per13":{"races":9.451618894323035,"bets":9.451618894323035,"stake":1109.5833591283354}},"consider":{"name":"検討（リストの残り）","short":"検討","desc":"リストのうち推奨の条件に届かない買い目を、1点100円ずつ買った場合(参考。アプリでは「買わない」)","roi":0.9295390491730328,"ci":[0.9067906976491782,0.9522184617669456],"hit":0.17125268857079284,"bets":53932,"races":15355,"per13":{"races":12.357766359190244,"bets":43.40469262675664,"stake":4340.469262675664}},"long_rec":{"name":"大穴枠・推奨のあるレース","short":"大穴（推奨あり）","desc":"推奨が1点以上あるレースで、大穴枠の買い目をアプリの金額で購入","roi":1.2461630718269907,"ci":[1.0308216644471222,1.4855414484494862],"hit":0.025157539934541548,"bets":20471,"races":9191,"per13":{"races":7.396954126168513,"bets":16.47514393611094,"stake":4227.555252894199}},"long_norec":{"name":"大穴枠・推奨のないレース","short":"大穴（推奨なし）","desc":"推奨がないレースで、大穴枠の買い目をアプリの金額で購入","roi":1.3906612037298671,"ci":[0.8705000885786621,2.0240468739252124],"hit":0.026736691334447362,"bets":4189,"races":2215,"per13":{"races":1.7826409954807159,"bets":3.37132421222064,"stake":569.6403144926638}},"longshot":{"name":"大穴枠","short":"大穴","desc":"当たる確率は低いものの、確率と配当から見込む払戻しが購入額以上の候補。1レース最大3点。金額は100円、大穴枠の中でも期待値が上位15%なら1000円","roi":1.26332142198064,"ci":[1.0533625954569583,1.4746638432012393],"hit":0.025425790754257906,"bets":24660,"races":11406,"per13":{"races":9.179595121649228,"bets":19.84646814833158,"stake":4797.195567386862}},"fav_tan":{"name":"1番人気の単勝","short":"1番人気","desc":"発走6分前に1番人気の馬の単勝を毎レース100円","roi":0.7684145359995047,"ci":[0.7501494119621855,0.7870972526920698],"hit":0.3252646567201139,"bets":16153,"races":16153,"per13":{"races":13.0,"bets":13.0,"stake":1300.0}},"fav_fuku":{"name":"1番人気の複勝","short":"1番人気（複）","desc":"発走6分前に1番人気の馬の複勝を毎レース100円","roi":0.8346127654305702,"ci":[0.8254912429750202,0.8446389786620452],"hit":0.6398192286262614,"bets":16153,"races":16153,"per13":{"races":13.0,"bets":13.0,"stake":1300.0}},"rnd_tan":{"name":"ランダムに1頭（単勝）","short":"ランダム","desc":"毎レース、全出走馬から同じ確率で1頭を選び、単勝を100円買うと仮定した平均の払戻し。実際に抽選した成績ではない","roi":0.7086885394062717,"ci":[0.6873073387308929,0.728308613912126],"hit":0.07725815788919164,"bets":16153,"races":16153,"per13":{"races":13.0,"bets":13.0,"stake":1300.0}},"rnd_fuku":{"name":"ランダムに1頭（複勝）","short":"ランダム（複）","desc":"毎レース、全出走馬から同じ確率で1頭を選び、複勝を100円買うと仮定した平均の払戻し。実際に抽選した成績ではない","roi":0.7270682194342887,"ci":[0.7169162281113217,0.7370055726702279],"hit":0.2277746269635866,"bets":16153,"races":16153,"per13":{"races":13.0,"bets":13.0,"stake":1300.0}}},"nest":{"top1_in_rec":0.7270476072556181,"pick_is_top1":1.0,"rec_races":0.7298953754720485}};
+const TIMING = {"prev":{"pick":{"roi":1.0557962389907165,"ci":[0.8550786333220908,1.2984968525316196],"bets":2122},"pick_flat":{"roi":1.0854382657869934,"ci":[0.9723115805672665,1.2034614310965601],"bets":2122},"rec":{"roi":0.9029967559719607,"ci":[0.8756638990382489,0.9328488962642688],"bets":42002},"rec_kelly":{"roi":0.8973331565192937,"ci":[0.8780390761253993,0.9154094941688116],"bets":42002},"top1":{"roi":1.0102220808513098,"ci":[0.9390192958728735,1.0842597706711128],"bets":15484},"longshot":{"roi":0.6033371526783157,"ci":[0.3445382756919146,0.8969603888400655],"bets":2824},"logloss":1.9396093686477995},"20":{"pick":{"roi":1.5239798622151564,"ci":[1.1553061193406327,1.9449765285885345],"bets":1857},"pick_flat":{"roi":1.3815293484114162,"ci":[1.1993720733518816,1.5954328595836538],"bets":1857},"rec":{"roi":1.1346777820056038,"ci":[1.0705117876766626,1.1988610401402542],"bets":26992},"rec_kelly":{"roi":1.1236029883509457,"ci":[1.082665688770658,1.1636974453999993],"bets":26992},"top1":{"roi":1.2283879997565874,"ci":[1.119002396300306,1.3408949107569281],"bets":16153},"longshot":{"roi":1.1361440109256162,"ci":[0.8927424439684614,1.4029987892694156],"bets":17773},"logloss":1.9032071408632412},"6":{"pick":{"roi":1.417402733964248,"ci":[0.9638745820791833,1.9342482374268797],"bets":1761},"pick_flat":{"roi":1.372174900624645,"ci":[1.159344995613784,1.602240824973159],"bets":1761},"rec":{"roi":1.1618660157309466,"ci":[1.093239862810129,1.2342262773498895],"bets":27453},"rec_kelly":{"roi":1.142630353153667,"ci":[1.1007571281823458,1.18556039991231],"bets":27453},"top1":{"roi":1.2253890381851134,"ci":[1.104991614103724,1.3544272338727046],"bets":16153},"longshot":{"roi":1.26332142198064,"ci":[1.0533625954569583,1.4746638432012393],"bets":24660},"logloss":1.9009835797776036},"final":{"pick":{"roi":0.6809510169006016,"ci":[0.4454335239038146,0.9625854846830949],"bets":1862},"pick_flat":{"roi":0.8010741138560687,"ci":[0.6177402149127136,0.9718422463713231],"bets":1862},"rec":{"roi":0.9690887497300799,"ci":[0.848917839286766,1.1001891778253143],"bets":7633},"rec_kelly":{"roi":1.0343771209971,"ci":[0.949269458081117,1.1183595050619113],"bets":7633},"top1":{"roi":0.8937467715961229,"ci":[0.7892707409838966,1.0000146016735458],"bets":16153},"longshot":{"roi":1.511888959795788,"ci":[1.1270205398712874,1.9629689451817869],"bets":14420},"logloss":1.8942587747141284}};
+const SERIES = [{"key":"pick","name":"厳選コース（◆）","short":"厳選（◆）","curve":[[1,null],[40,0.0],[80,0.0],[120,0.0],[160,0.0],[200,0.0],[240,0.0],[280,0.0],[320,229.33],[360,202.35],[400,172.0],[440,165.38],[480,159.26],[520,153.57],[560,137.6],[600,109.55],[640,107.5],[680,136.79],[720,139.03],[760,137.96],[800,134.15],[840,142.65],[880,138.84],[920,139.83],[960,130.81],[1000,128.22],[1040,127.72],[1080,126.23],[1120,115.04],[1160,124.21],[1200,122.94],[1240,125.1],[1280,123.48],[1320,123.73],[1360,119.91],[1400,119.17],[1440,128.72],[1480,124.03],[1520,127.63],[1560,129.7],[1600,128.28],[1640,123.88],[1680,120.08],[1720,115.93],[1760,115.64],[1800,115.07],[1840,114.23],[1880,113.41],[1920,110.47],[1960,109.44],[2000,111.23],[2040,110.21],[2080,107.49],[2120,107.01],[2160,107.01],[2200,106.53],[2240,112.12],[2280,113.8],[2320,114.77],[2360,114.03],[2400,129.04],[2440,127.96],[2480,127.17],[2520,124.09],[2560,120.69],[2600,119.51],[2640,118.82],[2680,118.95],[2720,116.73],[2760,142.58],[2800,139.37],[2840,137.3],[2880,138.84],[2920,134.43],[2960,130.87],[3000,130.29],[3040,128.04],[3080,126.04],[3120,126.9],[3160,123.08],[3200,135.44],[3240,131.92],[3280,131.57],[3320,131.42],[3360,131.08],[3400,130.41],[3440,131.29],[3480,130.79],[3520,129.96],[3560,129.63],[3600,130.39],[3640,130.33],[3680,130.33],[3720,131.1],[3760,129.05],[3800,130.36],[3840,129.89],[3880,129.58],[3920,131.23],[3960,128.94],[4000,128.61],[4040,127.88],[4080,127.3],[4120,126.12],[4160,124.34],[4200,122.47],[4240,121.81],[4280,120.15],[4320,175.63],[4360,174.91],[4400,174.74],[4440,171.95],[4480,167.94],[4520,167.29],[4560,166.8],[4600,164.58],[4640,164.42],[4680,163.8],[4720,162.94],[4760,159.21],[4800,158.49],[4840,156.99],[4880,155.47],[4920,153.7],[4960,152.9],[5000,154.6],[5040,153.71],[5080,153.71],[5120,153.58],[5160,154.25],[5200,152.57],[5240,152.07],[5280,151.94],[5320,150.44],[5360,150.17],[5400,150.17],[5440,150.05],[5480,151.46],[5520,150.97],[5560,149.4],[5600,148.09],[5640,148.59],[5680,147.3],[5720,147.04],[5760,144.34],[5800,145.56],[5840,145.45],[5880,144.13],[5920,142.73],[5960,142.3],[6000,142.3],[6040,138.89],[6080,138.58],[6120,147.95],[6160,146.59],[6200,146.59],[6240,146.18],[6280,146.44],[6320,147.86],[6360,146.21],[6400,146.01],[6440,145.7],[6480,142.93],[6520,143.66],[6560,144.2],[6600,143.87],[6640,143.1],[6680,142.72],[6720,143.13],[6760,141.73],[6800,139.71],[6840,137.62],[6880,137.49],[6920,163.28],[6960,161.39],[7000,160.04],[7040,159.47],[7080,159.98],[7120,157.41],[7160,158.55],[7200,157.19],[7240,156.84],[7280,153.88],[7320,157.45],[7360,156.25],[7400,153.72],[7440,161.79],[7480,160.2],[7520,159.53],[7560,158.96],[7600,160.78],[7640,161.0],[7680,160.6],[7720,161.56],[7760,158.87],[7800,158.0],[7840,157.4],[7880,155.31],[7920,154.95],[7960,156.07],[8000,155.2],[8040,152.66],[8080,150.8],[8120,165.59],[8160,163.69],[8200,162.74],[8240,162.32],[8280,160.43],[8320,159.4],[8360,161.12],[8400,160.1],[8440,159.22],[8480,157.69],[8520,157.72],[8560,156.8],[8600,155.13],[8640,155.2],[8680,154.42],[8720,154.46],[8760,154.4],[8800,155.69],[8840,154.18],[8880,153.32],[8920,152.9],[8960,153.23],[9000,152.33],[9040,151.38],[9080,149.47],[9120,148.05],[9160,146.77],[9200,145.4],[9240,144.06],[9280,145.27],[9320,143.53],[9360,146.19],[9400,146.08],[9440,145.3],[9480,144.58],[9520,144.49],[9560,143.8],[9600,143.1],[9640,142.95],[9680,141.72],[9720,140.35],[9760,145.22],[9800,144.39],[9840,143.76],[9880,142.0],[9920,140.47],[9960,140.19],[10000,139.49],[10040,139.26],[10080,138.85],[10120,138.85],[10160,138.81],[10200,138.68],[10240,138.72],[10280,139.21],[10320,139.08],[10360,138.9],[10400,139.18],[10440,138.96],[10480,138.83],[10520,138.69],[10560,138.61],[10600,138.84],[10640,138.8],[10680,139.49],[10720,139.35],[10760,139.27],[10800,139.69],[10840,140.72],[10880,140.1],[10920,139.97],[10960,140.04],[11000,139.96],[11040,140.04],[11080,139.6],[11120,139.47],[11160,139.64],[11200,139.33],[11240,139.12],[11280,139.04],[11320,138.91],[11360,138.78],[11400,138.69],[11440,138.63],[11480,138.29],[11520,138.25],[11560,138.28],[11600,138.2],[11640,137.65],[11680,137.11],[11720,137.03],[11760,137.12],[11800,136.66],[11840,136.54],[11880,145.26],[11920,145.04],[11960,145.0],[12000,145.0],[12040,144.87],[12080,144.69],[12120,144.52],[12160,144.48],[12200,144.48],[12240,144.05],[12280,143.84],[12320,143.75],[12360,143.2],[12400,143.07],[12440,142.76],[12480,142.67],[12520,142.55],[12560,142.51],[12600,142.46],[12640,142.3],[12680,142.21],[12720,142.09],[12760,141.51],[12800,141.39],[12840,141.94],[12880,141.9],[12920,141.53],[12960,141.41],[13000,141.2],[13040,141.08],[13080,141.68],[13120,142.04],[13160,141.88],[13200,145.56],[13240,145.51],[13280,145.82],[13320,145.78],[13360,145.74],[13400,145.7],[13440,145.84],[13480,145.38],[13520,145.59],[13560,145.01],[13600,144.89],[13640,145.03],[13680,144.5],[13720,144.85],[13760,144.77],[13800,144.56],[13840,144.44],[13880,144.36],[13920,144.16],[13960,143.96],[14000,143.87],[14040,144.08],[14080,144.5],[14120,144.93],[14160,144.73],[14200,144.69],[14240,145.02],[14280,145.02],[14320,144.85],[14360,144.77],[14400,144.57],[14440,144.49],[14480,144.45],[14520,144.29],[14560,144.17],[14600,144.09],[14640,144.02],[14680,144.34],[14720,144.06],[14760,143.71],[14800,143.43],[14840,143.31],[14880,143.65],[14920,143.57],[14960,143.45],[15000,142.99],[15040,143.17],[15080,143.05],[15120,143.16],[15160,143.0],[15200,142.89],[15240,142.73],[15280,143.17],[15320,143.13],[15360,143.35],[15400,143.19],[15440,143.16],[15480,143.12],[15520,143.0],[15560,143.0],[15600,143.0],[15640,142.54],[15680,142.47],[15720,142.47],[15760,142.31],[15800,142.24],[15840,142.24],[15880,142.29],[15920,142.52],[15960,142.25],[16000,141.76],[16040,141.97],[16080,141.49],[16120,141.49],[16153,141.74]]},{"key":"rec","name":"推奨コース","short":"推奨","curve":[[1,170.0],[40,173.47],[80,167.71],[120,122.15],[160,130.4],[200,108.47],[240,105.47],[280,111.99],[320,146.35],[360,132.26],[400,125.44],[440,127.04],[480,118.55],[520,119.07],[560,117.92],[600,115.79],[640,117.67],[680,121.82],[720,124.48],[760,123.44],[800,120.21],[840,122.52],[880,123.78],[920,123.02],[960,121.43],[1000,119.2],[1040,117.34],[1080,117.75],[1120,114.89],[1160,113.66],[1200,113.76],[1240,112.68],[1280,111.3],[1320,109.91],[1360,107.8],[1400,107.51],[1440,109.27],[1480,108.09],[1520,109.83],[1560,109.61],[1600,107.77],[1640,106.9],[1680,106.78],[1720,106.04],[1760,105.38],[1800,105.12],[1840,105.24],[1880,106.98],[1920,107.99],[1960,106.4],[2000,106.79],[2040,106.74],[2080,106.37],[2120,105.36],[2160,105.52],[2200,105.92],[2240,107.24],[2280,107.82],[2320,108.78],[2360,107.9],[2400,109.86],[2440,109.16],[2480,109.02],[2520,107.98],[2560,106.77],[2600,106.33],[2640,107.51],[2680,108.34],[2720,109.18],[2760,112.83],[2800,112.92],[2840,113.84],[2880,114.52],[2920,114.32],[2960,113.15],[3000,113.17],[3040,113.2],[3080,113.02],[3120,112.89],[3160,112.27],[3200,114.39],[3240,113.25],[3280,112.9],[3320,113.47],[3360,113.11],[3400,113.16],[3440,112.24],[3480,111.79],[3520,111.46],[3560,112.06],[3600,112.12],[3640,112.5],[3680,112.36],[3720,112.45],[3760,113.02],[3800,112.69],[3840,113.9],[3880,113.93],[3920,113.65],[3960,114.18],[4000,113.93],[4040,113.95],[4080,113.67],[4120,114.16],[4160,113.63],[4200,113.06],[4240,113.37],[4280,113.24],[4320,121.36],[4360,121.43],[4400,121.1],[4440,120.39],[4480,119.75],[4520,119.5],[4560,119.71],[4600,119.57],[4640,119.75],[4680,120.54],[4720,119.88],[4760,119.19],[4800,118.52],[4840,118.1],[4880,118.19],[4920,117.86],[4960,117.85],[5000,118.3],[5040,118.23],[5080,117.46],[5120,116.93],[5160,116.88],[5200,117.0],[5240,117.05],[5280,117.71],[5320,117.8],[5360,117.51],[5400,117.53],[5440,117.54],[5480,118.43],[5520,118.47],[5560,118.33],[5600,118.09],[5640,117.74],[5680,117.11],[5720,117.25],[5760,117.29],[5800,117.47],[5840,117.79],[5880,117.58],[5920,117.69],[5960,117.9],[6000,117.8],[6040,117.52],[6080,117.85],[6120,119.05],[6160,119.11],[6200,119.21],[6240,118.89],[6280,119.24],[6320,119.28],[6360,119.19],[6400,119.17],[6440,119.53],[6480,119.44],[6520,119.65],[6560,119.43],[6600,119.56],[6640,119.97],[6680,119.5],[6720,119.77],[6760,119.45],[6800,118.71],[6840,118.25],[6880,117.83],[6920,121.08],[6960,121.15],[7000,120.46],[7040,120.27],[7080,120.13],[7120,119.81],[7160,119.73],[7200,119.16],[7240,119.52],[7280,119.39],[7320,119.9],[7360,119.62],[7400,119.83],[7440,120.66],[7480,120.14],[7520,119.7],[7560,120.02],[7600,120.23],[7640,120.19],[7680,120.12],[7720,120.08],[7760,119.53],[7800,119.61],[7840,119.7],[7880,119.7],[7920,119.47],[7960,120.11],[8000,119.93],[8040,119.71],[8080,119.26],[8120,120.86],[8160,120.08],[8200,119.97],[8240,119.96],[8280,119.46],[8320,119.77],[8360,119.99],[8400,119.72],[8440,119.79],[8480,119.51],[8520,119.72],[8560,119.82],[8600,119.63],[8640,119.49],[8680,119.54],[8720,119.7],[8760,119.65],[8800,119.78],[8840,120.2],[8880,120.18],[8920,120.11],[8960,119.95],[9000,119.98],[9040,119.71],[9080,119.78],[9120,119.46],[9160,118.95],[9200,118.94],[9240,119.07],[9280,119.01],[9320,118.49],[9360,119.21],[9400,119.02],[9440,118.88],[9480,118.77],[9520,118.63],[9560,118.52],[9600,118.15],[9640,117.79],[9680,117.41],[9720,117.49],[9760,118.18],[9800,118.02],[9840,117.64],[9880,117.32],[9920,117.14],[9960,117.29],[10000,117.18],[10040,117.27],[10080,117.21],[10120,117.04],[10160,117.05],[10200,116.95],[10240,117.12],[10280,117.32],[10320,117.26],[10360,117.12],[10400,117.36],[10440,117.37],[10480,117.4],[10520,117.27],[10560,117.73],[10600,117.69],[10640,117.67],[10680,117.81],[10720,117.74],[10760,117.7],[10800,117.74],[10840,118.13],[10880,118.24],[10920,118.12],[10960,118.04],[11000,117.86],[11040,117.84],[11080,118.15],[11120,118.17],[11160,117.99],[11200,117.96],[11240,117.96],[11280,117.84],[11320,117.73],[11360,117.46],[11400,117.46],[11440,117.65],[11480,117.48],[11520,117.65],[11560,117.61],[11600,117.51],[11640,117.33],[11680,117.44],[11720,117.49],[11760,117.4],[11800,117.3],[11840,117.13],[11880,118.33],[11920,118.23],[11960,118.18],[12000,118.08],[12040,118.07],[12080,118.12],[12120,118.15],[12160,118.19],[12200,118.16],[12240,117.92],[12280,117.76],[12320,117.89],[12360,117.88],[12400,117.66],[12440,117.46],[12480,117.38],[12520,117.38],[12560,117.39],[12600,117.34],[12640,117.27],[12680,117.59],[12720,117.61],[12760,117.38],[12800,117.21],[12840,117.32],[12880,117.24],[12920,117.09],[12960,116.91],[13000,116.79],[13040,116.89],[13080,117.06],[13120,117.14],[13160,117.14],[13200,117.45],[13240,117.45],[13280,117.4],[13320,117.31],[13360,117.15],[13400,117.16],[13440,117.25],[13480,117.2],[13520,117.22],[13560,117.15],[13600,117.17],[13640,117.14],[13680,117.22],[13720,117.43],[13760,117.41],[13800,117.21],[13840,117.04],[13880,116.84],[13920,116.95],[13960,116.77],[14000,116.75],[14040,116.78],[14080,116.71],[14120,116.71],[14160,116.69],[14200,116.56],[14240,116.62],[14280,116.58],[14320,116.59],[14360,116.53],[14400,116.44],[14440,116.64],[14480,116.91],[14520,116.7],[14560,116.69],[14600,116.67],[14640,116.69],[14680,116.65],[14720,116.78],[14760,116.64],[14800,116.67],[14840,116.68],[14880,116.77],[14920,116.83],[14960,116.83],[15000,116.92],[15040,116.97],[15080,116.81],[15120,116.84],[15160,116.87],[15200,116.89],[15240,116.69],[15280,116.64],[15320,116.71],[15360,116.71],[15400,116.58],[15440,116.57],[15480,116.46],[15520,116.32],[15560,116.3],[15600,116.27],[15640,116.18],[15680,116.17],[15720,116.4],[15760,116.42],[15800,116.46],[15840,116.53],[15880,116.58],[15920,116.47],[15960,116.37],[16000,116.18],[16040,116.12],[16080,116.05],[16120,116.08],[16153,116.19]]},{"key":"top1","name":"毎レース1位コース","short":"毎レース1位","curve":[[1,680.0],[40,62.54],[80,55.59],[120,47.54],[160,50.71],[200,47.08],[240,45.95],[280,51.26],[320,89.15],[360,83.08],[400,75.55],[440,75.02],[480,69.39],[520,65.82],[560,63.66],[600,63.98],[640,63.21],[680,66.84],[720,86.39],[760,87.81],[800,84.51],[840,97.56],[880,94.21],[920,97.54],[960,94.56],[1000,91.23],[1040,89.65],[1080,89.18],[1120,86.31],[1160,98.27],[1200,96.95],[1240,104.42],[1280,102.16],[1320,101.84],[1360,100.09],[1400,100.0],[1440,116.29],[1480,113.98],[1520,117.99],[1560,120.41],[1600,117.95],[1640,116.28],[1680,115.15],[1720,113.37],[1760,113.13],[1800,112.63],[1840,112.38],[1880,112.9],[1920,112.37],[1960,110.07],[2000,111.4],[2040,110.01],[2080,109.29],[2120,108.19],[2160,107.71],[2200,107.39],[2240,113.09],[2280,115.0],[2320,115.65],[2360,114.13],[2400,118.46],[2440,117.19],[2480,115.54],[2520,114.02],[2560,112.7],[2600,110.83],[2640,111.05],[2680,111.5],[2720,111.36],[2760,116.55],[2800,118.07],[2840,118.51],[2880,120.28],[2920,120.05],[2960,117.56],[3000,116.46],[3040,115.47],[3080,114.69],[3120,115.38],[3160,114.77],[3200,115.47],[3240,115.08],[3280,114.66],[3320,114.92],[3360,114.3],[3400,113.53],[3440,114.18],[3480,113.33],[3520,112.26],[3560,111.78],[3600,112.51],[3640,114.3],[3680,114.47],[3720,115.47],[3760,114.9],[3800,115.98],[3840,115.85],[3880,115.87],[3920,117.37],[3960,116.52],[4000,117.48],[4040,116.18],[4080,115.38],[4120,117.36],[4160,116.53],[4200,116.08],[4240,115.49],[4280,114.64],[4320,120.52],[4360,120.26],[4400,120.17],[4440,118.92],[4480,118.26],[4520,117.72],[4560,117.12],[4600,116.61],[4640,116.55],[4680,116.87],[4720,117.62],[4760,116.61],[4800,115.77],[4840,117.04],[4880,116.94],[4920,116.5],[4960,115.88],[5000,119.82],[5040,120.26],[5080,119.98],[5120,119.48],[5160,120.51],[5200,120.11],[5240,119.49],[5280,119.82],[5320,119.39],[5360,119.4],[5400,119.55],[5440,119.55],[5480,121.49],[5520,120.86],[5560,120.29],[5600,120.15],[5640,120.65],[5680,120.51],[5720,121.69],[5760,121.49],[5800,122.99],[5840,122.78],[5880,122.27],[5920,121.76],[5960,121.22],[6000,121.26],[6040,120.5],[6080,120.43],[6120,121.14],[6160,120.66],[6200,120.51],[6240,120.2],[6280,120.73],[6320,122.44],[6360,121.67],[6400,121.35],[6440,120.88],[6480,119.89],[6520,120.64],[6560,121.28],[6600,122.15],[6640,121.55],[6680,120.95],[6720,121.63],[6760,121.1],[6800,120.48],[6840,120.95],[6880,120.76],[6920,123.25],[6960,122.59],[7000,123.03],[7040,122.67],[7080,122.42],[7120,122.51],[7160,124.06],[7200,123.42],[7240,123.21],[7280,122.79],[7320,127.62],[7360,126.89],[7400,125.95],[7440,127.59],[7480,127.58],[7520,127.08],[7560,127.32],[7600,129.73],[7640,130.02],[7680,131.32],[7720,132.64],[7760,132.08],[7800,132.93],[7840,133.1],[7880,132.4],[7920,131.94],[7960,131.6],[8000,130.47],[8040,129.86],[8080,129.22],[8120,130.4],[8160,129.53],[8200,129.3],[8240,129.56],[8280,128.72],[8320,128.31],[8360,130.65],[8400,130.14],[8440,129.97],[8480,129.66],[8520,129.7],[8560,129.37],[8600,128.82],[8640,128.85],[8680,128.94],[8720,129.13],[8760,128.89],[8800,130.58],[8840,131.07],[8880,130.64],[8920,130.27],[8960,130.57],[9000,130.01],[9040,129.35],[9080,128.88],[9120,128.67],[9160,128.29],[9200,127.92],[9240,127.55],[9280,127.13],[9320,126.57],[9360,127.05],[9400,126.7],[9440,126.15],[9480,125.72],[9520,125.73],[9560,126.0],[9600,125.55],[9640,125.23],[9680,124.7],[9720,124.57],[9760,125.85],[9800,125.3],[9840,124.87],[9880,124.15],[9920,123.9],[9960,123.59],[10000,123.81],[10040,124.91],[10080,124.44],[10120,124.32],[10160,124.18],[10200,124.08],[10240,124.32],[10280,124.98],[10320,124.87],[10360,124.65],[10400,125.09],[10440,124.74],[10480,124.54],[10520,124.34],[10560,124.36],[10600,124.65],[10640,124.5],[10680,125.43],[10720,125.13],[10760,124.89],[10800,125.49],[10840,127.29],[10880,126.99],[10920,126.72],[10960,126.74],[11000,126.59],[11040,126.74],[11080,126.93],[11120,126.67],[11160,126.77],[11200,126.3],[11240,126.54],[11280,126.34],[11320,126.19],[11360,125.99],[11400,125.75],[11440,126.36],[11480,125.79],[11520,125.63],[11560,125.63],[11600,125.52],[11640,125.28],[11680,125.0],[11720,124.84],[11760,124.81],[11800,124.72],[11840,124.4],[11880,125.49],[11920,125.17],[11960,125.1],[12000,125.1],[12040,124.97],[12080,124.73],[12120,124.42],[12160,124.28],[12200,124.27],[12240,124.18],[12280,123.88],[12320,123.9],[12360,123.63],[12400,123.41],[12440,123.42],[12480,123.25],[12520,122.96],[12560,122.94],[12600,122.87],[12640,122.64],[12680,122.66],[12720,122.63],[12760,122.27],[12800,122.03],[12840,122.75],[12880,122.78],[12920,122.27],[12960,122.06],[13000,121.83],[13040,121.65],[13080,122.69],[13120,123.1],[13160,122.95],[13200,123.19],[13240,123.09],[13280,123.46],[13320,123.41],[13360,123.21],[13400,123.1],[13440,123.28],[13480,123.23],[13520,123.47],[13560,123.37],[13600,123.15],[13640,123.33],[13680,123.25],[13720,123.64],[13760,123.52],[13800,123.29],[13840,123.07],[13880,122.91],[13920,122.79],[13960,122.47],[14000,122.37],[14040,122.65],[14080,123.15],[14120,123.66],[14160,123.38],[14200,123.26],[14240,123.73],[14280,123.59],[14320,123.54],[14360,123.47],[14400,123.27],[14440,123.08],[14480,123.11],[14520,122.82],[14560,122.74],[14600,122.64],[14640,122.57],[14680,122.94],[14720,123.1],[14760,123.04],[14800,122.81],[14840,122.68],[14880,123.13],[14920,123.09],[14960,122.84],[15000,122.57],[15040,122.74],[15080,122.63],[15120,122.64],[15160,122.45],[15200,122.34],[15240,122.14],[15280,122.67],[15320,122.71],[15360,122.97],[15400,122.75],[15440,122.69],[15480,122.57],[15520,122.46],[15560,122.38],[15600,122.33],[15640,122.23],[15680,122.17],[15720,122.25],[15760,122.14],[15800,122.48],[15840,122.45],[15880,122.54],[15920,122.73],[15960,122.46],[16000,122.21],[16040,122.42],[16080,122.18],[16120,122.2],[16153,122.54]]},{"key":"rec_kelly","name":"推奨をケリーの金額で（参考）","short":"ケリー","curve":[[1,447.37],[40,215.5],[80,196.36],[120,144.18],[160,140.07],[200,124.88],[240,109.57],[280,110.64],[320,120.87],[360,113.21],[400,110.09],[440,111.23],[480,101.67],[520,102.76],[560,104.72],[600,104.02],[640,104.6],[680,106.42],[720,109.13],[760,109.98],[800,107.11],[840,112.78],[880,113.89],[920,112.55],[960,111.47],[1000,109.03],[1040,108.53],[1080,109.51],[1120,108.01],[1160,108.12],[1200,108.73],[1240,109.41],[1280,108.52],[1320,108.05],[1360,106.43],[1400,106.6],[1440,110.51],[1480,109.78],[1520,111.07],[1560,111.1],[1600,109.56],[1640,109.72],[1680,109.63],[1720,109.19],[1760,108.19],[1800,107.83],[1840,108.58],[1880,109.37],[1920,110.8],[1960,109.46],[2000,110.3],[2040,109.99],[2080,110.4],[2120,109.84],[2160,109.93],[2200,109.52],[2240,110.6],[2280,111.03],[2320,111.85],[2360,110.75],[2400,111.34],[2440,110.83],[2480,110.55],[2520,109.6],[2560,108.86],[2600,107.83],[2640,109.21],[2680,109.6],[2720,110.2],[2760,111.26],[2800,111.89],[2840,112.97],[2880,113.77],[2920,113.81],[2960,113.06],[3000,112.99],[3040,112.71],[3080,112.41],[3120,111.79],[3160,111.64],[3200,112.46],[3240,112.07],[3280,111.63],[3320,112.54],[3360,112.67],[3400,112.61],[3440,111.94],[3480,111.66],[3520,111.08],[3560,111.91],[3600,111.67],[3640,112.73],[3680,112.49],[3720,112.14],[3760,112.69],[3800,112.77],[3840,113.58],[3880,113.45],[3920,113.42],[3960,113.75],[4000,114.01],[4040,113.93],[4080,113.56],[4120,114.19],[4160,114.14],[4200,114.07],[4240,114.33],[4280,114.17],[4320,115.6],[4360,115.91],[4400,115.7],[4440,115.03],[4480,114.49],[4520,114.62],[4560,115.2],[4600,115.06],[4640,115.21],[4680,115.98],[4720,115.48],[4760,115.49],[4800,115.01],[4840,115.16],[4880,115.38],[4920,115.35],[4960,115.12],[5000,115.51],[5040,115.85],[5080,115.09],[5120,114.87],[5160,115.31],[5200,115.1],[5240,115.1],[5280,115.55],[5320,115.66],[5360,115.52],[5400,115.74],[5440,115.84],[5480,116.58],[5520,116.7],[5560,116.41],[5600,116.28],[5640,116.02],[5680,115.57],[5720,116.0],[5760,116.11],[5800,116.21],[5840,116.21],[5880,116.2],[5920,116.57],[5960,116.89],[6000,117.18],[6040,117.16],[6080,117.51],[6120,117.67],[6160,117.82],[6200,117.98],[6240,117.84],[6280,118.38],[6320,118.47],[6360,118.17],[6400,118.14],[6440,118.22],[6480,118.36],[6520,118.67],[6560,118.26],[6600,118.78],[6640,118.9],[6680,118.6],[6720,118.76],[6760,118.45],[6800,117.92],[6840,117.75],[6880,117.54],[6920,117.49],[6960,117.51],[7000,117.1],[7040,116.81],[7080,116.5],[7120,116.98],[7160,116.84],[7200,116.59],[7240,116.78],[7280,116.85],[7320,117.2],[7360,116.88],[7400,117.09],[7440,117.09],[7480,116.69],[7520,116.44],[7560,116.63],[7600,116.98],[7640,116.89],[7680,117.06],[7720,117.14],[7760,116.81],[7800,117.29],[7840,117.34],[7880,117.42],[7920,117.38],[7960,117.78],[8000,117.45],[8040,117.36],[8080,117.03],[8120,116.76],[8160,116.23],[8200,116.06],[8240,116.07],[8280,115.83],[8320,115.95],[8360,116.24],[8400,115.81],[8440,115.77],[8480,115.64],[8520,115.85],[8560,115.92],[8600,115.77],[8640,115.53],[8680,115.61],[8720,115.84],[8760,115.87],[8800,116.13],[8840,116.42],[8880,116.4],[8920,116.23],[8960,116.26],[9000,116.2],[9040,115.88],[9080,116.31],[9120,116.06],[9160,115.97],[9200,116.05],[9240,116.07],[9280,115.89],[9320,115.56],[9360,115.98],[9400,115.77],[9440,115.78],[9480,115.67],[9520,115.65],[9560,115.61],[9600,115.32],[9640,115.04],[9680,114.83],[9720,114.98],[9760,115.1],[9800,115.02],[9840,114.73],[9880,114.49],[9920,114.29],[9960,114.5],[10000,114.5],[10040,114.83],[10080,114.67],[10120,114.51],[10160,114.44],[10200,114.36],[10240,114.55],[10280,114.9],[10320,114.9],[10360,114.75],[10400,114.97],[10440,114.9],[10480,114.86],[10520,114.77],[10560,114.96],[10600,114.95],[10640,115.14],[10680,115.24],[10720,115.26],[10760,115.22],[10800,115.38],[10840,115.73],[10880,115.84],[10920,115.82],[10960,115.76],[11000,115.6],[11040,115.78],[11080,116.19],[11120,116.18],[11160,115.99],[11200,115.92],[11240,116.22],[11280,116.11],[11320,115.99],[11360,115.73],[11400,115.66],[11440,115.77],[11480,115.62],[11520,115.67],[11560,115.73],[11600,115.53],[11640,115.47],[11680,115.46],[11720,115.5],[11760,115.43],[11800,115.36],[11840,115.22],[11880,115.34],[11920,115.19],[11960,115.04],[12000,114.89],[12040,114.86],[12080,114.84],[12120,114.86],[12160,114.91],[12200,114.81],[12240,114.63],[12280,114.55],[12320,114.54],[12360,114.46],[12400,114.26],[12440,114.19],[12480,114.11],[12520,114.08],[12560,114.11],[12600,114.2],[12640,114.22],[12680,114.47],[12720,114.5],[12760,114.33],[12800,114.23],[12840,114.32],[12880,114.23],[12920,114.02],[12960,113.85],[13000,113.86],[13040,113.96],[13080,114.08],[13120,114.13],[13160,114.08],[13200,114.09],[13240,114.13],[13280,114.14],[13320,114.07],[13360,113.96],[13400,113.93],[13440,114.18],[13480,114.22],[13520,114.31],[13560,114.3],[13600,114.28],[13640,114.23],[13680,114.44],[13720,114.51],[13760,114.43],[13800,114.22],[13840,114.13],[13880,113.96],[13920,114.12],[13960,113.98],[14000,113.95],[14040,114.06],[14080,113.98],[14120,114.04],[14160,113.97],[14200,113.83],[14240,113.96],[14280,113.93],[14320,113.9],[14360,113.9],[14400,113.82],[14440,113.91],[14480,114.07],[14520,113.86],[14560,113.73],[14600,113.68],[14640,113.85],[14680,113.82],[14720,114.06],[14760,114.07],[14800,114.07],[14840,114.06],[14880,114.28],[14920,114.29],[14960,114.36],[15000,114.47],[15040,114.53],[15080,114.47],[15120,114.54],[15160,114.54],[15200,114.58],[15240,114.38],[15280,114.37],[15320,114.33],[15360,114.38],[15400,114.28],[15440,114.27],[15480,114.18],[15520,114.02],[15560,114.04],[15600,114.03],[15640,113.91],[15680,113.92],[15720,114.08],[15760,114.07],[15800,114.19],[15840,114.25],[15880,114.37],[15920,114.34],[15960,114.27],[16000,114.14],[16040,114.16],[16080,114.01],[16120,114.12],[16153,114.26]]},{"key":"longshot","name":"大穴枠","short":"大穴","curve":[[1,0.0],[40,35.09],[80,18.16],[120,12.81],[160,104.13],[200,87.97],[240,174.74],[280,175.95],[320,161.93],[360,147.71],[400,138.31],[440,123.73],[480,130.3],[520,118.89],[560,110.03],[600,103.88],[640,101.75],[680,101.49],[720,93.74],[760,96.09],[800,98.74],[840,116.41],[880,113.24],[920,110.21],[960,106.19],[1000,103.74],[1040,113.52],[1080,111.12],[1120,107.4],[1160,107.4],[1200,105.71],[1240,104.34],[1280,101.57],[1320,108.08],[1360,105.64],[1400,103.07],[1440,101.84],[1480,106.02],[1520,104.58],[1560,104.22],[1600,101.97],[1640,101.3],[1680,99.17],[1720,99.29],[1760,99.15],[1800,98.15],[1840,96.59],[1880,94.92],[1920,94.43],[1960,93.14],[2000,92.89],[2040,91.51],[2080,90.56],[2120,89.66],[2160,96.08],[2200,94.95],[2240,94.4],[2280,92.06],[2320,90.44],[2360,106.48],[2400,104.76],[2440,104.1],[2480,103.34],[2520,102.33],[2560,100.34],[2600,103.06],[2640,106.47],[2680,105.28],[2720,103.91],[2760,101.18],[2800,110.12],[2840,121.33],[2880,120.0],[2920,118.46],[2960,117.21],[3000,120.66],[3040,120.5],[3080,119.48],[3120,117.9],[3160,116.87],[3200,121.21],[3240,119.4],[3280,121.45],[3320,120.76],[3360,120.82],[3400,120.47],[3440,119.57],[3480,118.34],[3520,118.06],[3560,116.75],[3600,115.88],[3640,114.56],[3680,113.56],[3720,112.78],[3760,111.75],[3800,112.74],[3840,113.23],[3880,112.28],[3920,110.98],[3960,111.49],[4000,110.79],[4040,109.87],[4080,111.63],[4120,111.27],[4160,109.79],[4200,109.75],[4240,109.1],[4280,118.62],[4320,118.72],[4360,118.24],[4400,116.84],[4440,115.99],[4480,115.13],[4520,113.98],[4560,115.2],[4600,114.23],[4640,114.48],[4680,113.72],[4720,117.99],[4760,119.11],[4800,120.15],[4840,120.09],[4880,119.3],[4920,119.09],[4960,119.49],[5000,118.68],[5040,122.18],[5080,121.69],[5120,121.7],[5160,124.95],[5200,124.88],[5240,124.41],[5280,123.92],[5320,125.75],[5360,124.82],[5400,124.17],[5440,123.98],[5480,125.03],[5520,124.75],[5560,124.19],[5600,123.6],[5640,123.57],[5680,123.02],[5720,122.41],[5760,122.1],[5800,121.94],[5840,121.49],[5880,120.88],[5920,122.63],[5960,121.87],[6000,121.32],[6040,120.41],[6080,119.88],[6120,119.02],[6160,120.81],[6200,120.5],[6240,120.02],[6280,119.53],[6320,119.04],[6360,118.11],[6400,117.93],[6440,117.29],[6480,116.56],[6520,116.13],[6560,115.54],[6600,115.1],[6640,114.45],[6680,114.0],[6720,113.95],[6760,113.26],[6800,114.22],[6840,113.56],[6880,112.51],[6920,111.53],[6960,111.33],[7000,110.76],[7040,111.98],[7080,111.47],[7120,111.1],[7160,110.64],[7200,112.11],[7240,111.29],[7280,110.86],[7320,111.67],[7360,110.89],[7400,118.85],[7440,118.02],[7480,117.14],[7520,116.71],[7560,117.16],[7600,116.71],[7640,116.16],[7680,115.51],[7720,115.46],[7760,114.75],[7800,114.27],[7840,113.54],[7880,113.6],[7920,115.89],[7960,115.08],[8000,114.88],[8040,114.23],[8080,114.19],[8120,118.38],[8160,121.18],[8200,120.41],[8240,119.7],[8280,119.41],[8320,118.77],[8360,118.35],[8400,117.84],[8440,117.43],[8480,116.91],[8520,116.67],[8560,116.62],[8600,116.31],[8640,119.8],[8680,119.31],[8720,118.87],[8760,118.54],[8800,118.05],[8840,117.42],[8880,118.32],[8920,117.76],[8960,117.94],[9000,117.28],[9040,122.36],[9080,123.94],[9120,123.62],[9160,123.19],[9200,122.79],[9240,122.75],[9280,123.05],[9320,122.64],[9360,122.43],[9400,122.09],[9440,123.84],[9480,123.46],[9520,123.05],[9560,123.49],[9600,123.27],[9640,122.66],[9680,122.19],[9720,121.97],[9760,121.74],[9800,126.4],[9840,126.05],[9880,125.42],[9920,125.05],[9960,124.7],[10000,124.15],[10040,123.86],[10080,123.73],[10120,123.95],[10160,123.59],[10200,123.43],[10240,123.1],[10280,122.88],[10320,122.63],[10360,122.46],[10400,122.83],[10440,122.58],[10480,123.58],[10520,124.41],[10560,124.13],[10600,125.11],[10640,125.98],[10680,126.47],[10720,126.04],[10760,125.83],[10800,125.61],[10840,125.24],[10880,129.11],[10920,128.67],[10960,128.53],[11000,130.25],[11040,129.95],[11080,129.57],[11120,129.19],[11160,128.78],[11200,128.47],[11240,129.21],[11280,129.06],[11320,128.68],[11360,128.64],[11400,129.49],[11440,129.16],[11480,129.34],[11520,129.18],[11560,129.78],[11600,129.54],[11640,129.42],[11680,129.17],[11720,129.17],[11760,129.11],[11800,129.15],[11840,129.23],[11880,129.12],[11920,129.22],[11960,129.91],[12000,129.78],[12040,129.55],[12080,129.66],[12120,129.1],[12160,129.11],[12200,129.7],[12240,129.54],[12280,129.48],[12320,129.2],[12360,130.06],[12400,129.98],[12440,129.82],[12480,129.59],[12520,129.51],[12560,129.1],[12600,128.87],[12640,128.66],[12680,128.45],[12720,128.38],[12760,128.05],[12800,127.79],[12840,127.6],[12880,127.56],[12920,127.08],[12960,126.91],[13000,128.3],[13040,127.92],[13080,127.59],[13120,127.54],[13160,127.41],[13200,127.77],[13240,127.78],[13280,127.73],[13320,127.68],[13360,127.54],[13400,127.33],[13440,126.94],[13480,126.82],[13520,126.57],[13560,126.16],[13600,126.82],[13640,126.62],[13680,126.26],[13720,127.77],[13760,127.58],[13800,127.37],[13840,127.13],[13880,126.78],[13920,126.23],[13960,126.69],[14000,126.4],[14040,126.86],[14080,126.6],[14120,126.25],[14160,125.77],[14200,127.09],[14240,127.52],[14280,127.49],[14320,128.49],[14360,128.05],[14400,128.7],[14440,128.41],[14480,128.16],[14520,128.25],[14560,127.84],[14600,129.27],[14640,130.69],[14680,130.43],[14720,130.06],[14760,129.77],[14800,129.69],[14840,129.6],[14880,129.38],[14920,129.07],[14960,128.78],[15000,128.48],[15040,128.35],[15080,128.13],[15120,127.9],[15160,128.23],[15200,127.97],[15240,127.77],[15280,127.56],[15320,127.28],[15360,127.05],[15400,126.73],[15440,126.37],[15480,126.29],[15520,127.53],[15560,127.4],[15600,127.27],[15640,127.05],[15680,126.98],[15720,126.71],[15760,126.84],[15800,126.63],[15840,126.46],[15880,126.4],[15920,126.0],[15960,125.9],[16000,125.76],[16040,126.75],[16080,126.61],[16120,126.48],[16153,126.33]]},{"key":"fav_tan","name":"1番人気の単勝","short":"1番人気","curve":[[1,0.0],[40,79.25],[80,85.62],[120,82.83],[160,78.38],[200,82.8],[240,81.71],[280,82.04],[320,79.19],[360,80.53],[400,79.05],[440,80.98],[480,84.25],[520,85.25],[560,85.68],[600,86.05],[640,87.0],[680,85.29],[720,85.67],[760,86.66],[800,85.9],[840,85.07],[880,84.15],[920,83.58],[960,82.85],[1000,83.3],[1040,81.7],[1080,81.58],[1120,81.29],[1160,82.23],[1200,81.11],[1240,81.9],[1280,82.05],[1320,80.92],[1360,81.63],[1400,81.92],[1440,81.85],[1480,82.29],[1520,82.4],[1560,82.56],[1600,82.81],[1640,82.85],[1680,81.87],[1720,81.65],[1760,82.12],[1800,81.41],[1840,81.55],[1880,80.71],[1920,80.73],[1960,80.46],[2000,80.16],[2040,80.22],[2080,80.61],[2120,81.13],[2160,81.84],[2200,81.95],[2240,82.23],[2280,82.04],[2320,81.44],[2360,81.43],[2400,81.52],[2440,81.69],[2480,81.06],[2520,80.85],[2560,81.11],[2600,81.4],[2640,81.2],[2680,81.06],[2720,80.97],[2760,81.42],[2800,81.54],[2840,81.64],[2880,81.7],[2920,81.29],[2960,81.33],[3000,81.58],[3040,81.36],[3080,81.67],[3120,81.66],[3160,81.39],[3200,81.08],[3240,81.32],[3280,81.07],[3320,80.91],[3360,80.71],[3400,80.7],[3440,80.09],[3480,80.19],[3520,80.09],[3560,79.94],[3600,79.66],[3640,79.48],[3680,79.29],[3720,79.56],[3760,79.52],[3800,79.82],[3840,79.63],[3880,79.8],[3920,79.94],[3960,79.61],[4000,79.52],[4040,79.6],[4080,79.67],[4120,79.67],[4160,79.5],[4200,79.24],[4240,79.35],[4280,79.4],[4320,79.27],[4360,79.3],[4400,79.21],[4440,79.04],[4480,79.21],[4520,79.29],[4560,79.57],[4600,80.09],[4640,80.13],[4680,79.95],[4720,79.82],[4760,79.71],[4800,79.78],[4840,79.95],[4880,79.79],[4920,79.88],[4960,79.5],[5000,79.65],[5040,79.56],[5080,79.57],[5120,79.21],[5160,79.25],[5200,79.18],[5240,79.38],[5280,79.45],[5320,79.5],[5360,79.53],[5400,79.53],[5440,79.55],[5480,79.55],[5520,79.66],[5560,79.58],[5600,79.54],[5640,79.29],[5680,79.19],[5720,79.22],[5760,79.21],[5800,79.22],[5840,79.2],[5880,79.19],[5920,78.94],[5960,78.76],[6000,78.71],[6040,78.81],[6080,78.91],[6120,78.83],[6160,78.93],[6200,78.92],[6240,78.98],[6280,79.14],[6320,79.3],[6360,79.19],[6400,78.99],[6440,79.21],[6480,79.29],[6520,79.21],[6560,79.18],[6600,79.26],[6640,79.08],[6680,79.21],[6720,79.0],[6760,78.97],[6800,79.11],[6840,79.11],[6880,79.15],[6920,79.15],[6960,79.11],[7000,79.07],[7040,79.14],[7080,79.16],[7120,79.04],[7160,79.02],[7200,79.05],[7240,79.09],[7280,79.21],[7320,79.29],[7360,79.26],[7400,79.07],[7440,79.16],[7480,79.28],[7520,79.25],[7560,79.21],[7600,79.17],[7640,79.12],[7680,79.21],[7720,79.09],[7760,79.08],[7800,78.97],[7840,79.02],[7880,78.99],[7920,79.03],[7960,79.02],[8000,78.97],[8040,78.89],[8080,78.71],[8120,78.7],[8160,78.68],[8200,78.63],[8240,78.67],[8280,78.68],[8320,78.63],[8360,78.79],[8400,78.75],[8440,78.67],[8480,78.66],[8520,78.78],[8560,78.86],[8600,78.89],[8640,78.94],[8680,78.99],[8720,78.8],[8760,78.67],[8800,78.61],[8840,78.65],[8880,78.84],[8920,78.72],[8960,78.73],[9000,78.47],[9040,78.51],[9080,78.41],[9120,78.3],[9160,78.43],[9200,78.41],[9240,78.34],[9280,78.28],[9320,78.49],[9360,78.33],[9400,78.23],[9440,78.19],[9480,78.36],[9520,78.36],[9560,78.4],[9600,78.45],[9640,78.43],[9680,78.34],[9720,78.53],[9760,78.62],[9800,78.78],[9840,78.78],[9880,78.76],[9920,78.83],[9960,78.78],[10000,78.81],[10040,78.84],[10080,78.79],[10120,78.66],[10160,78.69],[10200,78.64],[10240,78.54],[10280,78.63],[10320,78.49],[10360,78.48],[10400,78.47],[10440,78.42],[10480,78.41],[10520,78.45],[10560,78.45],[10600,78.53],[10640,78.49],[10680,78.58],[10720,78.55],[10760,78.53],[10800,78.51],[10840,78.66],[10880,78.62],[10920,78.73],[10960,78.78],[11000,78.78],[11040,78.8],[11080,78.86],[11120,79.02],[11160,79.04],[11200,79.03],[11240,78.96],[11280,78.86],[11320,78.82],[11360,78.79],[11400,78.89],[11440,78.76],[11480,78.86],[11520,78.79],[11560,78.85],[11600,78.8],[11640,78.76],[11680,78.62],[11720,78.58],[11760,78.5],[11800,78.49],[11840,78.48],[11880,78.41],[11920,78.32],[11960,78.43],[12000,78.51],[12040,78.41],[12080,78.48],[12120,78.47],[12160,78.62],[12200,78.58],[12240,78.51],[12280,78.44],[12320,78.48],[12360,78.48],[12400,78.45],[12440,78.33],[12480,78.34],[12520,78.34],[12560,78.22],[12600,78.15],[12640,78.06],[12680,78.0],[12720,77.94],[12760,77.94],[12800,77.9],[12840,77.87],[12880,77.93],[12920,77.96],[12960,77.85],[13000,77.88],[13040,77.89],[13080,77.88],[13120,77.85],[13160,77.77],[13200,77.76],[13240,77.69],[13280,77.62],[13320,77.56],[13360,77.68],[13400,77.73],[13440,77.68],[13480,77.62],[13520,77.68],[13560,77.67],[13600,77.7],[13640,77.66],[13680,77.62],[13720,77.56],[13760,77.55],[13800,77.5],[13840,77.48],[13880,77.62],[13920,77.58],[13960,77.6],[14000,77.57],[14040,77.44],[14080,77.34],[14120,77.34],[14160,77.31],[14200,77.29],[14240,77.25],[14280,77.21],[14320,77.21],[14360,77.17],[14400,77.19],[14440,77.19],[14480,77.2],[14520,77.25],[14560,77.26],[14600,77.21],[14640,77.21],[14680,77.21],[14720,77.2],[14760,77.25],[14800,77.25],[14840,77.24],[14880,77.23],[14920,77.16],[14960,77.07],[15000,77.1],[15040,77.08],[15080,77.02],[15120,76.97],[15160,76.95],[15200,76.98],[15240,77.01],[15280,76.98],[15320,77.01],[15360,77.03],[15400,77.09],[15440,77.09],[15480,77.12],[15520,77.12],[15560,77.06],[15600,77.07],[15640,77.13],[15680,77.06],[15720,77.02],[15760,77.0],[15800,77.03],[15840,77.03],[15880,77.01],[15920,76.99],[15960,76.98],[16000,77.02],[16040,76.92],[16080,76.96],[16120,76.9],[16153,76.84]]},{"key":"rnd_tan","name":"ランダムに1頭（単勝）","short":"ランダム","curve":[[1,42.5],[40,53.74],[80,55.55],[120,50.77],[160,53.09],[200,51.94],[240,62.12],[280,61.0],[320,61.29],[360,60.73],[400,69.31],[440,67.87],[480,65.51],[520,63.76],[560,62.32],[600,60.94],[640,62.47],[680,64.11],[720,65.0],[760,64.42],[800,63.61],[840,64.94],[880,66.45],[920,65.89],[960,64.82],[1000,64.98],[1040,64.86],[1080,64.22],[1120,64.78],[1160,64.18],[1200,65.36],[1240,65.13],[1280,65.69],[1320,66.46],[1360,66.69],[1400,66.45],[1440,66.29],[1480,66.24],[1520,66.19],[1560,67.0],[1600,68.14],[1640,68.35],[1680,68.28],[1720,68.09],[1760,68.01],[1800,67.91],[1840,67.51],[1880,67.49],[1920,68.31],[1960,68.18],[2000,68.64],[2040,69.04],[2080,68.71],[2120,68.41],[2160,68.55],[2200,68.53],[2240,68.26],[2280,68.45],[2320,69.63],[2360,69.49],[2400,69.09],[2440,69.13],[2480,69.67],[2520,69.26],[2560,69.52],[2600,69.4],[2640,69.91],[2680,70.04],[2720,69.86],[2760,69.6],[2800,70.2],[2840,70.22],[2880,70.31],[2920,70.31],[2960,70.1],[3000,69.91],[3040,69.8],[3080,69.61],[3120,69.35],[3160,69.2],[3200,69.67],[3240,69.38],[3280,69.66],[3320,69.53],[3360,69.69],[3400,69.81],[3440,70.38],[3480,70.18],[3520,70.04],[3560,70.15],[3600,70.13],[3640,70.03],[3680,69.97],[3720,69.63],[3760,69.62],[3800,69.65],[3840,69.74],[3880,69.54],[3920,69.66],[3960,69.61],[4000,69.53],[4040,69.48],[4080,69.4],[4120,69.25],[4160,69.68],[4200,69.74],[4240,69.53],[4280,69.52],[4320,69.42],[4360,69.52],[4400,69.44],[4440,69.6],[4480,69.42],[4520,69.23],[4560,69.06],[4600,68.83],[4640,68.58],[4680,68.58],[4720,69.19],[4760,69.68],[4800,69.63],[4840,69.5],[4880,69.37],[4920,69.25],[4960,69.3],[5000,69.31],[5040,69.49],[5080,69.47],[5120,69.41],[5160,69.27],[5200,69.58],[5240,69.76],[5280,69.75],[5320,69.71],[5360,69.62],[5400,69.6],[5440,69.73],[5480,69.6],[5520,69.46],[5560,69.45],[5600,69.54],[5640,70.08],[5680,70.55],[5720,70.54],[5760,70.83],[5800,70.81],[5840,70.81],[5880,70.74],[5920,70.7],[5960,70.58],[6000,70.56],[6040,70.49],[6080,70.37],[6120,70.61],[6160,70.69],[6200,70.65],[6240,70.54],[6280,70.52],[6320,70.53],[6360,70.37],[6400,70.31],[6440,70.18],[6480,70.18],[6520,70.19],[6560,70.32],[6600,70.22],[6640,70.16],[6680,69.99],[6720,69.96],[6760,69.85],[6800,69.72],[6840,69.68],[6880,69.64],[6920,69.52],[6960,69.59],[7000,69.45],[7040,69.32],[7080,69.38],[7120,69.42],[7160,69.48],[7200,69.38],[7240,69.29],[7280,69.22],[7320,69.06],[7360,69.13],[7400,69.19],[7440,69.13],[7480,69.07],[7520,69.03],[7560,69.01],[7600,68.88],[7640,68.82],[7680,68.7],[7720,68.79],[7760,68.72],[7800,68.92],[7840,68.79],[7880,68.84],[7920,68.97],[7960,68.96],[8000,69.12],[8040,69.26],[8080,69.17],[8120,69.07],[8160,69.1],[8200,69.0],[8240,69.03],[8280,69.29],[8320,69.33],[8360,69.32],[8400,69.45],[8440,69.6],[8480,69.61],[8520,69.6],[8560,69.56],[8600,69.68],[8640,69.71],[8680,69.77],[8720,69.71],[8760,69.73],[8800,69.61],[8840,69.61],[8880,69.5],[8920,69.4],[8960,69.57],[9000,69.48],[9040,69.67],[9080,69.66],[9120,69.64],[9160,69.8],[9200,69.76],[9240,69.81],[9280,69.75],[9320,69.7],[9360,69.89],[9400,69.96],[9440,70.01],[9480,69.9],[9520,69.76],[9560,69.7],[9600,69.75],[9640,69.76],[9680,69.76],[9720,69.82],[9760,69.8],[9800,69.83],[9840,69.77],[9880,69.75],[9920,69.89],[9960,69.87],[10000,69.91],[10040,69.86],[10080,69.9],[10120,70.07],[10160,70.03],[10200,70.11],[10240,70.13],[10280,70.01],[10320,69.95],[10360,69.96],[10400,70.06],[10440,70.01],[10480,70.0],[10520,70.12],[10560,70.07],[10600,70.24],[10640,70.23],[10680,70.18],[10720,70.08],[10760,70.17],[10800,70.32],[10840,70.21],[10880,70.21],[10920,70.17],[10960,70.3],[11000,70.35],[11040,70.29],[11080,70.22],[11120,70.19],[11160,70.21],[11200,70.16],[11240,70.16],[11280,70.18],[11320,70.16],[11360,70.21],[11400,70.15],[11440,70.22],[11480,70.23],[11520,70.16],[11560,70.13],[11600,70.24],[11640,70.25],[11680,70.23],[11720,70.34],[11760,70.32],[11800,70.4],[11840,70.4],[11880,70.49],[11920,70.52],[11960,70.51],[12000,70.5],[12040,70.53],[12080,70.44],[12120,70.4],[12160,70.32],[12200,70.23],[12240,70.25],[12280,70.31],[12320,70.31],[12360,70.23],[12400,70.19],[12440,70.11],[12480,70.08],[12520,70.06],[12560,70.04],[12600,70.04],[12640,70.2],[12680,70.15],[12720,70.12],[12760,70.12],[12800,70.22],[12840,70.21],[12880,70.15],[12920,70.19],[12960,70.3],[13000,70.25],[13040,70.24],[13080,70.2],[13120,70.24],[13160,70.2],[13200,70.19],[13240,70.29],[13280,70.27],[13320,70.25],[13360,70.26],[13400,70.25],[13440,70.35],[13480,70.33],[13520,70.29],[13560,70.23],[13600,70.22],[13640,70.28],[13680,70.39],[13720,70.46],[13760,70.49],[13800,70.43],[13840,70.5],[13880,70.42],[13920,70.43],[13960,70.42],[14000,70.42],[14040,70.58],[14080,70.55],[14120,70.5],[14160,70.6],[14200,70.75],[14240,70.85],[14280,70.88],[14320,70.86],[14360,70.83],[14400,70.84],[14440,70.86],[14480,70.83],[14520,70.87],[14560,70.89],[14600,70.91],[14640,71.1],[14680,71.06],[14720,71.01],[14760,70.93],[14800,70.87],[14840,70.87],[14880,70.8],[14920,70.85],[14960,70.83],[15000,70.81],[15040,70.75],[15080,70.84],[15120,70.8],[15160,70.72],[15200,70.66],[15240,70.68],[15280,70.72],[15320,70.69],[15360,70.63],[15400,70.67],[15440,70.59],[15480,70.67],[15520,70.66],[15560,70.68],[15600,70.69],[15640,70.66],[15680,70.7],[15720,70.7],[15760,70.79],[15800,70.79],[15840,70.89],[15880,70.85],[15920,70.85],[15960,70.89],[16000,70.86],[16040,70.91],[16080,70.91],[16120,70.88],[16153,70.87]]}];
+const WF = {"periods":[{"name":"2011〜2015","races":16807,"first":"2011010506010101","last":"2015122709050812","cats":{"pick":{"roi":1.5543345285804682,"ci":[1.0647549650300732,2.0986306565523227],"hit":0.07685352622061482,"bets":2212,"races":2212},"pick_flat":{"roi":1.5306057866184448,"ci":[1.3047484143150605,1.7452101102891637],"hit":0.07685352622061482,"bets":2212,"races":2212},"rec":{"roi":1.2684481102762555,"ci":[1.1875595666422816,1.3482641472176482],"hit":0.11565722629513582,"bets":32873,"races":13189},"rec_flat":{"roi":1.2448574818239893,"ci":[1.1945431460568463,1.2892014802213534],"hit":0.11565722629513582,"bets":32873,"races":13189},"top1":{"roi":1.3915299950961695,"ci":[1.2461285716282307,1.5422003518165588],"hit":0.10519426429463914,"bets":16807,"races":16807},"top1_flat":{"roi":1.2260486701969417,"ci":[1.1600879313223464,1.2875001866623623],"hit":0.10519426429463914,"bets":16807,"races":16807},"consider":{"roi":0.9654493575135487,"ci":[0.9394482234314303,0.9905405442135197],"hit":0.14155767057967406,"bets":52219,"races":15664},"longshot":{"roi":1.7163900646913186,"ci":[1.3743636273861841,2.0820771047196023],"hit":0.02586315656671853,"bets":23779,"races":11510},"fav_tan":{"roi":0.7897840185636937,"ci":[0.7698265818168011,0.8080727830240442],"hit":0.31831974772416255,"bets":16807,"races":16807},"rnd_tan":{"roi":0.7243222219185753,"ci":[0.7065075194288188,0.7421868455725185],"hit":0.07217022544030897,"bets":16807,"races":16807}}},{"name":"2016〜2021","races":20097,"first":"2016010506010101","last":"2021122809060912","cats":{"pick":{"roi":1.591030534351145,"ci":[1.1687143632834633,2.1241760978131587],"hit":0.08579210167952792,"bets":2203,"races":2203},"pick_flat":{"roi":1.4718111665910123,"ci":[1.235997602219152,1.727703043742835],"hit":0.08579210167952792,"bets":2203,"races":2203},"rec":{"roi":1.2195872402582104,"ci":[1.1595805043916754,1.2864868345986396],"hit":0.11619744420001483,"bets":40457,"races":16030},"rec_flat":{"roi":1.1948340213065725,"ci":[1.152318874355856,1.2366056746916687],"hit":0.11619744420001483,"bets":40457,"races":16030},"top1":{"roi":1.2979460975854122,"ci":[1.1670177859841948,1.4265950855940661],"hit":0.10976762700900632,"bets":20097,"races":20097},"top1_flat":{"roi":1.126416878141016,"ci":[1.0701591801687458,1.1820666061243434],"hit":0.10976762700900632,"bets":20097,"races":20097},"consider":{"roi":0.9482515427563915,"ci":[0.9253102596006849,0.9721135237787663],"hit":0.15471642668233912,"bets":61254,"races":18692},"longshot":{"roi":1.3576844537589339,"ci":[1.1598032527398743,1.553579319656083],"hit":0.025208986415882966,"bets":30624,"races":14218},"fav_tan":{"roi":0.7889485992934269,"ci":[0.7725019899538538,0.8053024891591742],"hit":0.3252724287207046,"bets":20097,"races":20097},"rnd_tan":{"roi":0.732778217429175,"ci":[0.7151061639457021,0.7519771789398593],"hit":0.07477680653143629,"bets":20097,"races":20097}}},{"name":"2022〜2026","races":16153,"first":"2022010506010101","last":"2026102508040912","cats":{"pick":{"roi":1.417402733964248,"ci":[0.9638745820791833,1.9342482374268797],"hit":0.09426462237365134,"bets":1761,"races":1761},"pick_flat":{"roi":1.372174900624645,"ci":[1.159344995613784,1.602240824973159],"hit":0.09426462237365134,"bets":1761,"races":1761},"rec":{"roi":1.1618660157309466,"ci":[1.093239862810129,1.2342262773498895],"hit":0.12315593924161294,"bets":27453,"races":11790},"rec_flat":{"roi":1.1399482752340364,"ci":[1.0952741527975214,1.1860448498210927],"hit":0.12315593924161294,"bets":27453,"races":11790},"top1":{"roi":1.2253890381851134,"ci":[1.104991614103724,1.3544272338727046],"hit":0.12053488516065128,"bets":16153,"races":16153},"top1_flat":{"roi":1.0813656905837925,"ci":[1.02773770374255,1.1347476587680176],"hit":0.12053488516065128,"bets":16153,"races":16153},"consider":{"roi":0.9295390491730328,"ci":[0.9067906976491782,0.9522184617669456],"hit":0.17125268857079284,"bets":53932,"races":15355},"longshot":{"roi":1.26332142198064,"ci":[1.0533625954569583,1.4746638432012393],"hit":0.025425790754257906,"bets":24660,"races":11406},"fav_tan":{"roi":0.7684145359995047,"ci":[0.7501494119621855,0.7870972526920698],"hit":0.3252646567201139,"bets":16153,"races":16153},"rnd_tan":{"roi":0.7086885394062717,"ci":[0.6873073387308929,0.728308613912126],"hit":0.07725815788919164,"bets":16153,"races":16153}}}],"total":{"pick":{"roi":1.5255162126089346,"ci":[1.2379476151901032,1.8209983717087073],"hit":0.08500647668393782,"bets":6176,"races":6176},"pick_flat":{"roi":1.4644591968911918,"ci":[1.3332919432965904,1.6074617681909795],"hit":0.08500647668393782,"bets":6176,"races":6176},"rec":{"roi":1.2198408853778506,"ci":[1.1802124342370641,1.261453040844698],"hit":0.11791671214391317,"bets":100783,"races":41009},"rec_flat":{"roi":1.1961997559112152,"ci":[1.171002297413912,1.2209430306447506],"hit":0.11791671214391317,"bets":100783,"races":41009},"top1":{"roi":1.3081927977023344,"ci":[1.2321322560350358,1.3903576317750508],"hit":0.11159696175810921,"bets":53057,"races":53057},"top1_flat":{"roi":1.1442618316150555,"ci":[1.1106418653875831,1.1778200307713447],"hit":0.11159696175810921,"bets":53057,"races":53057},"consider":{"roi":0.947587586989636,"ci":[0.9338091917635526,0.9619001683533264],"hit":0.15593918939099788,"bets":167405,"races":49711},"longshot":{"roi":1.443279362108946,"ci":[1.2957527454409472,1.5972688628545333],"hit":0.02547335669023437,"bets":79063,"races":37134},"fav_tan":{"roi":0.7829617204138944,"ci":[0.7723470315258859,0.7933681488295835],"hit":0.3230676442316754,"bets":53057,"races":53057},"rnd_tan":{"roi":0.722765580347346,"ci":[0.7123466309525754,0.7346170295903934],"hit":0.07470655114728803,"bets":53057,"races":53057}},"years":[{"year":2011,"period":"2011〜2015","races":3385,"pick":{"roi":1.0720675944333995,"bets":493,"stake":100600.0},"rec":{"roi":1.2595523329129887,"bets":5831,"stake":634400.0},"top1":{"roi":1.3423676809000256,"bets":3385,"stake":782200.0}},{"year":2012,"period":"2011〜2015","races":3372,"pick":{"roi":2.2686230248306996,"bets":436,"stake":88600.0},"rec":{"roi":1.3677270764358715,"bets":6497,"stake":694700.0},"top1":{"roi":1.3951283106902703,"bets":3372,"stake":728700.0}},{"year":2013,"period":"2011〜2015","races":3347,"pick":{"roi":1.3966012084592145,"bets":559,"stake":132400.0},"rec":{"roi":1.232249942778668,"bets":7973,"stake":873800.0},"top1":{"roi":1.3087610408211985,"bets":3347,"stake":837800.0}},{"year":2014,"period":"2011〜2015","races":3322,"pick":{"roi":1.8561872909698998,"bets":402,"stake":89700.0},"rec":{"roi":1.2202151501568803,"bets":6198,"stake":669300.0},"top1":{"roi":1.5455187319884727,"bets":3322,"stake":694000.0}},{"year":2015,"period":"2011〜2015","races":3381,"pick":{"roi":1.2205414012738853,"bets":322,"stake":62800.0},"rec":{"roi":1.2693263473053893,"bets":6374,"stake":668000.0},"top1":{"roi":1.3888358018792801,"bets":3381,"stake":627900.0}},{"year":2016,"period":"2016〜2021","races":3372,"pick":{"roi":0.8802985074626866,"bets":418,"stake":67000.0},"rec":{"roi":1.1768315130690883,"bets":7897,"stake":814900.0},"top1":{"roi":1.2652789458929072,"bets":3372,"stake":713400.0}},{"year":2017,"period":"2016〜2021","races":3345,"pick":{"roi":2.368258426966292,"bets":221,"stake":35600.0},"rec":{"roi":1.257079365079365,"bets":6165,"stake":630000.0},"top1":{"roi":1.3445256842894637,"bets":3345,"stake":533400.0}},{"year":2018,"period":"2016〜2021","races":3331,"pick":{"roi":2.675227963525836,"bets":316,"stake":65800.0},"rec":{"roi":1.3166950069562529,"bets":6127,"stake":646900.0},"top1":{"roi":1.626234817813765,"bets":3331,"stake":617500.0}},{"year":2019,"period":"2016〜2021","races":3300,"pick":{"roi":1.5515513126491647,"bets":424,"stake":83800.0},"rec":{"roi":1.2453018301010652,"bets":6908,"stake":732200.0},"top1":{"roi":1.4106661045531197,"bets":3300,"stake":711600.0}},{"year":2020,"period":"2016〜2021","races":3373,"pick":{"roi":1.5018055555555556,"bets":387,"stake":72000.0},"rec":{"roi":1.2255466903073287,"bets":6435,"stake":676800.0},"top1":{"roi":1.2469807467911318,"bets":3373,"stake":685600.0}},{"year":2021,"period":"2016〜2021","races":3376,"pick":{"roi":1.1525263157894736,"bets":437,"stake":95000.0},"rec":{"roi":1.1194810432912072,"bets":6925,"stake":743800.0},"top1":{"roi":0.9565467232179504,"bets":3376,"stake":730900.0}},{"year":2022,"period":"2022〜2026","races":3357,"pick":{"roi":1.3108387096774194,"bets":334,"stake":77500.0},"rec":{"roi":1.1315300546448088,"bets":5049,"stake":549000.0},"top1":{"roi":1.1435800722929437,"bets":3357,"stake":636300.0}},{"year":2023,"period":"2022〜2026","races":3359,"pick":{"roi":1.5601902173913043,"bets":331,"stake":73600.0},"rec":{"roi":1.2554360417011419,"bets":5638,"stake":604300.0},"top1":{"roi":1.2918428526349006,"bets":3359,"stake":633800.0}},{"year":2024,"period":"2022〜2026","races":3354,"pick":{"roi":1.3473520249221185,"bets":615,"stake":160500.0},"rec":{"roi":1.1367532947407317,"bets":7129,"stake":811900.0},"top1":{"roi":1.282585217684779,"bets":3354,"stake":888900.0}},{"year":2025,"period":"2022〜2026","races":3334,"pick":{"roi":2.0083333333333333,"bets":267,"stake":38400.0},"rec":{"roi":1.169905482041588,"bets":5173,"stake":529000.0},"top1":{"roi":1.1781070245773053,"bets":3334,"stake":573700.0}},{"year":2026,"period":"2022〜2026","races":2749,"pick":{"roi":0.9667763157894737,"bets":214,"stake":30400.0},"rec":{"roi":1.109705753184014,"bets":4464,"stake":455400.0},"top1":{"roi":1.1959144385026739,"bets":2749,"stake":467500.0}}],"races":53057};
+const COLORS = {pick: "--s3", pick_flat: "--s3", rec: "--s1", rec_flat: "--s1", rec_kelly: "--s2", top1: "--s7", longshot: "--s6", fav_tan: "--s4", rnd_tan: "--s5"};
+const css = v => getComputedStyle(document.documentElement).getPropertyValue(v).trim();
+const pct = (x, d = 1) => (x * 100).toFixed(d);
+const M = META.cats;
+const raceCount = s => `${s.races.toLocaleString()} / ${META.races.toLocaleString()}レース`;
+const per13 = s => `1日13Rなら 約${s.per13.races.toFixed(1)}R・${s.per13.bets.toFixed(1)}点・約${(Math.round(s.per13.stake / 10) * 10).toLocaleString()}円`;
+
+// 見出しと結論の数字
+document.getElementById("h-rec").textContent = pct(M.rec.roi);
+document.getElementById("h-star").textContent = pct(M.pick.roi);
+document.title = `推奨${pct(M.rec.roi)}%・厳選${pct(M.pick.roi)}% | keiba-aiの成績`;
+document.getElementById("lead").innerHTML = `keiba-aiは、馬の過去成績などから予測した的中確率とオッズを比べ、全レースで期待値の高い順に「買い目リスト」を出します。
+  札の付いた推奨を全部買う「推奨」と、特に期待値が大きい◆厳選の1点に絞る「厳選」。その買い方を、過去の ${META.races.toLocaleString()} レースで検証しました。`;
+document.getElementById("hero-scope").textContent = `${META.period} ／ 発走6分前までの情報で判断 ／ 単勝、複勝、枠連の検証。アプリの金額(◆厳選は1点100円、そのうち期待値が特に高い上位10%は1000円。推奨は100円)で集計。毎レース1位と大穴枠の金額は各コースの説明のとおり。`;
+document.getElementById("return-example").innerHTML = `<b>回収率を金額に置き換えると</b><br>総購入額1万円あたりの払戻は、推奨コースで約${Math.round(M.rec.roi * 10000).toLocaleString()}円、厳選コースで約${Math.round(M.pick.roi * 10000).toLocaleString()}円だった計算です。毎回この額が戻るという意味ではありません。`;
+const BOARD = ["rec", "pick", "fav_tan", "rnd_tan"];
+document.getElementById("board").innerHTML = BOARD.map(k => {
+  const s = M[k];
+  return `<div class="cell"><span class="k"><span class="sw" style="background:var(${COLORS[k]})"></span>${s.short}</span>
+    <span class="v num ${s.roi >= 1 ? "good" : ""}">${pct(s.roi)}<small>%</small></span><span class="s">${s.races.toLocaleString()}レースの集計<br>馬券1点ごとの的中率 ${pct(s.hit)}%</span></div>`;
+}).join("");
+document.getElementById("g-final").textContent = pct(TIMING.final.rec.roi, 0);
+document.getElementById("g-prev").textContent = pct(TIMING.prev.rec.roi, 0);
+document.getElementById("g-hl").textContent = `${pct(M.rec.roi)}%と${pct(M.pick.roi)}%`;
+document.getElementById("ci-star").textContent = `${pct(M.pick.ci[0], 0)}〜${pct(M.pick.ci[1], 0)}%`;
+document.getElementById("f-period").textContent = META.period;
+document.getElementById("f-races").textContent = `検証対象の中央競馬 ${META.races.toLocaleString()} レース。各コースの条件に合う買い目だけ購入し、対象外のレースは見送っています。`;
+document.getElementById("foot").textContent = `データの集計日：${META.generated}。回収率は払戻総額 ÷ 購入総額 × 100。表示は過去データでの検証結果で、将来の利益を約束するものではありません。`;
+
+// 3つのコース
+const COURSES = [["pick", "厳選コース", "◆厳選の札が付いた1点だけを買います(1レース1点まで)。金額は100円、◆厳選の中でも期待値が特に高い上位10%は1000円(アプリが表示)。一律100円で買った場合は" + pct(M.pick_flat.roi) + "%。", "買う機会を絞り、期待値の大きい1点を厚めに買いたい人に", true],
+                 ["rec", "推奨コース", "◆厳選と推奨の札が付いた買い目を全部、表示の金額で買います(推奨は100円)。推奨のあるレースは約" + pct(META.nest.rec_races, 0) + "%で、1レースに1〜数点。一律100円なら" + pct(M.rec_flat.roi) + "%。", "買う回数も楽しみつつ、条件を満たした買い目だけ買いたい人に", false],
+                 ["top1", "毎レース1位コース", "全レースでリストの1位(期待値が最も高い1点)を、1位が◆厳選なら1000円、推奨・検討なら100円で買います(アプリの1位の行に表示)。毎レース100円一律なら" + pct(M.top1_flat.roi) + "%。1位が検討のレースを見送れば" + pct(M.top1_rec.roi) + "%(買うのは約" + M.top1_rec.per13.races.toFixed(1) + "R)。", "競馬を楽しむのが主で、毎レース参加したい人に", false]];
+document.getElementById("courses").innerHTML = COURSES.map(([k, n, d, w, main]) => {
+  const s = M[k];
+  return `<div class="course${main ? " star" : ""}"><span class="eyebrow">${k === "pick" ? "◆厳選の札だけ" : k === "rec" ? "◆厳選+推奨の札" : "全レースのリスト1位(◆厳選は厚く)"}</span><h3>${n}</h3><span class="roi ${s.roi >= 1 ? "good" : ""}">${pct(s.roi)}%</span>
+    <span class="ci-label">95%信頼区間 ${pct(s.ci[0], 0)}〜${pct(s.ci[1], 0)}%</span><p>${d}</p><div class="who"><span>${per13(s)}</span><span>的中率 ${pct(s.hit)}%（馬券1点ごと）</span><span>${w}</span></div></div>`;
+}).join("");
+
+// 3つのコースの関係(直前6分前)
+document.getElementById("nest").innerHTML = `
+  <div class="n n1"><div class="hd"><b>推奨コース</b><span class="d">◆厳選と推奨の札をすべて、アプリの金額で</span><span class="r">${pct(M.rec.roi)}%</span><span class="c">${M.rec.races.toLocaleString()}レース / ${M.rec.bets.toLocaleString()}点</span></div>
+    <div class="n n3"><div class="hd"><b>厳選コース（◆）</b><span class="d">その中の、期待値が過去の上位10%の線を越えた1点(1レース1点まで)</span><span class="r">${pct(M.pick.roi)}%</span><span class="c">${M.pick.races.toLocaleString()}レース / 1点100円か1000円</span></div></div>
+  </div>
+  <div class="n n2" style="margin-top:10px"><div class="hd"><b>毎レース1位コース</b><span class="d">全レースでリストの1位を、◆厳選なら1000円・ほかは100円で。1位のうち推奨にも入るのは${pct(META.nest.top1_in_rec, 0)}%、◆厳選のうちリストの1位は${pct(META.nest.pick_is_top1, 0)}%</span><span class="r ${M.top1.roi >= 1 ? "" : "bad"}">${pct(M.top1.roi)}%</span><span class="c">${M.top1.races.toLocaleString()}レース / 1点100〜500円</span></div></div>`;
+document.getElementById("vn1").textContent = `リストのうち推奨の条件に届かない「検討」の買い目を全部100円で買うと、回収率は${pct(M.consider.roi)}%でした。同じリストでも、推奨は${pct(M.rec_flat.roi)}%(100円一律)。毎レース1位コースで ◆厳選だけ厚く買うのはこのためで、毎レース100円一律の${pct(M.top1_flat.roi)}%から${pct(M.top1.roi)}%に上がります。`;
+document.getElementById("vn2").textContent = `「大穴枠」は的中確率が低い別枠の候補です。大穴枠の的中率は${pct(M.longshot.hit)}%、回収率は${pct(M.longshot.roi)}%。推奨のあるレースの大穴は${pct(M.long_rec.roi)}%、ないレースは${pct(M.long_norec.roi)}%でした。3コースには追加せず、下の表で別に比較しています。`;
+
+// 比較表(直前6分前)
+const ORDER = [["pick", "pick_flat", "rec", "rec_flat", "rec_kelly"], ["top1", "top1_flat", "top1_rec", "consider"], ["longshot", "long_rec", "long_norec"], ["fav_tan", "fav_fuku", "rnd_tan", "rnd_fuku"]];
+document.getElementById("rows").innerHTML = ORDER.map((grp, gi) => grp.map((k, i) => {
+  const s = M[k], roi = s.roi * 100;
+  return `<tr class="${i === 0 && gi > 0 ? "sep" : ""}"><td><span class="nm"><span class="sw" style="background:var(${COLORS[k] || "--line"})"></span>${s.name}</span><span class="ds">${s.desc}</span></td>
+    <td class="roi ${roi >= 100 ? "good" : "bad"}">${roi.toFixed(1)}%</td><td>${pct(s.ci[0], 0)}〜${pct(s.ci[1], 0)}%</td>
+    <td>${pct(s.hit)}%</td><td>${s.races.toLocaleString()}</td><td>${s.bets.toLocaleString()}</td></tr>`;
+}).join("")).join("");
+
+// 時点の比較
+const TCOLS = [["prev", "前日版<br><span class='muted'>前日21時</span>"], ["20", "発走20分前"], ["6", "発走6分前<br><span class='muted'>冒頭の成績</span>"], ["final", "確定オッズ<br><span class='muted'>締切後の参考値</span>"]];
+document.getElementById("t-head").innerHTML = `<tr><th>買い方</th>${TCOLS.map(([k, l]) => `<th class="${k === "6" ? "hl" : ""}">${l}</th>`).join("")}</tr>`;
+const TROWS = [["pick", "厳選コース（◆）"], ["rec", "推奨コース"], ["top1", "毎レース1位コース"], ["rec_kelly", "推奨・ケリーの金額（参考）"], ["longshot", "大穴枠"]];
+document.getElementById("t-rows").innerHTML = TROWS.map(([k, n]) => `<tr><td>${n}</td>${TCOLS.map(([t]) => {
+  const s = TIMING[t] && TIMING[t][k];
+  return s ? `<td class="${t === "6" ? "hl" : ""} ${s.roi >= 1 ? "good" : "bad"}"><b>${pct(s.roi)}%</b><span class="ci">${pct(s.ci[0], 0)}〜${pct(s.ci[1], 0)}%<br>${s.bets.toLocaleString()}点</span></td>` : `<td>-</td>`;
+}).join("")}</tr>`).join("") + `<tr class="sep"><td>確率予測の誤差（logloss）<span class="ds">小さいほど良い</span></td>${TCOLS.map(([t]) => `<td class="${t === "6" ? "hl" : ""}">${TIMING[t] ? TIMING[t].logloss.toFixed(4) : "-"}</td>`).join("")}</tr>`;
+
+// 推移のグラフ(凡例を押すと線を出し入れ)
+const svg = document.getElementById("chart"), tip = document.getElementById("tip"), legend = document.getElementById("legend");
+const W = 820, H = 400, L = 52, R = 132, T = 14, B = 38, Y0 = 40, Y1 = 200, N = META.races;
+const sx = x => L + (x - 1) / (N - 1) * (W - L - R), sy = y => T + (Y1 - Math.max(Y0, Math.min(Y1, y))) / (Y1 - Y0) * (H - T - B);
+const hidden = new Set(["rec_kelly"]);
+for (const s of SERIES) {
+  const b = document.createElement("button");
+  b.type = "button"; b.setAttribute("aria-pressed", hidden.has(s.key) ? "false" : "true"); b.dataset.key = s.key;
+  const i = document.createElement("i"); i.style.background = `var(${COLORS[s.key]})`;
+  b.append(i, document.createTextNode(s.name));
+  b.addEventListener("click", () => {
+    hidden.has(s.key) ? hidden.delete(s.key) : hidden.add(s.key);
+    b.setAttribute("aria-pressed", hidden.has(s.key) ? "false" : "true");
+    draw();
+  });
+  legend.append(b);
+}
+function draw() {
+  const vis = SERIES.filter(s => !hidden.has(s.key));
+  let g = "";
+  for (let y = Y0; y <= Y1; y += 20) g += `<line class="ax${y === 100 ? " ref" : ""}" x1="${L}" x2="${W - R}" y1="${sy(y)}" y2="${sy(y)}"/><text class="tk" x="${L - 8}" y="${sy(y) + 4}" text-anchor="end">${y}%</text>`;
+  for (const x of [1, 4000, 8000, 12000, N]) g += `<text class="tk" x="${sx(x)}" y="${H - 14}" text-anchor="middle">${x.toLocaleString()}</text>`;
+  g += `<text class="tk" x="${W - R}" y="${H - 1}" text-anchor="end">レース数 →</text>`;
+  const ends = [];
+  for (const s of vis) {
+    const pts = s.curve.filter(p => p[1] !== null && p[0] >= 200);
+    if (!pts.length) continue;
+    const d = pts.map((p, i) => `${i ? "L" : "M"}${sx(p[0]).toFixed(1)},${sy(p[1]).toFixed(1)}`).join("");
+    g += `<path d="${d}" fill="none" stroke="${css(COLORS[s.key])}" stroke-width="2" stroke-linejoin="round"/>`;
+    const last = pts[pts.length - 1]; ends.push({s, y: sy(last[1]), v: last[1]});
+  }
+  ends.sort((a, b) => a.y - b.y);
+  for (let i = 1; i < ends.length; i++) if (ends[i].y - ends[i - 1].y < 18) ends[i].y = ends[i - 1].y + 18;
+  for (let i = ends.length - 1; i >= 0; i--) {
+    const lim = i === ends.length - 1 ? H - B : ends[i + 1].y - 18;
+    if (ends[i].y > lim) ends[i].y = lim;
+  }
+  for (const e of ends) g += `<circle cx="${sx(N)}" cy="${sy(e.v)}" r="4" fill="${css(COLORS[e.s.key])}" stroke="${css("--surface")}" stroke-width="2"/>
+    <text class="lbl" x="${sx(N) + 9}" y="${e.y + 4}">${e.s.short} ${e.v.toFixed(1)}%</text>`;
+  g += `<line id="cross" class="cross" x1="0" x2="0" y1="${T}" y2="${H - B}" visibility="hidden"/>`;
+  g += `<rect x="${L}" y="${T}" width="${W - L - R}" height="${H - T - B}" fill="transparent" id="hit"/>`;
+  svg.innerHTML = g;
+  const hit = document.getElementById("hit"), cross = document.getElementById("cross");
+  const move = ev => {
+    const r = svg.getBoundingClientRect(), px = (ev.clientX - r.left) / r.width * W;
+    const n = Math.round((px - L) / (W - L - R) * (N - 1) + 1);
+    if (n < 1 || n > N || !vis.length) return;
+    cross.setAttribute("x1", sx(n)); cross.setAttribute("x2", sx(n)); cross.setAttribute("visibility", "visible");
+    const rows = vis.map(s => { let best = s.curve[0]; for (const p of s.curve) if (Math.abs(p[0] - n) < Math.abs(best[0] - n)) best = p;
+      return {s, v: best[1], at: best[0]}; }).sort((a, b) => (b.v ?? 0) - (a.v ?? 0));
+    tip.innerHTML = `<b>${rows[0].at.toLocaleString()} レース目まで</b>` + rows.map(r => `<div class="r"><span><i style="background:${css(COLORS[r.s.key])}"></i>${r.s.name}</span><b>${r.v === null ? "-" : r.v.toFixed(1) + "%"}</b></div>`).join("");
+    tip.hidden = false;
+    const box = svg.parentNode.getBoundingClientRect(), x = ev.clientX - box.left;
+    tip.style.left = Math.max(8, Math.min(x + 14, box.width - tip.offsetWidth - 8)) + "px"; tip.style.top = "56px";
+  };
+  hit.addEventListener("pointermove", move); hit.addEventListener("pointerdown", move);
+  hit.addEventListener("pointerleave", () => { tip.hidden = true; cross.setAttribute("visibility", "hidden"); });
+}
+draw();
+matchMedia("(prefers-color-scheme: dark)").addEventListener("change", draw);
+new MutationObserver(draw).observe(document.documentElement, {attributes: true, attributeFilter: ["data-theme"]});
+
+// 期間を広げた検証(scripts/build_showcase.py の WF: 期間ごと・合計・年ごと。直前6分前)
+if (WF.periods && WF.periods.length > 1) {
+  const P = WF.periods, ys = WF.years, y0 = ys[0].year, y1 = ys[ys.length - 1].year, last = P[P.length - 1];
+  const span = y1 - y0 + 1 === ys.length ? `${y0}〜${y1}年` : P.map(p => p.name).join("・") + "年";
+  document.getElementById("wf").hidden = false;
+  document.getElementById("wf-jump").hidden = false;
+  document.getElementById("wf-title").textContent = `期間を${ys.length}年に広げた検証`;
+  document.getElementById("wf-jump").textContent = `${ys.length}年の検証`;
+  document.getElementById("wf-q").textContent = `${span}・${WF.races.toLocaleString()}レース`;
+  const hw = document.getElementById("hero-wf");
+  hw.innerHTML = `同じ手順で${span}の${ys.length}年・${WF.races.toLocaleString()}レースに広げた検証でも、厳選コース ${pct(WF.total.pick.roi)}%・推奨コース ${pct(WF.total.rec.roi)}%(<a href="#wf">期間ごとの成績</a>)。`;
+  hw.hidden = false;
+  document.getElementById("wf-intro").innerHTML = `上の成績(${last.name}年)と同じ手順で、${span}の各年を「その年より前のデータだけ」で学習し直したモデルで予測し、同じ買い方で精算しました。
+    合わせて<b>${WF.races.toLocaleString()}レース</b>。厳選コースは<b>${pct(WF.total.pick.roi)}%</b>(95%信頼区間 ${pct(WF.total.pick.ci[0], 0)}〜${pct(WF.total.pick.ci[1], 0)}%)、
+    推奨コースは<b>${pct(WF.total.rec.roi)}%</b>、毎レース1位コースは<b>${pct(WF.total.top1.roi)}%</b>でした。`;
+  const WROWS = [["pick", "厳選コース（◆）"], ["rec", "推奨コース"], ["top1", "毎レース1位コース"], ["longshot", "大穴枠"], ["fav_tan", "1番人気の単勝"], ["rnd_tan", "ランダムに1頭（単勝）"]];
+  document.getElementById("wf-head").innerHTML = `<tr><th scope="col">買い方</th>${P.map(p => `<th scope="col">${p.name}<br><span class="muted">${p.races.toLocaleString()}レース</span></th>`).join("")}<th scope="col" class="hl">合計<br><span class="muted">${WF.races.toLocaleString()}レース</span></th></tr>`;
+  const wcell = (s, cls = "") => s && s.bets ? `<td class="${cls} ${s.roi >= 1 ? "good" : "bad"}"><b>${pct(s.roi)}%</b><span class="ci">${pct(s.ci[0], 0)}〜${pct(s.ci[1], 0)}%<br>${s.bets.toLocaleString()}点</span></td>` : `<td class="${cls}">-</td>`;
+  document.getElementById("wf-rows").innerHTML = WROWS.map(([k, n], i) => `<tr class="${i === 3 ? "sep" : ""}"><td><span class="nm"><span class="sw" style="background:var(${COLORS[k] || "--line"})"></span>${n}</span></td>${P.map(p => wcell(p.cats[k])).join("")}${wcell(WF.total[k], "hl")}</tr>`).join("");
+  const ycell = s => s.roi === null ? "-" : `<b class="${s.roi >= 1 ? "good" : "bad"}">${pct(s.roi)}%</b> <span class="muted small">${s.bets.toLocaleString()}点</span>`;
+  document.getElementById("wf-years").innerHTML = ys.map((r, i) => `<tr class="${i && ys[i - 1].period !== r.period ? "sep" : ""}"><td>${r.year}</td><td>${r.races.toLocaleString()}</td><td>${ycell(r.pick)}</td><td>${ycell(r.rec)}</td><td>${ycell(r.top1)}</td></tr>`).join("");
+
+  // 年ごとの回収率のグラフ(凡例を押すと線を出し入れ。期間の境目は帯で区切る)
+  const KS = [["pick", "厳選コース（◆）"], ["rec", "推奨コース"], ["top1", "毎レース1位コース"]];
+  const wsvg = document.getElementById("wf-chart"), wtip = document.getElementById("wf-tip"), wleg = document.getElementById("wf-legend");
+  const L2 = 46, R2 = 14, T2 = 30, B2 = 34, n = ys.length;
+  const vmax = Math.max(...ys.flatMap(r => KS.map(([k]) => (r[k].roi ?? 0) * 100)));
+  const YA = 60, YB = Math.max(200, Math.ceil(vmax / 20) * 20);
+  const hid2 = new Set();
+  for (const [k, nm] of KS) {
+    const b = document.createElement("button");
+    b.type = "button"; b.setAttribute("aria-pressed", "true");
+    const i = document.createElement("i"); i.style.background = `var(${COLORS[k]})`;
+    b.append(i, document.createTextNode(nm));
+    b.addEventListener("click", () => { hid2.has(k) ? hid2.delete(k) : hid2.add(k); b.setAttribute("aria-pressed", hid2.has(k) ? "false" : "true"); draw2(); });
+    wleg.append(b);
+  }
+  function draw2() {
+    // 画面の幅に合わせて座標の幅を変える(スマホでも文字が小さくなりすぎないように)
+    const W2 = Math.round(Math.max(400, Math.min(820, wsvg.parentNode.clientWidth - 20))), H2 = W2 < 600 ? 300 : 320;
+    wsvg.setAttribute("viewBox", `0 0 ${W2} ${H2}`);
+    const xs = i => L2 + (i + 0.5) / n * (W2 - L2 - R2), yv = v => T2 + (YB - Math.max(YA, Math.min(YB, v))) / (YB - YA) * (H2 - T2 - B2);
+    const every = (W2 - L2 - R2) / n < 36 ? 2 : 1;
+    let g = "";
+    P.forEach((p, pi) => {
+      const idx = ys.map((r, i) => r.period === p.name ? i : -1).filter(i => i >= 0);
+      if (!idx.length) return;
+      const xa = L2 + idx[0] / n * (W2 - L2 - R2), xb = L2 + (idx[idx.length - 1] + 1) / n * (W2 - L2 - R2);
+      if (pi % 2 === 1) g += `<rect class="pband" x="${xa}" y="${T2}" width="${xb - xa}" height="${H2 - T2 - B2}"/>`;
+      g += `<text class="plbl" x="${(xa + xb) / 2}" y="${T2 - 10}" text-anchor="middle">${p.name}</text>`;
+    });
+    for (let y = YA; y <= YB; y += 20) g += `<line class="ax${y === 100 ? " ref" : ""}" x1="${L2}" x2="${W2 - R2}" y1="${yv(y)}" y2="${yv(y)}"/><text class="tk" x="${L2 - 8}" y="${yv(y) + 4}" text-anchor="end">${y}%</text>`;
+    ys.forEach((r, i) => { if ((n - 1 - i) % every === 0) g += `<text class="tk" x="${xs(i)}" y="${H2 - 12}" text-anchor="middle">${r.year}</text>`; });
+    for (const [k] of KS) {
+      if (hid2.has(k)) continue;
+      const col = css(COLORS[k]), pts = ys.map((r, i) => [i, r[k].roi]).filter(p => p[1] !== null);
+      // 年が飛んでいるところ(期間のあいだの空白)は線をつながない
+      g += `<path d="${pts.map((p, j) => `${j && ys[p[0]].year - ys[pts[j - 1][0]].year === 1 ? "L" : "M"}${xs(p[0]).toFixed(1)},${yv(p[1] * 100).toFixed(1)}`).join("")}" fill="none" stroke="${col}" stroke-width="2" stroke-linejoin="round"/>`;
+      for (const p of pts) g += `<circle cx="${xs(p[0]).toFixed(1)}" cy="${yv(p[1] * 100).toFixed(1)}" r="4" fill="${col}" stroke="${css("--surface")}" stroke-width="2"/>`;
+    }
+    g += `<line id="wf-cross" class="cross" x1="0" x2="0" y1="${T2}" y2="${H2 - B2}" visibility="hidden"/>`;
+    g += `<rect x="${L2}" y="${T2}" width="${W2 - L2 - R2}" height="${H2 - T2 - B2}" fill="transparent" id="wf-hit"/>`;
+    wsvg.innerHTML = g;
+    const hit = document.getElementById("wf-hit"), cross = document.getElementById("wf-cross");
+    const mv = ev => {
+      const rc = wsvg.getBoundingClientRect(), px = (ev.clientX - rc.left) / rc.width * W2;
+      const i = Math.max(0, Math.min(n - 1, Math.floor((px - L2) / (W2 - L2 - R2) * n))), r = ys[i];
+      cross.setAttribute("x1", xs(i)); cross.setAttribute("x2", xs(i)); cross.setAttribute("visibility", "visible");
+      wtip.innerHTML = `<b>${r.year}年</b>(${r.races.toLocaleString()}レース)` + KS.filter(([k]) => !hid2.has(k)).map(([k, nm]) =>
+        `<div class="r"><span><i style="background:${css(COLORS[k])}"></i>${nm}</span><b>${r[k].roi === null ? "-" : pct(r[k].roi) + "%"}</b></div>`).join("");
+      wtip.hidden = false;
+      const box = wsvg.parentNode.getBoundingClientRect(), x = ev.clientX - box.left;
+      wtip.style.left = Math.max(8, Math.min(x + 14, box.width - wtip.offsetWidth - 8)) + "px"; wtip.style.top = "56px";
+    };
+    hit.addEventListener("pointermove", mv); hit.addEventListener("pointerdown", mv);
+    hit.addEventListener("pointerleave", () => { wtip.hidden = true; cross.setAttribute("visibility", "hidden"); });
+  }
+  draw2();
+  let rz; addEventListener("resize", () => { clearTimeout(rz); rz = setTimeout(draw2, 150); });
+  matchMedia("(prefers-color-scheme: dark)").addEventListener("change", draw2);
+  new MutationObserver(draw2).observe(document.documentElement, {attributes: true, attributeFilter: ["data-theme"]});
+
+  // 補足(数字から文を作る)
+  const allUp = k => P.every(p => p.cats[k].roi >= 1);
+  const per = k => P.map(p => `${p.name}年 ${pct(p.cats[k].roi)}%`).join("、");
+  const yearsUp = k => ys.filter(r => r[k].roi !== null && r[k].roi >= 1).length, yearsN = k => ys.filter(r => r[k].roi !== null).length;
+  const notes = [
+    [allUp("pick") && allUp("rec") ? "ok" : "warn", allUp("pick") && allUp("rec") ? "どの期間でも100%を上回りました" : "期間によっては100%を下回りました",
+     `厳選コースは${per("pick")}。推奨コースは${per("rec")}。年ごとに見ると、厳選コースは${yearsN("pick")}年のうち${yearsUp("pick")}年、推奨コースは${yearsN("rec")}年のうち${yearsUp("rec")}年で100%を上回っています。`],
+    ...(last.cats.rec.roi < P[0].cats.rec.roi ? [["warn", "推奨コースは、新しい期間ほど回収率が低めです",
+     `推奨コースは${per("rec")}。オッズの精度(市場の予測)が年々上がり、AIが上乗せできる幅が小さくなったためと考えられます。
+      厳選コースはどの期間も${pct(Math.min(...P.map(p => p.cats.pick.roi)), 0)}〜${pct(Math.max(...P.map(p => p.cats.pick.roi)), 0)}%でした。今の実力に近いのは、直近の${last.name}年の数字(このページの冒頭の成績)です。`]] : []),
+    ["ok", "判断と精算の時点を確かめました",
+     "買い目は発走6分前までに発表されたオッズだけで選び、払戻は確定した払戻金で計算しています。全期間の各年で、判断に使ったオッズの発表時刻と、払戻(単勝なら確定オッズと一致)を突き合わせて確かめました。"]];
+  document.getElementById("wf-notes").innerHTML = notes.map(([c, h, t]) => `<div class="check"><span class="mk ${c}">${c === "ok" ? "✓" : "!"}</span><div><h3>${h}</h3><p>${t}</p></div></div>`).join("");
+}
+</script>

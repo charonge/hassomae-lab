@@ -1,0 +1,433 @@
+<title>発走前ラボの見方</title>
+<meta name="claude:viewport-fit-sides" content="cover">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Zen+Kaku+Gothic+New:wght@500;700;900&family=Noto+Sans+JP:wght@400;500;700&family=JetBrains+Mono:wght@500;700&display=swap">
+<style>
+/* 発走前ラボの見方: 配信・X を見る人向け。結論(当たらないけど割に合う)→ 3種類の買い目 → よくある声への答え(数字と図)→ 実際の成績 → 見方 → 検証 → 注意。
+   色はアプリと同じ意味: 青緑 = 厳選、緑 = 推奨、赤紫 = 大穴、金 = 的中、灰 = 比べる相手(1番人気) */
+:root {
+  --bg: #f4f6f9; --surface: #ffffff; --surface-2: #eef1f5; --line: #dde2ea;
+  --ink: #141a26; --ink-2: #3b4456; --muted: #697387;
+  --pick: #0e7c86; --pick-bg: #e1f3f4; --rec: #0b7f45; --rec-bg: #e3f3e9; --long: #96388f; --long-bg: #f4e6f3;
+  --gold: #a87a0a; --gold-bg: #fbf3dc; --fav: #8892a4; --live: #cf3b33; --navy: #121a2e;
+  --f-disp: "Zen Kaku Gothic New", "Hiragino Kaku Gothic ProN", "Yu Gothic", sans-serif;
+  --f-body: "Noto Sans JP", "Hiragino Sans", "Yu Gothic", "Meiryo", sans-serif;
+  --f-num: "JetBrains Mono", ui-monospace, "SFMono-Regular", Consolas, monospace;
+}
+@media (prefers-color-scheme: dark) { :root:not([data-theme="light"]) {
+  --bg: #0d1220; --surface: #151c2d; --surface-2: #1b2438; --line: #273149;
+  --ink: #eef1f7; --ink-2: #c3cad8; --muted: #8e98ad;
+  --pick: #3cc4cf; --pick-bg: #10303a; --rec: #45c285; --rec-bg: #14301f; --long: #e28ad9; --long-bg: #36203c;
+  --gold: #f0c040; --gold-bg: #362b10; --fav: #8a93a6; --live: #ff6b63; --navy: #0a0f1c; color-scheme: dark; } }
+:root[data-theme="dark"] {
+  --bg: #0d1220; --surface: #151c2d; --surface-2: #1b2438; --line: #273149;
+  --ink: #eef1f7; --ink-2: #c3cad8; --muted: #8e98ad;
+  --pick: #3cc4cf; --pick-bg: #10303a; --rec: #45c285; --rec-bg: #14301f; --long: #e28ad9; --long-bg: #36203c;
+  --gold: #f0c040; --gold-bg: #362b10; --fav: #8a93a6; --live: #ff6b63; --navy: #0a0f1c; color-scheme: dark; }
+body { background: var(--bg); color: var(--ink); font: 16px/1.85 var(--f-body); -webkit-font-smoothing: antialiased; margin: 0; }
+.wrap { max-width: 920px; margin: 0 auto; padding-left: max(16px, env(safe-area-inset-left, 0px)); padding-right: max(16px, env(safe-area-inset-right, 0px)); padding-block: 0 72px; }
+h1, h2, h3 { font-family: var(--f-disp); text-wrap: balance; letter-spacing: -.01em; line-height: 1.3; margin: 0; }
+h2 { font-size: clamp(24px, 4.2vw, 32px); font-weight: 900; }
+h3 { font-size: 19px; font-weight: 700; }
+p { margin: 0; max-width: 40em; }
+.num { font-family: var(--f-num); font-variant-numeric: tabular-nums; letter-spacing: -.02em; }
+.muted { color: var(--muted); } .small { font-size: 13.5px; line-height: 1.7; }
+b, strong { font-weight: 700; }
+mark { background: linear-gradient(transparent 60%, color-mix(in srgb, var(--gold) 35%, transparent) 60%); color: inherit; padding: 0 .1em; }
+.flow { display: grid; gap: 18px; }
+section { display: grid; gap: 22px; padding-block: 56px 8px; border-top: 1px solid var(--line); }
+.eyebrow { font: 700 12.5px/1 var(--f-body); letter-spacing: .16em; color: var(--muted); }
+.voice { font-family: var(--f-disp); font-weight: 900; font-size: clamp(22px, 3.6vw, 28px); line-height: 1.4; }
+.voice::before { content: "「"; color: var(--muted); } .voice::after { content: "」"; color: var(--muted); }
+.beat { font-family: var(--f-disp); font-weight: 900; font-size: 21px; }
+
+/* 冒頭 */
+.hero { display: grid; gap: 22px; padding-block: 40px 44px; }
+.brand { display: flex; align-items: center; gap: 10px; font: 700 14px/1 var(--f-body); color: var(--ink-2); }
+.brand svg { width: 34px; height: 34px; flex: none; }
+.hero h1 { font-size: clamp(38px, 8vw, 64px); font-weight: 900; letter-spacing: -.03em; }
+.hero .lead { font-size: clamp(19px, 3vw, 23px); font-weight: 700; line-height: 1.6; max-width: 28em; }
+.hero .lead em { font-style: normal; color: var(--pick); }
+
+/* 3種類のまとめ表 */
+.sum { width: 100%; border-collapse: collapse; font-size: 15px; }
+.sum th, .sum td { padding: 12px 10px; text-align: right; border-bottom: 1px solid var(--line); white-space: nowrap; }
+.sum th:first-child, .sum td:first-child { text-align: left; }
+.sum thead th { font: 700 12.5px/1.4 var(--f-body); color: var(--muted); white-space: normal; vertical-align: bottom; }
+.sum td .num { font-size: 18px; font-weight: 700; }
+.sum td.roi .num { font-size: 22px; }
+.sum td small { display: block; font-size: 12px; color: var(--muted); line-height: 1.3; }
+.scroll { overflow-x: auto; -webkit-overflow-scrolling: touch; }
+.tag { display: inline-flex; align-items: center; gap: 6px; font: 700 14px/1 var(--f-body); padding: 6px 11px; border-radius: 999px; white-space: nowrap; }
+.tag.pick { color: var(--pick); background: var(--pick-bg); } .tag.rec { color: var(--rec); background: var(--rec-bg); }
+.tag.long { color: var(--long); background: var(--long-bg); } .tag.fav { color: var(--ink-2); background: var(--surface-2); }
+
+/* 買い目の3種類 */
+.kinds { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 14px; }
+.kind { background: var(--surface); border: 1px solid var(--line); border-radius: 18px; padding: 18px; display: grid; gap: 10px; align-content: start; }
+.kind p { font-size: 15px; line-height: 1.75; }
+.kind .money { font-size: 13.5px; color: var(--ink-2); border-top: 1px dashed var(--line); padding-top: 10px; }
+@media (max-width: 760px) { .kinds { grid-template-columns: 1fr; } }
+
+/* 図 */
+figure { margin: 0; background: var(--surface); border: 1px solid var(--line); border-radius: 18px; padding: 18px 18px 14px; display: grid; gap: 10px; min-width: 0; }
+figcaption { font-size: 13.5px; color: var(--muted); line-height: 1.7; }
+figure h3 { font-size: 16.5px; }
+svg text { font-family: var(--f-body); }
+.pair { display: grid; grid-template-columns: 1fr 1fr; gap: 18px; }
+@media (max-width: 680px) { .pair { grid-template-columns: 1fr; } }
+.calc { display: grid; grid-template-columns: auto 1fr; gap: 6px 16px; background: var(--surface-2); border-radius: 14px; padding: 16px 18px; font-size: 15.5px; max-width: 34em; }
+.calc dt { color: var(--muted); } .calc dd { margin: 0; text-align: right; font-family: var(--f-num); font-weight: 700; }
+.calc .tot { border-top: 1px solid var(--line); padding-top: 6px; color: var(--ink); }
+
+/* 1日36レースの盤面 */
+.board { display: grid; gap: 6px; }
+.brow { display: grid; grid-template-columns: 44px repeat(12, minmax(0, 1fr)); gap: 5px; align-items: center; }
+.brow > span { font: 700 13px/1 var(--f-body); color: var(--ink-2); }
+.chip { position: relative; aspect-ratio: 1.15; border-radius: 9px; background: var(--surface-2); border: 1px solid var(--line); display: grid; place-items: center;
+  font: 700 12px/1 var(--f-num); color: var(--muted); }
+.chip.p { background: var(--pick-bg); border-color: var(--pick); color: var(--pick); box-shadow: 0 0 0 1px var(--pick); }
+.chip i { position: absolute; width: 7px; height: 7px; border-radius: 50%; top: 3px; }
+.chip i.r { background: var(--rec); right: 3px; } .chip i.l { background: var(--long); left: 3px; }
+.legend { display: flex; flex-wrap: wrap; gap: 8px 16px; font-size: 13px; color: var(--ink-2); }
+.legend span { display: inline-flex; align-items: center; gap: 6px; }
+.legend i { width: 10px; height: 10px; border-radius: 50%; display: inline-block; }
+
+/* 100点の当たり外れ */
+.dots { display: grid; grid-template-columns: repeat(20, minmax(0, 1fr)); gap: 5px; max-width: 520px; }
+.dots i { aspect-ratio: 1; border-radius: 50%; background: var(--surface-2); border: 1px solid var(--line); }
+.dots i.h { background: var(--gold); border-color: var(--gold); }
+.dots i.k { box-shadow: 0 0 0 2px var(--surface), 0 0 0 3.5px var(--pick); }
+
+/* 実際の成績 */
+.real { width: 100%; border-collapse: collapse; font-size: 15px; }
+.real th, .real td { padding: 10px; border-bottom: 1px solid var(--line); text-align: right; white-space: nowrap; }
+.real th:first-child, .real td:first-child { text-align: left; }
+.real thead th { font: 700 12.5px/1.4 var(--f-body); color: var(--muted); }
+.real td.roi { font-family: var(--f-num); font-weight: 700; font-size: 17px; }
+
+/* X の投稿 */
+.post { display: grid; grid-template-columns: minmax(0, 1fr) minmax(0, 1fr); gap: 18px; align-items: start; }
+.tweet { background: var(--surface); border: 1px solid var(--line); border-radius: 18px; padding: 16px 18px; font-size: 15px; line-height: 1.7; white-space: pre-wrap; min-width: 0; }
+.tweet .who { display: flex; align-items: center; gap: 9px; margin-bottom: 8px; white-space: normal; }
+.tweet .who svg { width: 36px; height: 36px; }
+.tweet .who b { display: block; line-height: 1.2; } .tweet .who small { color: var(--muted); font-size: 13px; }
+.notes { display: grid; gap: 12px; margin: 0; padding: 0; list-style: none; }
+.notes li { display: grid; grid-template-columns: 26px minmax(0, 1fr); gap: 10px; font-size: 15px; line-height: 1.7; }
+.notes li > span { width: 26px; height: 26px; border-radius: 50%; background: var(--navy); color: #fff; display: grid; place-items: center; font: 700 13px/1 var(--f-num); }
+@media (max-width: 720px) { .post { grid-template-columns: 1fr; } }
+
+/* 配信の画面 */
+.screen { background: var(--navy); border-radius: 18px; padding: 12px; display: grid; gap: 8px; aspect-ratio: 16 / 9; max-width: 100%; grid-template-rows: auto auto 1fr; }
+.screen > div, .screen .cols > div { border-radius: 10px; background: rgba(255, 255, 255, .08); color: #e9edf5; font: 700 clamp(10px, 1.6vw, 14px)/1.35 var(--f-body);
+  display: grid; place-items: center; text-align: center; padding: 6px; position: relative; }
+.screen .cols { display: grid; grid-template-columns: 1fr 1fr .9fr; gap: 8px; background: none; padding: 0; }
+.screen .side { display: grid; grid-template-rows: auto 1fr; gap: 8px; background: none !important; padding: 0 !important; }
+.screen b { position: absolute; top: 6px; left: 6px; width: 22px; height: 22px; border-radius: 50%; background: var(--gold); color: #1b1f27; display: grid; place-items: center; font: 700 12px/1 var(--f-num); }
+.screen .top { min-height: 0; } .screen .tt { min-height: 3.4em; }
+
+.end { display: grid; gap: 10px; background: var(--surface); border: 1px solid var(--line); border-radius: 18px; padding: 20px 22px; }
+.end ul { margin: 0; padding-left: 1.2em; display: grid; gap: 6px; }
+.foot { padding-block: 36px 0; display: flex; justify-content: space-between; gap: 12px; flex-wrap: wrap; color: var(--muted); font-size: 13.5px; }
+a { color: var(--pick); }
+:focus-visible { outline: 3px solid var(--pick); outline-offset: 2px; border-radius: 4px; }
+</style>
+
+<div class="wrap">
+<header class="hero">
+  <div class="brand">
+    <svg viewBox="0 0 100 100" aria-hidden="true"><circle cx="50" cy="50" r="50" fill="#121a2e"/><circle cx="50" cy="50" r="38.5" fill="none" stroke="rgba(255,255,255,.14)" stroke-width="5"/><path d="M50 11.5 A38.5 38.5 0 1 1 16.66 30.75" fill="none" stroke="#3cc4cf" stroke-width="5" stroke-linecap="round"/><circle cx="16.66" cy="30.75" r="4.2" fill="#f0c040"/><text x="50" y="47" text-anchor="middle" font-size="17" font-weight="900" fill="#f6f8fc">発走前</text><text x="50" y="68" text-anchor="middle" font-size="17" font-weight="900" fill="#3cc4cf">ラボ</text></svg>
+    発走前ラボ ・ 配信とXを見てくれている人へ
+  </div>
+  <h1>発走前ラボの見方</h1>
+  <p class="lead">このAIが探しているのは、<em>当たりやすい馬券</em>ではなく、<em>割に合う馬券</em>です。だから当たる回数は少ない。そのかわり、当たったときに大きく戻ってくるように作っています。</p>
+  <div class="scroll">
+    <table class="sum" aria-label="買い目の3種類の数字">
+      <thead><tr><th>買い目</th><th>出るレース</th><th>1点あたりの的中率</th><th>当たったときの配当(平均)</th><th>回収率</th></tr></thead>
+      <tbody>
+        <tr><td><span class="tag pick">🔥 厳選</span></td><td><span class="num">11.6%</span><small>9レースに1回</small></td><td><span class="num">8.5%</span><small>12回に1回</small></td><td><span class="num">17.2倍</span></td><td class="roi"><span class="num">153%</span></td></tr>
+        <tr><td><span class="tag rec">🟢 推奨</span></td><td><span class="num">77%</span><small>4レースに3回・平均2〜3点</small></td><td><span class="num">11.8%</span><small>8〜9回に1回</small></td><td><span class="num">10.1倍</span></td><td class="roi"><span class="num">122%</span></td></tr>
+        <tr><td><span class="tag long">🎯 大穴</span></td><td><span class="num">70%</span><small>10レースに7回・平均2点</small></td><td><span class="num">2.5%</span><small>39回に1回</small></td><td><span class="num">50.3倍</span></td><td class="roi"><span class="num">144%</span></td></tr>
+      </tbody>
+    </table>
+  </div>
+  <p class="small muted">2011〜2026年の中央競馬 約5.3万レースで、今と同じやり方(発走6分前のオッズで買い目を決め、確定した払戻で精算)を試した結果です。過去のデータでの検証で、実際の成績ではありません。実際の成績は下の「実際の成績」に。</p>
+</header>
+
+<section aria-labelledby="s-kinds">
+  <span class="eyebrow">買い目は3種類</span>
+  <h2 id="s-kinds">🔥厳選・🟢推奨・🎯大穴</h2>
+  <div class="kinds">
+    <div class="kind"><span class="tag pick">🔥 厳選</span><h3>AIの勝負の1点</h3>
+      <p>推奨の中から、期待値がとくに高い1点だけ。1レースに1点まで。<b>出ないレースのほうがずっと多い</b>です。</p>
+      <p class="money">金額は100円。過去の検証で上位1割に入るくらい自信があるときだけ1,000円。</p></div>
+    <div class="kind"><span class="tag rec">🟢 推奨</span><h3>買う価値ありの買い目</h3>
+      <p>単勝・複勝・枠連から、AIの見立てとオッズを比べて「割に合う」と判断したもの。出るレースでは平均2〜3点ほど。</p>
+      <p class="money">全部100円。</p></div>
+    <div class="kind"><span class="tag long">🎯 大穴</span><h3>当たればでかい夢枠</h3>
+      <p>当たる確率は低いけど、オッズがそれ以上に高いもの。<b>だいたい外れます。</b>夢を見る枠なので、外れても怒らないでください。</p>
+      <p class="money">100円か1,000円。</p></div>
+  </div>
+  <p>買い目がないレースは「見送り」です。それでも気になる人のために「しいて言うなら」の1点を書いていますが、これは買い目ではありません(期待値が基準に届いていないもの)。</p>
+</section>
+
+<section aria-labelledby="s-hit">
+  <span class="eyebrow">よくある声 1</span>
+  <p class="voice" id="s-hit">全然当たらないじゃん</p>
+  <p class="beat">わかります。</p>
+  <p>厳選の的中率は8.5%。12回買って1回当たるくらいです。1番人気の単勝なら3回に1回は当たるので、<b>当たっている感覚はそっちのほうがずっと上</b>です。</p>
+  <p>でも、お金で見るとこうなります。</p>
+  <div class="pair">
+    <figure><h3>当たる割合</h3><svg id="c-hit" role="img" aria-label="1点あたりの的中率"></svg></figure>
+    <figure><h3>戻ってくるお金(回収率)</h3><svg id="c-roi" role="img" aria-label="回収率"></svg></figure>
+  </div>
+  <p class="small muted">16年・約5.3万レース。1番人気の単勝は全レースで100円ずつ買った場合。点線が100%(買ったお金がちょうど戻る線)。厳選の152.6%は、とくに自信がある点を1,000円にした実際の金額で数えたもの(全部100円なら146%)。</p>
+  <p>計算はわりと単純です。厳選を100円ずつ100回買うと:</p>
+  <dl class="calc">
+    <dt>買ったお金</dt><dd>100円 × 100回 = 10,000円</dd>
+    <dt>当たる回数</dt><dd>だいたい 8〜9回</dd>
+    <dt>当たったときの配当</dt><dd>平均 17.2倍(1,720円)</dd>
+    <dt class="tot">戻ってくるお金</dt><dd class="tot">8.5回 × 1,720円 ≒ 14,600円</dd>
+  </dl>
+  <p>さらに、とくに自信がある上位1割を1,000円にしているので、16年の実際の金額で数えると回収率は153%になります。</p>
+  <p><mark><b>当たる回数を増やすことと、お金を増やすことは、別の話</b></mark>です。1番人気はみんなが買うので、当たりやすいかわりにオッズが低すぎて、買い続けると78%まで減ります。AIが狙っているのは、その逆側です。</p>
+</section>
+
+<section aria-labelledby="s-rare">
+  <span class="eyebrow">よくある声 2</span>
+  <p class="voice" id="s-rare">厳選、全然出ないじゃん</p>
+  <p class="beat">出ません。9レースに1回です。</p>
+  <p>1日36レースの開催なら、平均して4レースほど。朝から最後まで1回も出ない日も、16年で約5%(21日に1日くらい)ありました。基準(過去の検証で上位1割に入る期待値)を、出ない日に下げたりはしていません。</p>
+  <figure>
+    <h3>1日36レースだと、だいたいこう(イメージ)</h3>
+    <div class="board" id="board" aria-label="36レースのうち厳選・推奨・大穴が出るレースのイメージ"></div>
+    <div class="legend"><span><i style="background:var(--pick)"></i>厳選あり(4レース)</span><span><i style="background:var(--rec)"></i>推奨あり(28レース)</span><span><i style="background:var(--long)"></i>大穴あり(25レース)</span></div>
+    <figcaption>出る割合(厳選11.6%・推奨77%・大穴70%)を36レースに当てはめた図です。どのレースに出るかは毎回ちがいます。</figcaption>
+  </figure>
+  <h3>「朝は厳選だったのに、消えた」</h3>
+  <p>これもあります。予想は朝から何度も作り直していて、決めるのは締切の少し前(発走の4分前ごろ)です。オッズは締切に向けて動き、人気が集まった馬は配当が下がります。割に合わなくなったら、厳選から外れます。</p>
+  <p>Xに投稿するのは、この最後の決定のあとだけです。配信の画面で「暫定」と出ているうちはまだ変わる途中で、「最終予測」になったら確定です。前の夜に出す「明日の厳選候補」も、当日のオッズで変わります。</p>
+</section>
+
+<section aria-labelledby="s-when">
+  <span class="eyebrow">よくある声 3</span>
+  <p class="voice" id="s-when">で、いつ勝てるの？</p>
+  <p class="beat">正直に書きます。短い期間だと、普通に負けます。</p>
+  <figure>
+    <h3>続けて買ったとき、プラスで終わる割合</h3>
+    <svg id="c-win" role="img" aria-label="続けて買った点数ごとの、プラスで終わる割合"></svg>
+    <figcaption>16年の買い目を時間の順に並べ、どこから買い始めても同じ点数だけ続けた場合に、収支がプラスで終わった割合。厳選は1週あたり約7.5点出るので、100点で約13週、300点で約9か月、1,000点で約2年半です。</figcaption>
+  </figure>
+  <p>厳選を10点だけ買った場合、プラスで終わるのは3回に1回くらい。100点で6割。300点で8割強。1,000点続けた場合は、16年のどこから始めてもプラスでした。</p>
+  <div class="pair">
+    <figure><h3>厳選の累計の収支(16年)</h3><svg id="c-cum" role="img" aria-label="厳選の累計の収支"></svg>
+      <figcaption>実際の金額(100円・1,000円)で買い続けた場合。合計 127.4万円を買って、+66.9万円。平らなところは、外れが続いている時期です。</figcaption></figure>
+    <figure><h3>直近の検証の100点</h3><div class="dots" id="dots" aria-label="直近の100点の当たり外れ"></div>
+      <figcaption>2026年5月末〜10月の厳選100点。金色が当たり、青緑の輪は1,000円の点。<b>10回当たって回収率94%</b>。100点だけで見ると、16年の中でも回収率は40%台〜350%台まで、時期によって大きくぶれます(よくある範囲。もっと極端な時期もありました)。</figcaption></figure>
+  </div>
+  <div class="scroll">
+    <table class="sum" aria-label="勝ち負けの続き方">
+      <thead><tr><th>買い目</th><th>一番長い連続はずれ</th><th>プラスの月</th><th>プラスの年</th></tr></thead>
+      <tbody>
+        <tr><td><span class="tag pick">🔥 厳選</span></td><td><span class="num">54回</span><small>およそ7週</small></td><td><span class="num">46%</span><small>2か月に1回くらい</small></td><td><span class="num">14 / 16年</span><small>負け: 2016・2026年(10月まで)</small></td></tr>
+        <tr><td><span class="tag rec">🟢 推奨</span></td><td><span class="num">77回</span><small>およそ1開催日と少し</small></td><td><span class="num">85%</span></td><td><span class="num">16 / 16年</span><small>いちばん安定</small></td></tr>
+        <tr><td><span class="tag long">🎯 大穴</span></td><td><span class="num">306回</span><small>およそ3週</small></td><td><span class="num">58%</span></td><td><span class="num">16 / 16年</span><small>いちばん荒い</small></td></tr>
+      </tbody>
+    </table>
+  </div>
+  <p>厳選は「たまに大きく当たって、そのあいだはずっと外れ」の形です。毎週の勝ち負けで見ると、つらい時期のほうが長い。<b>月単位でも、プラスになるのは2か月に1回くらい</b>です。それでも積み上げると右に上がっていく、というのが16年分の結果です。</p>
+</section>
+
+<section aria-labelledby="s-real">
+  <span class="eyebrow">実際の成績</span>
+  <h2 id="s-real">2026年10月17日から(<span id="real-span">3日・108レース</span>)</h2>
+  <div class="scroll">
+    <table class="real">
+      <thead><tr><th>買い目</th><th>点数</th><th>的中</th><th>買ったお金</th><th>戻ったお金</th><th>回収率</th></tr></thead>
+      <tbody id="real"></tbody>
+    </table>
+  </div>
+  <p id="real-note">厳選は、ここまで9回続けて外れています。的中率8.5%で9回続けて外れる確率は約45%。コインを投げて表が出るくらいよくあることです。まだ3日なので、どの数字もいくらでもぶれます。毎週月曜に、先週の成績カードをXに出しています。</p>
+  <p class="small muted">10/17・18 の大穴枠には、検証していない券種(3連単など)が混ざっていました(10/23に直して、今は単勝・複勝・枠連だけ)。10/24 のPC停止中の11レースは後から復元した予測なので、実運用成績には含めていません。</p>
+</section>
+
+<section aria-labelledby="s-x">
+  <span class="eyebrow">見方 1</span>
+  <h2 id="s-x">Xの投稿</h2>
+  <div class="post">
+    <div class="tweet"><div class="who"><svg viewBox="0 0 100 100" aria-hidden="true"><circle cx="50" cy="50" r="50" fill="#121a2e"/><path d="M50 11.5 A38.5 38.5 0 1 1 16.66 30.75" fill="none" stroke="#3cc4cf" stroke-width="7" stroke-linecap="round"/><text x="50" y="47" text-anchor="middle" font-size="17" font-weight="900" fill="#f6f8fc">発走前</text><text x="50" y="68" text-anchor="middle" font-size="17" font-weight="900" fill="#3cc4cf">ラボ</text></svg><div><b>発走前ラボ|競馬AI予測</b><small>@hassomae_ai</small></div></div>🔥🔥🔥 厳選レース 🔥🔥🔥
+【10/18 新潟6R 12:25発走】3歳以上1勝クラス
+🔥厳選(AIの勝負の1点)
+　枠連 ③-⑦ → 100円
+🟢推奨
+　単勝 ⑫番 → 100円
+　枠連 ①-③ → 100円
+　単勝 ①番 → 100円
+🎯大穴(高配当狙い)
+　枠連 ⑦-⑧ → 1,000円
+#競馬予想</div>
+    <ol class="notes">
+      <li><span>1</span><div>1行目に🔥🔥🔥が付いていたら、そのレースに<b>厳選がある</b>という合図です。</div></li>
+      <li><span>2</span><div>「券種 番号 → 金額」で1点。単勝・複勝の番号は馬番、枠連は枠番です。</div></li>
+      <li><span>3</span><div>投稿は締切の直前、最後の決定のあと(だいたい発走の4〜5分前)。全レース出します。</div></li>
+      <li><span>4</span><div>当たったら、その投稿にリプで的中を報告。夕方に、その日の厳選・推奨・大穴それぞれの回収率をまとめて出します。外れたレースの投稿も消しません。</div></li>
+      <li><span>5</span><div>前の夜21時ごろに「明日の厳選候補」の一覧。これは前日のオッズでの候補なので、当日に消えることがあります。</div></li>
+    </ol>
+  </div>
+</section>
+
+<section aria-labelledby="s-live">
+  <span class="eyebrow">見方 2</span>
+  <h2 id="s-live">配信の画面</h2>
+  <div class="screen" aria-label="配信の画面の配置">
+    <div class="top">発走前ラボ LIVE ・ 日付 ・ 時計</div>
+    <div class="tt"><b>1</b>全レースの時刻表(◆ = 厳選、金色 = 的中、赤い線 = 今、「次」= 次に発走)</div>
+    <div class="cols">
+      <div><b>2</b>次のレース<br>締切までのカウントダウン<br>AIの上位3頭・買い目</div>
+      <div><b>3</b>今日のメインレース<br>終わったら結果</div>
+      <div class="side"><div><b>4</b>今日の回収率</div><div><b>5</b>当たったレース</div></div>
+    </div>
+  </div>
+  <ol class="notes">
+    <li><span>1</span><div>その日の全レースを、横に時刻・縦に競馬場で並べています。終わったレースは薄く、当たったレースは金色に。</div></li>
+    <li><span>2</span><div>次に発走するレース。「暫定」はまだ変わる途中、「最終予測」になったら確定です。締切の5分前でカウントダウンが橙、2分前で赤に変わります。</div></li>
+    <li><span>3</span><div>その日でいちばん格の高いレース(G1があればG1)。</div></li>
+    <li><span>4</span><div>その日の推奨+大穴の合計の回収率と、厳選・推奨・大穴それぞれの数字。払戻が確定するたびに増えていきます。</div></li>
+    <li><span>5</span><div>当たったレースを新しい順に。結果が確定すると、画面いっぱいに結果も出ます(当たりは金色)。</div></li>
+  </ol>
+</section>
+
+<section aria-labelledby="s-how">
+  <span class="eyebrow">検証のしかた</span>
+  <h2 id="s-how">153%は、どうやって出した数字か</h2>
+  <div class="flow">
+    <p>2011〜2026年の中央競馬 約5.3万レースを、3つの期間に分けて試しました。各年は、<b>その年より前のデータだけで学習したAI</b>で予想しています。答えを知っているAIで過去を当てても意味がないので。</p>
+    <p>買い目は発走6分前のオッズで決めて、確定した払戻で精算しています。締切までにオッズが下がる分も込みです。2022年からは、単勝に加えて馬連・複勝のオッズもAIの見立てに混ぜています(今の仕組み)。2021年までは馬連の途中オッズの記録がないので、単勝のオッズだけです。AIの一部(ディープラーニング)は、発走前の単勝オッズを土台にして、オッズが見落としている分だけを学ぶ形にしています(2026年11月から。16年すべてこの形で試し直しました)。</p>
+    <p>それでも運の良し悪しはあります。回収率の95%区間(運が悪ければここまで下がりうる、という幅)は、厳選が124〜182%、推奨が118〜126%、大穴が130〜160%でした。厳選は当たる回数が少ないぶん、幅も広いです。</p>
+  </div>
+</section>
+
+<section aria-labelledby="s-end">
+  <h2 id="s-end">最後に</h2>
+  <div class="end">
+    <ul>
+      <li>AIの予想です。的中や利益を約束するものではありません。</li>
+      <li>馬券は20歳になってから。買うかどうか、いくら買うかはご自身で決めてください。なくなっても困らない金額で。</li>
+      <li>予想の販売や有料の情報はやっていません。ぜんぶ無料で出しています。</li>
+    </ul>
+  </div>
+</section>
+
+<footer class="foot"><span>発走前ラボ ・ X <a href="https://x.com/hassomae_ai" rel="noopener">@hassomae_ai</a></span><span id="asof">数字は 2026年10月25日 時点</span></footer>
+</div>
+
+<script>
+const DATA = {"cmp": {"pick_hit": 8.500647668393782, "pick_roi": 152.55162126089346, "rec_hit": 11.791671214391316, "rec_roi": 121.98408853778506, "long_hit": 2.547335669023437, "long_roi": 144.3279362108946, "fav_hit": 32.306764423167536, "fav_roi": 78.29617204138944}, "windows": {"pick": {"10": 0.3627371493432787, "30": 0.42313323572474376, "50": 0.49355312551003755, "100": 0.5919038999506335, "300": 0.8390335205036583, "1000": 1.0, "3000": 1.0}, "rec": {"10": 0.43522138646873204, "30": 0.5177263433709828, "50": 0.5528818472412492, "100": 0.6077231734933057, "300": 0.7319274710401656, "1000": 0.9216006574200273, "3000": 0.9996420682320216}, "long": {"10": 0.18327978343916818, "30": 0.24405951868815953, "50": 0.2756220416635027, "100": 0.36567296489539536, "300": 0.529201157889391, "1000": 0.6885632301701168, "3000": 0.9247475809844342}}, "cum": {"m": ["2011-01", "2011-02", "2011-03", "2011-04", "2011-05", "2011-06", "2011-07", "2011-08", "2011-09", "2011-10", "2011-11", "2011-12", "2012-01", "2012-02", "2012-03", "2012-04", "2012-05", "2012-06", "2012-07", "2012-08", "2012-09", "2012-10", "2012-11", "2012-12", "2013-01", "2013-02", "2013-03", "2013-04", "2013-05", "2013-06", "2013-07", "2013-08", "2013-09", "2013-10", "2013-11", "2013-12", "2014-01", "2014-02", "2014-03", "2014-04", "2014-05", "2014-06", "2014-07", "2014-08", "2014-09", "2014-10", "2014-11", "2014-12", "2015-01", "2015-02", "2015-03", "2015-04", "2015-05", "2015-06", "2015-07", "2015-08", "2015-09", "2015-10", "2015-11", "2015-12", "2016-01", "2016-02", "2016-03", "2016-04", "2016-05", "2016-06", "2016-07", "2016-08", "2016-09", "2016-10", "2016-11", "2016-12", "2017-01", "2017-02", "2017-03", "2017-04", "2017-05", "2017-06", "2017-07", "2017-08", "2017-09", "2017-10", "2017-11", "2017-12", "2018-01", "2018-02", "2018-03", "2018-04", "2018-05", "2018-06", "2018-07", "2018-08", "2018-09", "2018-10", "2018-11", "2018-12", "2019-01", "2019-02", "2019-03", "2019-04", "2019-05", "2019-06", "2019-07", "2019-08", "2019-09", "2019-10", "2019-11", "2019-12", "2020-01", "2020-02", "2020-03", "2020-04", "2020-05", "2020-06", "2020-07", "2020-08", "2020-09", "2020-10", "2020-11", "2020-12", "2021-01", "2021-02", "2021-03", "2021-04", "2021-05", "2021-06", "2021-07", "2021-08", "2021-09", "2021-10", "2021-11", "2021-12", "2022-01", "2022-02", "2022-03", "2022-04", "2022-05", "2022-06", "2022-07", "2022-08", "2022-09", "2022-10", "2022-11", "2022-12", "2023-01", "2023-02", "2023-03", "2023-04", "2023-05", "2023-06", "2023-07", "2023-08", "2023-09", "2023-10", "2023-11", "2023-12", "2024-01", "2024-02", "2024-03", "2024-04", "2024-05", "2024-06", "2024-07", "2024-08", "2024-09", "2024-10", "2024-11", "2024-12", "2025-01", "2025-02", "2025-03", "2025-04", "2025-05", "2025-06", "2025-07", "2025-08", "2025-09", "2025-10", "2025-11", "2025-12", "2026-01", "2026-02", "2026-03", "2026-04", "2026-05", "2026-06", "2026-07", "2026-08", "2026-09", "2026-10"], "v": [110, 2420, 40500, 39360, 30380, 26950, 24190, 22630, 23420, 14430, 8220, 7250, 1570, 13310, 46340, 91760, 82960, 76460, 77080, 121150, 124490, 119990, 115290, 119650, 111860, 131130, 123910, 146010, 142330, 143880, 145590, 142970, 159950, 154010, 175260, 172160, 166790, 171410, 166710, 162440, 191850, 253820, 252380, 250390, 249970, 252050, 252160, 248960, 280210, 277990, 274110, 271340, 272860, 271310, 272260, 271330, 270330, 266030, 266060, 262810, 259110, 258570, 262120, 256310, 249740, 248160, 244890, 243410, 244750, 245460, 250490, 254790, 313520, 313520, 309820, 315930, 313830, 312730, 311650, 309510, 306310, 303910, 303930, 303500, 360560, 361260, 360150, 357070, 359430, 354030, 354610, 365420, 400800, 401650, 403330, 413730, 410080, 404790, 406710, 408450, 401700, 410810, 418710, 415550, 421380, 440740, 447830, 459950, 456050, 469280, 467540, 468090, 478080, 502200, 502420, 500400, 498780, 498440, 493270, 496080, 488380, 484810, 488320, 483620, 481810, 520190, 515360, 516230, 511820, 505440, 497270, 510570, 504170, 515170, 519910, 515910, 519720, 518420, 515410, 516950, 523720, 533920, 529030, 534660, 535260, 536430, 531310, 579810, 575150, 573890, 571830, 571740, 569100, 576400, 576520, 575890, 610420, 607770, 629910, 627500, 656100, 649840, 645250, 644280, 634390, 635510, 642270, 631640, 633110, 633020, 637940, 638280, 636360, 633360, 661120, 657120, 655460, 654970, 656240, 670360, 669790, 668110, 672970, 671270, 669700, 669760, 670520, 669450, 669410, 669350]}, "last100": {"pays": [0, 0, 0, 0, 0, 0, 0, 0, 0, 1520, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1240, 0, 0, 0, 540, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 2320, 0, 0, 0, 0, 0, 0, 1530, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1580, 0, 0, 880, 0, 0, 0, 0, 0, 0, 1440, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1220, 0, 0, 0, 0, 0, 0, 1380, 0], "stakes": [100, 100, 100, 100, 100, 100, 100, 100, 100, 100, 100, 100, 100, 100, 100, 1000, 100, 100, 100, 100, 100, 100, 100, 100, 100, 100, 100, 100, 100, 100, 100, 100, 100, 100, 100, 100, 100, 100, 100, 100, 100, 100, 100, 100, 100, 100, 100, 100, 100, 100, 100, 100, 100, 100, 100, 100, 100, 100, 1000, 100, 100, 100, 100, 100, 100, 100, 100, 100, 100, 1000, 100, 100, 100, 100, 100, 100, 100, 100, 100, 100, 100, 100, 100, 100, 100, 100, 100, 100, 1000, 100, 100, 100, 100, 100, 1000, 100, 100, 100, 100, 100]}, "real": {"pick": {"bets": 16, "hits": 0, "stake": 4300, "ret": 0}, "rec": {"bets": 213, "hits": 24, "stake": 24000, "ret": 25900}, "top1": {"bets": 181, "hits": 19, "stake": 32500, "ret": 11350}, "longshots": {"bets": 157, "hits": 2, "stake": 33700, "ret": 42410}}, "real_days": 6, "real_races": 181, "real_pick_seq": [false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false], "real_excluded_backfill": 11, "at": "2026年11月2日"};
+(function () {
+  const NS = "http://www.w3.org/2000/svg";
+  const css = n => getComputedStyle(document.documentElement).getPropertyValue(n).trim();
+  const el = (tag, attrs = {}, parent) => { const e = document.createElementNS(NS, tag); for (const k in attrs) e.setAttribute(k, attrs[k]); if (parent) parent.appendChild(e); return e; };
+  const yen = n => Math.round(n).toLocaleString("ja-JP") + "円";
+
+  // 当たる割合・回収率(横棒。2つの図で目盛りは別々)
+  const rows = [["1番人気の単勝", "fav", DATA.cmp.fav_hit, DATA.cmp.fav_roi], ["🟢 推奨", "rec", DATA.cmp.rec_hit, DATA.cmp.rec_roi],
+                ["🔥 厳選", "pick", DATA.cmp.pick_hit, DATA.cmp.pick_roi], ["🎯 大穴", "long", DATA.cmp.long_hit, DATA.cmp.long_roi]];
+  function bars(id, idx, max, ticks, ref) {
+    const svg = document.getElementById(id), W = 360, L = 104, R = 46, rowH = 40, top = 6, H = top + rows.length * rowH + 22;
+    svg.setAttribute("viewBox", `0 0 ${W} ${H}`); svg.style.width = "100%"; svg.innerHTML = "";
+    const x = v => L + (W - L - R) * v / max;
+    ticks.forEach(t => { el("line", {x1: x(t), x2: x(t), y1: top, y2: H - 20, stroke: css("--line"), "stroke-width": 1}, svg);
+      el("text", {x: x(t), y: H - 6, "text-anchor": "middle", "font-size": 11, fill: css("--muted")}, svg).textContent = t + "%"; });
+    if (ref) el("line", {x1: x(ref), x2: x(ref), y1: top - 2, y2: H - 20, stroke: css("--ink-2"), "stroke-width": 1.5, "stroke-dasharray": "3 3"}, svg);
+    rows.forEach((r, i) => {
+      const y = top + i * rowH, v = r[idx];
+      el("text", {x: L - 10, y: y + rowH / 2 + 4, "text-anchor": "end", "font-size": 13, "font-weight": 700, fill: css("--ink-2")}, svg).textContent = r[0];
+      const b = el("rect", {x: L, y: y + 9, width: Math.max(2, x(v) - L), height: rowH - 18, rx: 4, fill: css("--" + r[1])}, svg);
+      el("title", {}, b).textContent = `${r[0]}: ${v.toFixed(1)}%`;
+      el("text", {x: x(v) + 6, y: y + rowH / 2 + 4, "font-size": 13, "font-weight": 700, fill: css("--ink"), "font-family": "JetBrains Mono, monospace"}, svg).textContent = v.toFixed(1) + "%";
+    });
+  }
+
+  // 続けて買ったとき、プラスで終わる割合(線3本。線の形と端の名前で区別)
+  function wins() {
+    const svg = document.getElementById("c-win"), W = 640, H = 300, L = 44, R = 84, T = 14, B = 34;
+    svg.setAttribute("viewBox", `0 0 ${W} ${H}`); svg.style.width = "100%"; svg.innerHTML = "";
+    const ns = [10, 30, 50, 100, 300, 1000, 3000];
+    const x = i => L + (W - L - R) * i / (ns.length - 1), y = v => T + (H - T - B) * (1 - v);
+    [0, .25, .5, .75, 1].forEach(v => { el("line", {x1: L, x2: W - R, y1: y(v), y2: y(v), stroke: v === .5 ? css("--ink-2") : css("--line"), "stroke-width": v === .5 ? 1.2 : 1, "stroke-dasharray": v === .5 ? "4 3" : ""}, svg);
+      el("text", {x: L - 8, y: y(v) + 4, "text-anchor": "end", "font-size": 11, fill: css("--muted")}, svg).textContent = Math.round(v * 100) + "%"; });
+    ns.forEach((n, i) => el("text", {x: x(i), y: H - 12, "text-anchor": "middle", "font-size": 11.5, fill: css("--muted")}, svg).textContent = n.toLocaleString() + "点");
+    [["pick", "厳選", ""], ["rec", "推奨", "7 5"], ["long", "大穴", "2 5"]].forEach(([k, name, dash]) => {
+      const pts = ns.map((n, i) => [i, DATA.windows[k][n]]).filter(p => p[1] != null);
+      el("polyline", {points: pts.map(p => `${x(p[0])},${y(p[1])}`).join(" "), fill: "none", stroke: css("--" + k), "stroke-width": 2.5, "stroke-dasharray": dash, "stroke-linecap": "round", "stroke-linejoin": "round"}, svg);
+      pts.forEach(p => { const c = el("circle", {cx: x(p[0]), cy: y(p[1]), r: 4.5, fill: css("--surface"), stroke: css("--" + k), "stroke-width": 2.2}, svg);
+        el("title", {}, c).textContent = `${name}を${ns[p[0]].toLocaleString()}点: ${Math.round(p[1] * 100)}%でプラス`; });
+      const last = pts[pts.length - 1];
+      el("text", {x: x(last[0]) + 10, y: y(last[1]) + 4 + (k === "pick" ? -8 : k === "rec" ? 6 : 0), "font-size": 13, "font-weight": 700, fill: css("--ink")}, svg).textContent = name;
+    });
+  }
+
+  // 厳選の累計の収支(月ごと)
+  function cum() {
+    const svg = document.getElementById("c-cum"), s = DATA.cum, W = 400, H = 230, L = 50, R = 12, T = 12, B = 28;
+    svg.setAttribute("viewBox", `0 0 ${W} ${H}`); svg.style.width = "100%"; svg.innerHTML = "";
+    const lo = Math.min(0, ...s.v), hi = Math.max(...s.v);
+    const x = i => L + (W - L - R) * i / (s.v.length - 1), y = v => T + (H - T - B) * (hi - v) / (hi - lo);
+    [0, 200000, 400000].forEach(v => { el("line", {x1: L, x2: W - R, y1: y(v), y2: y(v), stroke: v === 0 ? css("--ink-2") : css("--line"), "stroke-width": 1}, svg);
+      el("text", {x: L - 6, y: y(v) + 4, "text-anchor": "end", "font-size": 11, fill: css("--muted")}, svg).textContent = v === 0 ? "0" : `+${v / 10000}万`; });
+    s.m.forEach((m, i) => { if (m.endsWith("-01") && (+m.slice(0, 4)) % 3 === 2) el("text", {x: x(i), y: H - 8, "text-anchor": "middle", "font-size": 11, fill: css("--muted")}, svg).textContent = m.slice(0, 4); });
+    const line = s.v.map((v, i) => `${x(i)},${y(v)}`).join(" ");
+    el("polygon", {points: `${x(0)},${y(0)} ${line} ${x(s.v.length - 1)},${y(0)}`, fill: css("--pick"), "fill-opacity": .14}, svg);
+    el("polyline", {points: line, fill: "none", stroke: css("--pick"), "stroke-width": 2, "stroke-linejoin": "round"}, svg);
+    const e = s.v.length - 1;
+    el("circle", {cx: x(e), cy: y(s.v[e]), r: 4, fill: css("--pick")}, svg);
+    el("text", {x: x(e) - 8, y: y(s.v[e]) + 18, "text-anchor": "end", "font-size": 12, "font-weight": 700, fill: css("--ink")}, svg).textContent = `+${(s.v[e] / 10000).toFixed(1)}万円`;
+    s.v.forEach((v, i) => { const r = el("rect", {x: x(i) - (W - L - R) / s.v.length / 2, y: T, width: (W - L - R) / s.v.length, height: H - T - B, fill: "transparent"}, svg);
+      el("title", {}, r).textContent = `${s.m[i]}: 累計 ${v >= 0 ? "+" : ""}${yen(v)}`; });
+  }
+
+  // 1日36レースのイメージ(厳選4・推奨24・大穴22。場所は固定のちらし)
+  function board() {
+    const box = document.getElementById("board"), P = new Set([5, 14, 22, 31]);
+    const REC = new Set([0, 1, 3, 4, 5, 7, 8, 9, 10, 12, 14, 15, 16, 17, 18, 20, 21, 22, 24, 25, 26, 27, 29, 30, 31, 32, 34, 35]);
+    const LONG = new Set([1, 2, 3, 4, 6, 7, 9, 11, 13, 14, 15, 16, 17, 19, 20, 23, 24, 25, 27, 28, 30, 31, 32, 34, 35]);
+    ["東京", "京都", "新潟"].forEach((c, r) => {
+      const row = document.createElement("div"); row.className = "brow";
+      row.innerHTML = `<span>${c}</span>` + Array.from({length: 12}, (_, k) => { const i = r * 12 + k;
+        return `<div class="chip${P.has(i) ? " p" : ""}" title="${c}${k + 1}R">${P.has(i) ? "◆" : ""}${k + 1}${REC.has(i) ? '<i class="r"></i>' : ""}${LONG.has(i) ? '<i class="l"></i>' : ""}</div>`; }).join("");
+      box.appendChild(row);
+    });
+  }
+
+  // 直近の100点
+  function dots() {
+    const box = document.getElementById("dots");
+    box.innerHTML = DATA.last100.pays.map((p, i) => `<i class="${p > 0 ? "h" : ""}${DATA.last100.stakes[i] >= 1000 ? " k" : ""}" title="${i + 1}点目: ${p > 0 ? "的中 " + (p / 100).toFixed(1) + "倍" : "はずれ"}(${DATA.last100.stakes[i]}円)"></i>`).join("");
+  }
+
+  // 実際の成績
+  function real() {
+    const t = DATA.real, R = [["pick", "🔥 厳選"], ["rec", "🟢 推奨(厳選を含む)"], ["longshots", "🎯 大穴"]];
+    document.getElementById("real").innerHTML = R.map(([k, name]) => { const x = t[k];
+      return `<tr><td><span class="tag ${k === "longshots" ? "long" : k}">${name}</span></td><td class="num">${x.bets}点</td><td class="num">${x.hits}点</td><td class="num">${yen(x.stake)}</td><td class="num">${yen(x.ret)}</td><td class="roi">${x.stake ? Math.round(x.ret / x.stake * 100) + "%" : "-"}</td></tr>`; }).join("");
+  }
+
+  function realNote() {
+    const t = DATA.real, p = t.pick, days = DATA.real_days, n = DATA.real_races;
+    document.getElementById("real-span").textContent = `${days}日・${n}レース`;
+    document.getElementById("asof").textContent = `数字は ${DATA.at} 時点`;
+    let streak = 0;
+    for (let i = DATA.real_pick_seq.length - 1; i >= 0 && !DATA.real_pick_seq[i]; i--) streak++;
+    const q = Math.round(Math.pow(1 - DATA.cmp.pick_hit / 100, streak) * 100);
+    const head = streak >= 3 ? `厳選は、いま${streak}回続けて外れています。的中率${DATA.cmp.pick_hit.toFixed(1)}%で${streak}回続けて外れる確率は約${q}%${q >= 40 ? "。コインを投げて表が出るくらい、よくあることです" : "。16年の中でも普通に起きていることです"}。`
+      : `厳選は、ここまで${p.bets}点で${p.hits}回の的中です。`;
+    const tail = days < 30 ? `まだ${days}日なので、どの数字もいくらでもぶれます。` : "";
+    document.getElementById("real-note").textContent = head + tail + "毎週月曜に、先週の成績カードをXに出しています。";
+  }
+
+  function draw() { bars("c-hit", 2, 40, [0, 10, 20, 30, 40], null); bars("c-roi", 3, 160, [0, 50, 100, 150], 100); wins(); cum(); }
+  board(); dots(); real(); realNote(); draw();
+  matchMedia("(prefers-color-scheme: dark)").addEventListener("change", draw);
+  new MutationObserver(draw).observe(document.documentElement, {attributes: true, attributeFilter: ["data-theme"]});
+})();
+</script>

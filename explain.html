@@ -1,0 +1,382 @@
+<title>keiba-ai の中身</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Zen+Kaku+Gothic+New:wght@500;700;900&family=Noto+Sans+JP:wght@400;500;700&family=JetBrains+Mono:wght@500&display=swap">
+<style>
+/* 成績表と同じ「競馬新聞」の見た目。データが左から右・上から下へ流れる図解を、章ごとに1枚ずつ */
+:root {
+  --bg: #f6f6f2; --surface: #fcfcfb; --surface-2: #f0f0ea; --ink: #14150f; --ink-2: #4b4c45; --muted: #7a7b72; --line: #e2e2da; --turf: #1f6b45;
+  --gbm: #2a78d6; --dl: #eb6834; --mkt: #c98500; --mix: #1f6b45;
+  --rec: #0b7f45; --watch: #2160c4; --long: #96388f; --best: #a87400; --pick: #0e7c86;
+  --gbm-bg: #e8f0fb; --dl-bg: #fcece4; --mkt-bg: #fbf2dc; --mix-bg: #e4f1ea;
+  --display: "Zen Kaku Gothic New", "Hiragino Sans", "Yu Gothic", sans-serif;
+  --body: "Noto Sans JP", "Hiragino Sans", "Yu Gothic", sans-serif;
+  --mono: "JetBrains Mono", ui-monospace, Consolas, monospace;
+}
+@media (prefers-color-scheme: dark) { :root:not([data-theme="light"]) {
+  --bg: #0f100d; --surface: #1a1a19; --surface-2: #22231f; --ink: #f2f2ec; --ink-2: #c3c2b7; --muted: #8e8e85; --line: #2c2d27; --turf: #5fbf8b;
+  --gbm: #6aa3f0; --dl: #f08a5d; --mkt: #e2ac3a; --mix: #5fbf8b;
+  --rec: #45c285; --watch: #7ba7ff; --long: #e28ad9; --best: #e8b93c; --pick: #3cc4cf;
+  --gbm-bg: #18263a; --dl-bg: #3a2318; --mkt-bg: #33290f; --mix-bg: #15301f; color-scheme: dark; } }
+:root[data-theme="dark"] {
+  --bg: #0f100d; --surface: #1a1a19; --surface-2: #22231f; --ink: #f2f2ec; --ink-2: #c3c2b7; --muted: #8e8e85; --line: #2c2d27; --turf: #5fbf8b;
+  --gbm: #6aa3f0; --dl: #f08a5d; --mkt: #e2ac3a; --mix: #5fbf8b;
+  --rec: #45c285; --watch: #7ba7ff; --long: #e28ad9; --best: #e8b93c; --pick: #3cc4cf;
+  --gbm-bg: #18263a; --dl-bg: #3a2318; --mkt-bg: #33290f; --mix-bg: #15301f; color-scheme: dark; }
+* { box-sizing: border-box; }
+body { background: var(--bg); color: var(--ink); font: 15px/1.75 var(--body); padding-inline: 18px; padding-block: 28px 64px; }
+.wrap { max-width: 920px; margin: 0 auto; display: flex; flex-direction: column; gap: 48px; }
+h1, h2, h3 { font-family: var(--display); text-wrap: balance; margin: 0; letter-spacing: .01em; }
+h1 { font-size: clamp(28px, 6vw, 44px); font-weight: 900; line-height: 1.2; }
+h2 { font-size: 22px; font-weight: 900; } h3 { font-size: 16px; font-weight: 700; }
+p { margin: 0; max-width: 68ch; }
+code, .mono { font-family: var(--mono); font-size: 12px; }
+.kicker { font-family: var(--mono); font-size: 12px; letter-spacing: .12em; color: var(--turf); text-transform: uppercase; }
+.lead { color: var(--ink-2); font-size: 16px; margin-top: 10px; }
+.muted { color: var(--muted); } .small { font-size: 13px; }
+section { display: flex; flex-direction: column; gap: 16px; min-width: 0; }
+section > header { display: flex; gap: 12px; align-items: baseline; border-bottom: 2px solid var(--ink); padding-bottom: 8px; }
+section > header .no { font-family: var(--mono); font-size: 13px; color: var(--turf); }
+
+/* 全体の流れ(冒頭) */
+.pipe { display: flex; flex-wrap: wrap; gap: 6px; align-items: stretch; margin-top: 22px; }
+.pipe .st { flex: 1 1 120px; background: var(--surface); border: 1px solid var(--line); border-radius: 10px; padding: 10px 12px; min-width: 0; display: flex; flex-direction: column; gap: 2px; text-decoration: none; color: inherit; }
+.pipe .st:hover { border-color: var(--ink); }
+.pipe .st b { font-family: var(--display); font-size: 15px; }
+.pipe .st span { font-size: 12px; color: var(--muted); }
+.pipe .st .n { font-family: var(--mono); font-size: 11px; color: var(--turf); }
+.pipe .ar { align-self: center; color: var(--muted); font-weight: 700; }
+@media (max-width: 640px) { .pipe .ar { display: none; } .pipe .st { flex-basis: 45%; } }
+
+/* 共通の箱と矢印 */
+.box { background: var(--surface); border: 1px solid var(--line); border-radius: 10px; padding: 10px 12px; min-width: 0; }
+.box b { font-family: var(--display); }
+.down { text-align: center; color: var(--muted); font-size: 18px; line-height: 1; padding: 4px 0; }
+.down small { display: block; font-size: 11px; font-family: var(--mono); margin-top: 2px; }
+.tag { display: inline-block; font-size: 11px; font-weight: 700; padding: 0 7px; border-radius: 999px; background: var(--surface-2); color: var(--ink-2); white-space: nowrap; line-height: 1.8; }
+.tensor { font-family: var(--mono); font-size: 11px; color: var(--muted); white-space: nowrap; }
+
+/* 1. 生データ */
+.raw { display: grid; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); gap: 10px; }
+.raw .box { display: flex; flex-direction: column; gap: 4px; }
+.raw .box p { font-size: 13px; color: var(--ink-2); }
+
+/* 2. 特徴量づくり */
+.chain { display: grid; grid-template-columns: minmax(0, 1fr) auto; gap: 8px 14px; align-items: center; background: var(--surface); border: 1px solid var(--line); border-radius: 12px; padding: 12px 14px; }
+.chain .steps { display: flex; flex-wrap: wrap; align-items: center; gap: 6px; min-width: 0; }
+.chain .s { font-size: 13px; padding: 3px 9px; border-radius: 8px; background: var(--surface-2); color: var(--ink-2); }
+.chain .s.raw0 { background: transparent; border: 1px dashed var(--line); }
+.chain .s.out { background: var(--ink); color: var(--bg); font-weight: 700; }
+.chain .ar { color: var(--muted); font-size: 13px; }
+.chain .gain { text-align: right; font-variant-numeric: tabular-nums; }
+.chain .gain b { font-family: var(--display); font-size: 20px; font-weight: 900; display: block; line-height: 1.1; }
+.chain .gain span { font-size: 11px; color: var(--muted); }
+.chain .name { grid-column: 1 / -1; font-size: 12px; color: var(--muted); }
+@media (max-width: 560px) { .chain { grid-template-columns: 1fr; } .chain .gain { text-align: left; } }
+.bars { display: grid; grid-template-columns: minmax(0, 13em) minmax(0, 1fr) 4em; gap: 6px 10px; align-items: center; font-size: 13px; }
+.bars .bar { height: 10px; border-radius: 0 5px 5px 0; background: var(--gbm); }
+.bars .v { text-align: right; font-variant-numeric: tabular-nums; font-weight: 700; }
+@media (max-width: 560px) { .bars { grid-template-columns: minmax(0, 9em) minmax(0, 1fr) 3.5em; } }
+
+/* 3. 2つのモデル */
+.models { display: grid; grid-template-columns: minmax(0, 1fr) minmax(0, 1.55fr); gap: 16px; align-items: start; }
+@media (max-width: 760px) { .models { grid-template-columns: 1fr; } }
+.col { display: flex; flex-direction: column; gap: 0; min-width: 0; }
+.col > h3 { margin-bottom: 8px; display: flex; align-items: center; gap: 8px; }
+.col > h3 i { width: 12px; height: 12px; border-radius: 3px; display: inline-block; }
+.gbm .box { border-color: color-mix(in srgb, var(--gbm) 45%, var(--line)); }
+.gbm .box.hl { background: var(--gbm-bg); }
+.dl .box { border-color: color-mix(in srgb, var(--dl) 45%, var(--line)); }
+.dl .box.hl { background: var(--dl-bg); }
+.layer { display: flex; justify-content: space-between; gap: 8px; align-items: baseline; flex-wrap: wrap; }
+.layer b { font-size: 14px; } .layer p { font-size: 12.5px; color: var(--ink-2); flex-basis: 100%; }
+.inputs { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 6px; }
+.inputs .box { padding: 8px 10px; } .inputs .box b { font-size: 13px; display: block; } .inputs .box span { font-size: 12px; color: var(--ink-2); }
+.repeat { position: relative; border: 2px dashed color-mix(in srgb, var(--dl) 55%, var(--line)); border-radius: 12px; padding: 8px; }
+.repeat > .tag { position: absolute; top: -11px; right: 10px; background: var(--dl); color: #fff; }
+.trees { display: flex; gap: 4px; flex-wrap: wrap; justify-content: center; padding: 6px 0; }
+.trees svg { width: 34px; height: 30px; }
+.trees svg path { fill: none; stroke: var(--gbm); stroke-width: 1.6; } .trees svg circle { fill: var(--gbm); }
+.heads { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 6px; }
+.heads .box { padding: 7px 9px; font-size: 12px; } .heads .box b { font-size: 13px; display: block; }
+
+/* 4. 合成 */
+.merge { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 10px; }
+.merge .box { text-align: center; } .merge .box b { display: block; font-size: 16px; }
+.merge .w { font-family: var(--display); font-size: 26px; font-weight: 900; font-variant-numeric: tabular-nums; }
+.merge .box.g { background: var(--gbm-bg); } .merge .box.d { background: var(--dl-bg); } .merge .box.m { background: var(--mkt-bg); }
+.result { background: var(--mix-bg); border-color: color-mix(in srgb, var(--mix) 45%, var(--line)); text-align: center; }
+.result b { font-size: 18px; }
+.formula { font-family: var(--mono); font-size: 13px; text-align: center; color: var(--ink-2); overflow-x: auto; white-space: nowrap; padding: 4px 0; }
+.stage { display: grid; grid-template-columns: repeat(4, minmax(0, 1fr)); gap: 8px; }
+@media (max-width: 560px) { .stage { grid-template-columns: repeat(2, minmax(0, 1fr)); } .merge { grid-template-columns: 1fr; } }
+.stage .box { text-align: center; padding: 8px; } .stage .box b { display: block; } .stage .box span { font-size: 12px; color: var(--muted); font-variant-numeric: tabular-nums; }
+.hist { display: flex; align-items: flex-end; gap: 6px; height: 90px; padding: 0 8px; border-bottom: 1px solid var(--line); }
+.hist div { flex: 1; background: var(--mix); border-radius: 4px 4px 0 0; position: relative; }
+.hist div.o { background: color-mix(in srgb, var(--mix) 35%, var(--surface)); }
+.hist div span { position: absolute; top: -18px; left: 0; right: 0; text-align: center; font-size: 11px; color: var(--ink-2); font-variant-numeric: tabular-nums; }
+.histx { display: flex; gap: 6px; padding: 2px 8px 0; font-size: 11px; color: var(--muted); } .histx span { flex: 1; text-align: center; }
+
+/* 5. 買い目 */
+.flow { display: flex; flex-direction: column; }
+.flow .box:not(.result) { display: grid; grid-template-columns: 30px minmax(0, 1fr); gap: 4px 10px; align-items: start; }
+.flow .box.result { display: flex; flex-direction: column; align-items: center; gap: 2px; }
+.flow .box .k { font-family: var(--mono); font-size: 12px; color: var(--turf); padding-top: 2px; }
+.flow .box p { font-size: 13px; color: var(--ink-2); }
+.tiers { display: grid; grid-template-columns: repeat(4, minmax(0, 1fr)); gap: 10px; }
+@media (max-width: 760px) { .tiers { grid-template-columns: repeat(2, minmax(0, 1fr)); } }
+@media (max-width: 440px) { .tiers { grid-template-columns: 1fr; } }
+.tier { border-radius: 12px; padding: 12px; border: 1px solid var(--line); border-top: 4px solid; background: var(--surface); display: flex; flex-direction: column; gap: 6px; min-width: 0; }
+.tier h3 { font-size: 17px; }
+.tier .cond { font-size: 12.5px; color: var(--ink-2); }
+.tier .cond li { margin: 2px 0; } .tier ul { margin: 0; padding-left: 16px; }
+.tier .out { margin-top: auto; display: flex; flex-direction: column; gap: 2px; font-size: 12.5px; padding-top: 8px; border-top: 1px dashed var(--line); }
+.tier .out .amt { font-weight: 700; }
+.tier .out .ver { color: var(--ink-2); font-variant-numeric: tabular-nums; }
+.tier .out .ver b { font-family: var(--display); font-size: 22px; font-weight: 900; color: var(--ink); margin: 0 2px; }
+.tier.pick { border-top-color: var(--pick); } .tier.pick h3 { color: var(--pick); }
+.tier.watch .out .amt { color: var(--muted); }
+.tier.best { border-top-color: var(--best); } .tier.best h3 { color: var(--best); }
+.tier.rec { border-top-color: var(--rec); } .tier.rec h3 { color: var(--rec); }
+.tier.watch { border-top-color: var(--line); } .tier.watch h3 { color: var(--muted); }
+.tier.long { border-top-color: var(--long); } .tier.long h3 { color: var(--long); }
+/* 4. 合成の追加 */
+.twocol { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 10px; }
+.twocol .box p { margin-top: 2px; color: var(--ink-2); }
+.adj { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 8px; }
+.adj .box { display: flex; flex-direction: column; gap: 2px; } .adj .box span { font-size: 12px; color: var(--ink-2); }
+@media (max-width: 640px) { .twocol, .adj { grid-template-columns: 1fr; } }
+/* 6. いつ・どう買う */
+ol.tl { list-style: none; margin: 0; padding: 0; display: flex; flex-direction: column; gap: 0; border-left: 3px solid var(--line); margin-left: 8px; }
+ol.tl li { position: relative; padding: 8px 0 12px 20px; display: grid; grid-template-columns: 7.5em minmax(0, 1fr); gap: 2px 12px; }
+ol.tl li::before { content: ""; position: absolute; left: -8px; top: 14px; width: 13px; height: 13px; border-radius: 50%; background: var(--surface); border: 3px solid var(--muted); }
+ol.tl li.hl::before { border-color: var(--rec); background: var(--rec); }
+ol.tl .t { font-family: var(--mono); font-size: 12.5px; color: var(--muted); padding-top: 2px; grid-row: span 2; }
+ol.tl b { font-family: var(--display); font-size: 16px; } ol.tl li.hl b { color: var(--rec); }
+ol.tl span:not(.t) { font-size: 13px; color: var(--ink-2); }
+@media (max-width: 520px) { ol.tl li { grid-template-columns: 1fr; } ol.tl .t { grid-row: auto; } }
+.courses { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 10px; }
+@media (max-width: 760px) { .courses { grid-template-columns: 1fr; } }
+.course { border: 2px solid var(--line); border-radius: 12px; padding: 12px 14px; background: var(--surface); display: flex; flex-direction: column; gap: 4px; min-width: 0; }
+.course.main { border-color: var(--rec); }
+.course .roi { font-family: var(--display); font-weight: 900; font-size: 24px; font-variant-numeric: tabular-nums; color: var(--rec); }
+.course p { font-size: 13px; color: var(--ink-2); } .course .who { font-size: 12px; color: var(--muted); }
+.foot { font-size: 12px; color: var(--muted); border-top: 1px solid var(--line); padding-top: 14px; }
+</style>
+
+<div class="wrap">
+  <header>
+    <div class="kicker">keiba-ai ・ JRA 中央競馬の予想 AI</div>
+    <h1>1頭のデータが、買い目になるまで</h1>
+    <p class="lead">過去40年分のレース結果から304個の手がかりを作り、性格の違う2つの AI に読ませ、締切前のオッズと混ぜて確率を出し、
+      単勝・複勝・枠連の期待値を計算して買い目を選んでいます。買い目が決まるのは締切2分前の最終予測。その流れを6枚の図で。</p>
+    <nav class="pipe" aria-label="全体の流れ">
+      <a class="st" href="#raw"><span class="n">1</span><b>生データ</b><span>1986年〜の全レース</span></a><span class="ar">→</span>
+      <a class="st" href="#feat"><span class="n">2</span><b>特徴量 304個</b><span>比べやすい形に加工</span></a><span class="ar">→</span>
+      <a class="st" href="#models"><span class="n">3</span><b>GBM と DL</b><span>2つの AI がそれぞれ予想</span></a><span class="ar">→</span>
+      <a class="st" href="#mix"><span class="n">4</span><b>オッズと合成</b><span>勝率と1〜5着の確率</span></a><span class="ar">→</span>
+      <a class="st" href="#bets"><span class="n">5</span><b>買い目</b><span>期待値で選ぶ</span></a><span class="ar">→</span>
+      <a class="st" href="#when"><span class="n">6</span><b>いつ・どう買う</b><span>最終予測を待って</span></a>
+    </nav>
+  </header>
+
+  <!-- 1. 生データ -->
+  <section id="raw">
+    <header><span class="no">1</span><h2>生データ: 1行 = 1レース × 1頭</h2></header>
+    <p class="small" style="color:var(--ink-2)">JRA-VAN から取り込んだ公式データ。どの情報も「いつの時点で分かるか」が決まっていて、予想するレースの時点で分からない情報は使いません。</p>
+    <div class="raw">
+      <div class="box"><b>出馬表</b><span class="tag">木〜金曜</span><p>競馬場・芝ダート・距離・頭数・枠番・馬番・斤量・騎手・調教師・クラス・賞金</p></div>
+      <div class="box"><b>過去の成績</b><span class="tag">前走まで</span><p>1986年〜の全レース: 着順・着差・走破タイム・上がり3F・コーナーの通過順・単勝オッズ・人気</p></div>
+      <div class="box"><b>調教</b><span class="tag">前走まで</span><p>坂路・ウッドチップの調教タイム(同じ日・同じトレセンの中央値との差)</p></div>
+      <div class="box"><b>血統・セリ</b><span class="tag">出馬表</span><p>父・母父・父系統・兄弟の成績・セリの落札価格・馬主・生産者</p></div>
+      <div class="box"><b>当日・直前</b><span class="tag">当日〜発走70分前</span><p>天候・馬場状態・馬体重と増減・取消</p></div>
+      <div class="box"><b>JRA-VAN のデータマイニング予想</b><span class="tag">直前</span><p>JRA-VAN の AI による予想タイム・予想順位・対戦型のスコア</p></div>
+    </div>
+  </section>
+
+  <!-- 2. 特徴量 -->
+  <section id="feat">
+    <header><span class="no">2</span><h2>特徴量づくり: 生の数字を「比べられる形」に</h2></header>
+    <p class="small" style="color:var(--ink-2)">着順やタイムは、そのままだと頭数・コース・馬場で意味が変わります。正規化 → 重み付き平均 → レース内で比べ直す、という加工を重ねて304個の特徴量にします。
+      右の % は LightGBM の重要度(その特徴量で予測が良くなった量の割合)で、上位から選んだ例です。</p>
+    <div class="chain"><div class="steps"><span class="s raw0">JRA の AI 予想タイム</span><span class="ar">→</span><span class="s">同じレースの他の馬と比べて偏差に</span><span class="ar">→</span><span class="s out">予想タイムのレース内偏差</span></div>
+      <div class="gain"><b>11.9%</b><span>重要度 1位</span></div><code class="name">dm_time_z</code></div>
+    <div class="chain"><div class="steps"><span class="s raw0">過去走の着順</span><span class="ar">→</span><span class="s">÷ 頭数 = 着順比</span><span class="ar">→</span><span class="s">今回と条件が近い過去走ほど重く平均(競馬場・距離・回り・内外・根幹距離・新しさ)</span><span class="ar">→</span><span class="s out">似た条件での着順比の偏差</span></div>
+      <div class="gain"><b>9.8%</b><span>2位</span></div><code class="name">rel_z_sim_fr</code></div>
+    <div class="chain"><div class="steps"><span class="s raw0">過去走の着順</span><span class="ar">→</span><span class="s">着順比</span><span class="ar">→</span><span class="s">最近の走りほど重い指数加重平均</span><span class="ar">→</span><span class="s out">近走の調子のレース内偏差</span></div>
+      <div class="gain"><b>2.9%</b><span>5位</span></div><code class="name">rel_z_h_fin_ratio_ewm</code></div>
+    <div class="chain"><div class="steps"><span class="s raw0">前走の確定単勝オッズ</span><span class="ar">→</span><span class="s">1 ÷ オッズを正規化</span><span class="ar">→</span><span class="s out">前走で市場が付けた勝率</span></div>
+      <div class="gain"><b>2.5%</b><span>6位</span></div><code class="name">h_mkt_last</code></div>
+    <div class="chain"><div class="steps"><span class="s raw0">走破タイム</span><span class="ar">→</span><span class="s">コース・距離ごとの基準タイムとの差</span><span class="ar">→</span><span class="s">その日の馬場の速さ(馬場差)を引く</span><span class="ar">→</span><span class="s">指数加重平均</span><span class="ar">→</span><span class="s out">馬場差補正タイムの偏差</span></div>
+      <div class="gain"><b>1.9%</b><span>10位</span></div><code class="name">rel_z_h_spdadj_ewm</code></div>
+    <div class="chain"><div class="steps"><span class="s raw0">騎手の過去1年の成績</span><span class="ar">→</span><span class="s">勝率(前日までの集計)</span><span class="ar">→</span><span class="s out">騎手の勝率のレース内偏差</span></div>
+      <div class="gain"><b>1.1%</b><span>14位</span></div><code class="name">rel_z_j_win_rate_1y</code></div>
+    <div class="chain"><div class="steps"><span class="s raw0">上がり3F・4角の通過順</span><span class="ar">→</span><span class="s">4角の位置から期待される上がりとの差</span><span class="ar">→</span><span class="s out">位置取りの割に脚を使えたか</span></div>
+      <div class="gain"><b>DL</b><span>過去走トークンに</span></div><code class="name">l3f_style_res</code></div>
+
+    <div class="box">
+      <h3 style="margin-bottom:10px">特徴量のグループ別の重要度(LightGBM、上位10)</h3>
+      <div class="bars" id="groupbars" role="img" aria-label="特徴量グループ別の重要度"></div>
+      <p class="small muted" style="margin-top:8px">「レース内」= 同じ値を出走馬の中で比べ直したもの。競馬は相手との相対勝負なので、絶対値より「このメンバーの中で何番目か」が効きます。</p>
+    </div>
+  </section>
+
+  <!-- 3. 2つのモデル -->
+  <section id="models">
+    <header><span class="no">3</span><h2>2つの AI: 表を読む GBM と、過去走を読む DL</h2></header>
+    <div class="models">
+      <div class="col gbm">
+        <h3><i style="background:var(--gbm)"></i>LightGBM(勾配ブースティング木)</h3>
+        <div class="box"><div class="layer"><b>入力: 特徴量 304列</b><span class="tensor">馬 × 304</span>
+          <p>前走まで 161 ・ 出馬表 121 ・ 当日 10 ・ 直前 12</p></div></div>
+        <div class="down">↓</div>
+        <div class="box hl"><div class="layer"><b>決定木 1,847本</b><span class="tensor">葉 31 ・ 学習率 0.03</span>
+          <p>前の木の間違いを次の木が直していく。1本ずつは単純な「もし〜なら」の分岐</p></div>
+          <div class="trees" aria-hidden="true" id="trees"></div></div>
+        <div class="down">↓<small>木の合計</small></div>
+        <div class="box"><div class="layer"><b>各馬のスコア</b><span class="tensor">馬 × 1</span></div></div>
+        <div class="down">↓<small>レース内 softmax</small></div>
+        <div class="box hl"><div class="layer"><b>勝率 p<sub>gbm</sub></b><span class="tensor">合計 100%</span>
+          <p>「このレースで誰が勝つか」を直接学ぶので、出力がそのまま全馬で合計100%の確率</p></div></div>
+      </div>
+
+      <div class="col dl">
+        <h3><i style="background:var(--dl)"></i>DL(Transformer 型ニューラルネット)</h3>
+        <div class="inputs">
+          <div class="box"><b>静的特徴 304列</b><span>GBM とほぼ同じ数値 + 欠損フラグ</span></div>
+          <div class="box"><b>カテゴリ 8種</b><span>騎手・調教師・父・母父ほか → 埋め込み</span></div>
+          <div class="box"><b>今日のレース</b><span>競馬場・芝ダ・馬場・距離・賞金・頭数</span></div>
+          <div class="box"><b>過去10走</b><span>1走 = 23項目 + 条件 + 騎手 + 何日前か</span></div>
+        </div>
+        <div class="down">↓</div>
+        <div class="box"><div class="layer"><b>エンコーダ</b><span class="tensor">→ 128次元</span>
+          <p>馬の特徴(304 → 256 → 128 の全結合)、レースの条件(埋め込みの和)、過去走1本ずつをベクトルに</p></div></div>
+        <div class="down">↓</div>
+        <div class="repeat"><span class="tag">× 2層</span>
+          <div class="box hl"><div class="layer"><b>過去走 Self-Attention</b><span class="tensor">10走 × 128 ・ 4ヘッド</span>
+            <p>過去走どうしの関係を読む(上り調子・条件替わり・休み明け)</p></div></div></div>
+        <div class="down">↓</div>
+        <div class="box hl"><div class="layer"><b>Cross-Attention</b><span class="tensor">問い合わせ 1 × 128</span>
+          <p>「今日の条件 + この馬」を問い合わせにして、今日に似た過去走を重く要約</p></div></div>
+        <div class="down">↓<small>馬 + 今日 + 要約 + 平均 を連結 512 → 256 → 128</small></div>
+        <div class="repeat"><span class="tag">× 2層</span>
+          <div class="box hl"><div class="layer"><b>出走馬間 Self-Attention</b><span class="tensor">頭数 × 128 ・ 4ヘッド</span>
+            <p>同じレースの全馬を見比べる(展開・力関係)。馬番の並びには依存しない</p></div></div></div>
+        <div class="down">↓</div>
+        <div class="heads">
+          <div class="box hl"><b>1着の強さ</b>s<sub>1</sub> → 勝率 p<sub>dl</sub></div>
+          <div class="box hl"><b>2〜5着の強さ</b>λ<sub>k</sub>·s<sub>1</sub> + 補正<br><span class="tensor">λ = 0.82 / 0.68 / 0.59 / 0.52</span></div>
+          <div class="box"><b>補助</b>着順 ÷ 頭数<br><span class="tensor">学習のときだけ</span></div>
+        </div>
+        <p class="small muted" style="margin-top:8px">パラメータ 約219万個。損失は1〜5着の並びの尤度(Plackett-Luce)。5回学習した平均を使う。補正は「勝ち切れないが堅実」「一発型」などの型を表す。</p>
+      </div>
+    </div>
+  </section>
+
+  <!-- 4. 合成 -->
+  <section id="mix">
+    <header><span class="no">4</span><h2>合成: 2つの AI と締切前のオッズを混ぜる</h2></header>
+    <p class="small" style="color:var(--ink-2)">市場のオッズは、たくさんの人の知恵が詰まった強い予想です。AI だけで勝負せず、オッズを情報の1つとして取り込み、市場が見落としている分だけを上乗せします(香港で成功した Bill Benter と同じ考え方)。混ぜる割合は、モデルが学習に使っていない年の結果から決めます。</p>
+    <div class="merge">
+      <div class="box g"><b>GBM の勝率</b><span class="w" style="color:var(--gbm)">−0.12</span><div class="small muted">DL と重なる分を差し引く</div></div>
+      <div class="box d"><b>DL の勝率</b><span class="w" style="color:var(--dl)">0.57</span><div class="small muted">市場に無い情報の主役</div></div>
+      <div class="box m"><b>締切前のオッズ</b><span class="w" style="color:var(--mkt)">0.61</span><div class="small muted">1 ÷ 単勝オッズ</div></div>
+    </div>
+    <div class="formula">log 勝率 = (−0.12 + 0.21r)·log p<sub>gbm</sub> + (0.57 + 0.12r)·log p<sub>dl</sub> + (0.61 − 0.36r)·log p<sub>市場</sub>(→ レース内で合計100%に)</div>
+    <div class="twocol">
+      <div class="box"><b>馬ごとに重みを変える(r)</b><p class="small">r = その馬の過去走の数の目安(0走で −1、20走以上で +1)。過去走の多い馬ほど AI を信じ、少ない馬ほどオッズに寄せます。キャリアの浅い馬は AI にも分からないことが多いからです。</p></div>
+      <div class="box"><b>判断の時点ごとに別の係数</b><p class="small">上は最終予測(発走6分前のオッズ)用。前日のオッズはまだ荒いので市場の重みは 0.28 と小さく、発走20分前用・6分前用も、それぞれの時点のオッズで決めています。</p></div>
+    </div>
+    <div class="down">↓<small>直前の補正</small></div>
+    <div class="adj">
+      <div class="box"><b>新馬戦は市場だけ</b><span>過去走の無い馬について、AI は市場に何も足せない</span></div>
+      <div class="box"><b>当日の馬場の偏り</b><span>同じ日・同じ競馬場・同じ馬場(芝/ダート)で、先に終わったレースの内外の偏り(4レース以上から)</span></div>
+      <div class="box"><b>オッズの動き</b><span>発走20分前から。直前に入ったお金の配分と、行き過ぎた動きの戻り</span></div>
+    </div>
+    <div class="box result"><b>各馬の勝率</b><div class="small muted">オッズが無いとき(発売前)は GBM 0.23・DL 0.77 だけで</div></div>
+    <div class="down">↓<small>2着以降は「残りの馬の中で、その着の強さに比例して決まる」</small></div>
+    <div class="stage">
+      <div class="box"><b>2着の強さ</b><span>勝率^0.88 × DL の2着の型</span></div>
+      <div class="box"><b>3着の強さ</b><span>勝率^0.61 × DL の3着の型</span></div>
+      <div class="box"><b>4着の強さ</b><span>勝率^0.52 × DL の4着の型</span></div>
+      <div class="box"><b>5着の強さ</b><span>勝率^0.55 × DL の5着の型</span></div>
+    </div>
+    <div class="box">
+      <h3 style="margin-bottom:18px">出力: 各馬の着順の確率(例: 勝率 28% の人気馬)</h3>
+      <div class="hist" role="img" aria-label="着順の確率の例: 1着28%、2着17%、3着11%、4着8%、5着7%、6着以下29%">
+        <div style="height:28%"><span>28%</span></div><div style="height:17%"><span>17%</span></div><div style="height:11%"><span>11%</span></div>
+        <div style="height:8%"><span>8%</span></div><div style="height:7%"><span>7%</span></div><div class="o" style="height:29%"><span>29%</span></div>
+      </div>
+      <div class="histx"><span>1着</span><span>2着</span><span>3着</span><span>4着</span><span>5着</span><span>6着以下</span></div>
+      <p class="small muted" style="margin-top:8px">同じ勝率でも、DL が「一発型」と見れば6着以下が厚く、「堅実型」と見れば2・3着が厚くなります。</p>
+    </div>
+  </section>
+
+  <!-- 5. 買い目 -->
+  <section id="bets">
+    <header><span class="no">5</span><h2>買い目のアルゴリズム: 確率 × オッズ = 期待値</h2></header>
+    <div class="flow">
+      <div class="box"><span class="k">5-1</span><div><b>3連単の全通りの確率</b><p>着ごとの強さから、1-2-3着の並び全部(18頭なら 4,896通り)の確率を計算</p></div></div>
+      <div class="down">↓</div>
+      <div class="box"><span class="k">5-2</span><div><b>単勝・複勝・枠連の的中確率</b><p>3連単の表を足し合わせて作るので、券種どうしで矛盾しない。馬連・ワイド・3連系は締切前のオッズの記録が無く、「買う時点で勝てるか」を確かめられないので、買い目には出しません</p></div></div>
+      <div class="down">↓</div>
+      <div class="box"><span class="k">5-3</span><div><b>その券種のオッズとも合成して補正</b><p>AI が市場より強気な組み合わせほど AI の間違いであることが多い(勝者の呪い)。券種ごとのオッズを混ぜ、過去の的中率で確率を補正し、「控えめな確率」(的中率の95%下限)も出す</p></div></div>
+      <div class="down">↓</div>
+      <div class="box"><span class="k">5-4</span><div><b>選び方の偏りを割り引く</b><p>期待値の高いものを選ぶと、選んだこと自体で強気に偏る。過去の実績から、確率のオッズ比を ×0.92〜0.95 に割り引く(確率の高い馬券を割り引きすぎない形)</p></div></div>
+      <div class="down">↓</div>
+      <div class="box"><span class="k">5-5</span><div><b>締切までのオッズの動きを予想</b><p>AI が市場より高く見ている馬券ほど、締切までに他の人にも買われてオッズが下がる(推奨した馬券は中央値で14%下がっていた)。下がった後の「予想される最終オッズ」で期待値を計算</p></div></div>
+      <div class="down">↓</div>
+      <div class="box result"><b>期待値 = 確率 × 予想される最終オッズ</b><div class="small muted">1より大きければ、平均して払った以上に戻ってくる買い目</div></div>
+      <div class="down">↓<small>レースごとに「買い目リスト」(期待値の高い順に5件)と大穴枠</small></div>
+    </div>
+    <div class="tiers">
+      <div class="tier pick"><h3>◆厳選</h3>
+        <ul class="cond"><li>推奨の条件を満たし</li><li>期待値が過去の上位10%の線(直前 約1.52)以上</li><li>1レースに1点まで(線を越えた中で最も高い1点。2点目以降は推奨に)</li></ul>
+        <div class="out"><span class="amt">金額: 100円(◆厳選の中でも期待値が上位10%なら1000円)</span><span class="ver">検証<b>158.4%</b>約9レースに1回</span></div></div>
+      <div class="tier rec"><h3>推奨</h3>
+        <ul class="cond"><li>割り引いた期待値 ≥ 1</li><li>控えめな確率でも期待値 ≥ 1</li><li>的中確率が券種ごとの下限以上・ケリー基準で金額が付く</li></ul>
+        <div class="out"><span class="amt">金額: 100円</span><span class="ver">検証<b>115.2%</b>(◆厳選を含む)約59%のレース</span></div></div>
+      <div class="tier watch"><h3>検討</h3>
+        <ul class="cond"><li>リストの5件のうち</li><li>推奨の条件に届かないもの</li></ul>
+        <div class="out"><span class="amt">金額: 買わない(参考)</span><span class="ver">検証<b>91.1%</b>買うと負ける側</span></div></div>
+      <div class="tier long"><h3>大穴枠(夢枠)</h3>
+        <ul class="cond"><li>控えめな確率で期待値 ≥ 1</li><li>的中確率が下限より低い(めったに当たらない)</li></ul>
+        <div class="out"><span class="amt">金額: 100円(大穴枠の中でも期待値が上位15%なら1000円。1レース最大3点)</span><span class="ver">検証<b>122.3%</b>約41回に1回当たる</span></div></div>
+    </div>
+    <p class="small muted">検証 = 2022/1/5〜2026/10/4 の 15,940 レース、直前版。発走6分前のオッズで買い目を決め、実際の払戻で精算(本番と同じ流れ。係数はテスト年より前の年だけから推定)。同じ手順で 2011〜2026年の16年・52,844 レースに広げた検証では、◆厳選 150.5%・推奨 118.5%・毎レース1位 117.8%・大穴枠 133.6%(期間ごとの数字は成績表に)。</p>
+    <p class="small muted">買い目リスト = 単勝・複勝・枠連のうち的中確率が券種ごとの下限(単勝 5% ・ 複勝 15% ・ 枠連 4%。「7〜25回に1回は当たる」目安)以上のものを、期待値の高い順に5件(推奨はそれより下でも載せる)。全レースで出る。金額は、100〜1000円の17通りの決め方(一律100円・期待値で3段階や5段階・期待値に比例・ケリー基準など)を、2011年からの3つの期間で比べて選んだ(◆厳選の中でも期待値が上位10%のものほど回収率が高く、どの期間でも同じ傾向だった)。</p>
+  </section>
+
+  <!-- 6. いつ・どう買う -->
+  <section id="when">
+    <header><span class="no">6</span><h2>いつ・どう買う: 最終予測を待って、表示の金額で買う</h2></header>
+    <ol class="tl">
+      <li><span class="t">前日 21:00</span><b>前日版</b><span>馬体重などは使わない版。前日のオッズはまだ荒いので見立ての参考に(推奨の回収率 92%)</span></li>
+      <li><span class="t">当日 朝〜</span><b>モデルの更新・オッズの更新</b><span>10分おきにモデル(特徴量・GBM・DL)、5分おきにオッズから先を計算し直し。この間の買い目は暫定</span></li>
+      <li><span class="t">発走20分前〜</span><b>オッズの動きを反映</b><span>時系列オッズの動きの補正と、予想される最終オッズ(20分前用の係数)</span></li>
+      <li class="hl"><span class="t">発走5.5分前</span><b>最終予測</b><span>EveryDB3 を更新 → 6分前用の係数で計算し、締切2分前ごろに確定(以後は変わらない)。レースの画面はその時刻に自動で読み直す</span></li>
+      <li><span class="t">発走2分前</span><b>締切</b><span>ここまでに購入</span></li>
+    </ol>
+    <p class="small" style="color:var(--ink-2)">全レースで買い目リストが出ます。札(◆厳選・推奨・検討)を見て、好みで次の3つのどれかで買います。<b>「検討」は買いません</b>(回収率は直前6分前での検証)。</p>
+    <div class="courses">
+      <div class="course main"><h3>厳選コース</h3><span class="roi">158.4%</span><p>◆厳選の札が付いた1点だけを、画面の金額(100円。◆厳選の中でも期待値が特に高い上位10%は1000円)で。一律100円なら 124.0%。画面では青緑で目立たせています。</p><div class="who">1日13Rなら約1.4R(約280円)・ 回数より確度を取りたい人</div></div>
+      <div class="course"><h3>推奨コース</h3><span class="roi">115.2%</span><p>◆厳選と推奨の札が付いた買い目を全部、画面の金額で(推奨は100円)。一律100円なら 107.9%、ケリー基準の金額なら 108.3%。</p><div class="who">1日13Rなら約7.6R・約15点(約1,590円)・ 回数も楽しみたい人</div></div>
+      <div class="course"><h3>毎レース1位コース</h3><span class="roi">112.6%</span><p>全レースでリストの1位を、1位が◆厳選なら1000円、推奨・検討なら100円で(1位の行に「毎レース1位コースなら○円」と表示)。毎レース100円一律なら 101.1%、1位が検討のレースを見送れば 122.3%。</p><div class="who">1日13Rなら13R(約2,600円)・ 競馬を楽しむのが主で、毎レース参加したい人</div></div>
+    </div>
+    <p class="small muted">厳選コースは推奨コースの中に入ります(◆厳選は推奨の中の1点で、検証ではいつもリストの1位)。毎レース1位コースは別の切り口で、1位のうち推奨にも入るのは58%。大穴枠は別枠の「夢枠」(約41回に1回当たり、回収率 122.3%)。推奨のあるレースの大穴は 124%、無いレースは 116% なので、買うなら推奨のあるレースで。関係のベン図は成績表に。</p>
+  </section>
+
+  <p class="foot">数字は 2026年10月16日時点の本番モデルのもの(学習 2000〜2025年)。特徴量の重要度は直前版の LightGBM の gain、合成の係数は最終予測(発走6分前のオッズ)用。</p>
+</div>
+
+<script>
+// 特徴量グループ別の重要度(LightGBM の gain の割合、直前版)
+const GROUPS = [["直前の予想・体重など", 17.7], ["似た条件の過去走(レース内)", 14.9], ["過去走・騎手の成績(レース内)", 14.6], ["出馬表の基本", 7.9],
+  ["近走の詳しい成績", 5.9], ["補正タイム・相手の強さ(レース内)", 5.5], ["過去走の基本成績", 4.7], ["市場の評価・タイム指数", 4.3],
+  ["騎手・調教師 × 条件", 3.2], ["同じ条件での成績", 1.7]];
+const max = Math.max(...GROUPS.map(g => g[1]));
+document.getElementById("groupbars").innerHTML = GROUPS.map(([n, v]) =>
+  `<span>${n}</span><div class="bar" style="width:${(v / max * 100).toFixed(1)}%" title="${n} ${v}%"></div><span class="v">${v}%</span>`).join("");
+// 決定木のアイコン(並びは飾り。実際は1,847本)
+const tree = '<svg viewBox="0 0 34 30"><path d="M17 4 9 15M17 4l8 11M9 15l-4 11M9 15l4 11M25 15l-3 11M25 15l5 11"/><circle cx="17" cy="4" r="2.4"/><circle cx="9" cy="15" r="2"/><circle cx="25" cy="15" r="2"/></svg>';
+document.getElementById("trees").innerHTML = tree.repeat(7) + '<span class="tensor" style="align-self:center">… 1,847本</span>';
+</script>
