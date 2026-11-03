@@ -1,4 +1,40 @@
-<title>keiba-ai の中身</title>
+<!doctype html><html lang="ja"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><style>
+html{scroll-padding-top:76px}
+.sb{position:sticky;top:0;z-index:50;background:rgba(11,18,32,.94);-webkit-backdrop-filter:saturate(160%) blur(12px);backdrop-filter:saturate(160%) blur(12px);
+ border-bottom:1px solid #26324d;color:#f6f8fc;line-height:1.3;font-family:"Zen Kaku Gothic New","Noto Sans JP",-apple-system,"Segoe UI","Hiragino Sans",sans-serif}
+.sb *{box-sizing:border-box}
+.sb-in{max-width:960px;margin:0 auto;padding:0 max(16px,env(safe-area-inset-left,0px));display:flex;align-items:center;gap:18px;min-height:64px}
+.sb a{text-decoration:none}
+.sb-brand{display:flex;align-items:center;gap:10px;color:#f6f8fc;flex:none}
+.sb-brand svg{width:36px;height:36px;display:block}
+.sb-brand b{display:block;font-size:16px;font-weight:900;letter-spacing:.03em}
+.sb-brand small{display:block;font-size:11px;color:#8a96af;font-weight:500}
+.sb-tabs{display:flex;flex:1;align-self:stretch;gap:2px}
+.sb-tab{position:relative;display:flex;align-items:center;gap:8px;padding:0 12px;color:#c3cbdc;transition:color .15s,background-color .15s}
+.sb-tab svg{width:19px;height:19px;flex:none;fill:none;stroke:currentColor;stroke-width:1.8;stroke-linecap:round;stroke-linejoin:round;opacity:.75}
+.sb-tab b{display:block;font-size:14px;font-weight:700}
+.sb-tab small{display:block;font-size:10.5px;color:#8a96af;font-weight:500}
+.sb-tab:hover{color:#f6f8fc;background:rgba(255,255,255,.05)}
+.sb-tab:active{background:rgba(255,255,255,.09)}
+.sb-tab[aria-current=page]{color:#f6f8fc}
+.sb-tab[aria-current=page] svg{stroke:#3cc4cf;opacity:1}
+.sb-tab[aria-current=page]::after{content:"";position:absolute;left:12px;right:12px;bottom:0;height:3px;border-radius:3px 3px 0 0;background:#3cc4cf}
+.sb-x{flex:none;display:flex;align-items:center;gap:7px;padding:7px 13px;border:1px solid #3a4766;border-radius:999px;color:#f6f8fc;font-size:13px;font-weight:700;
+ transition:background-color .15s,border-color .15s}
+.sb-x:hover{background:#1c2740;border-color:#46526e}
+.sb-x svg{width:13px;height:13px;fill:currentColor}
+@media (max-width:760px){
+ html{scroll-padding-top:110px}
+ .sb-in{flex-wrap:wrap;gap:0;min-height:0;padding-top:8px}
+ .sb-brand{flex:1}.sb-brand svg{width:30px;height:30px}.sb-brand small{display:none}
+ .sb-x{padding:5px 11px;font-size:12px}
+ .sb-tabs{order:3;flex-basis:100%;display:grid;grid-template-columns:repeat(4,1fr);gap:0;margin-top:4px}
+ .sb-tab{flex-direction:column;justify-content:center;gap:2px;padding:7px 0 9px;text-align:center}
+ .sb-tab b{font-size:12.5px}.sb-tab small{display:none}
+ .sb-tab[aria-current=page]::after{left:22%;right:22%}
+}
+@media (prefers-reduced-motion:reduce){.sb-tab,.sb-x{transition:none}}
+body{padding:0!important}.wrap{padding:28px 18px 64px}</style><title>keiba-ai の中身</title>
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Zen+Kaku+Gothic+New:wght@500;700;900&family=Noto+Sans+JP:wght@400;500;700&family=JetBrains+Mono:wght@500&display=swap">
 <style>
@@ -163,7 +199,7 @@ ol.tl span:not(.t) { font-size: 13px; color: var(--ink-2); }
 .foot { font-size: 12px; color: var(--muted); border-top: 1px solid var(--line); padding-top: 14px; }
 </style>
 
-<div class="wrap">
+<div class="sb"><div class="sb-in"><a class="sb-brand" href="index.html"><svg viewBox="0 0 100 100" aria-hidden="true"><circle cx="50" cy="50" r="50" fill="#121a2e"/><circle cx="50" cy="50" r="38.5" fill="none" stroke="rgba(255,255,255,.14)" stroke-width="5"/><path d="M50 11.5 A38.5 38.5 0 1 1 16.66 30.75" fill="none" stroke="#3cc4cf" stroke-width="5" stroke-linecap="round"/><circle cx="16.66" cy="30.75" r="4.2" fill="#f0c040"/><text x="50" y="47" text-anchor="middle" font-size="17" font-weight="900" fill="#f6f8fc">発走前</text><text x="50" y="68" text-anchor="middle" font-size="17" font-weight="900" fill="#3cc4cf">ラボ</text></svg><span><b>発走前ラボ</b><small>競馬AIの予想と帳簿</small></span></a><nav class="sb-tabs" aria-label="サイト内のページ"><a class="sb-tab" href="index.html"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M5 4h10a3 3 0 0 1 3 3v13H8a3 3 0 0 1-3-3z"/><path d="M9 9h5M9 13h5"/></svg><span><b>帳簿</b><small>実運用の成績</small></span></a><a class="sb-tab" href="guide.html"><svg viewBox="0 0 24 24" aria-hidden="true"><circle cx="12" cy="12" r="8.5"/><path d="M12 11v5.5M12 7.6v.4"/></svg><span><b>見方</b><small>はじめての人へ</small></span></a><a class="sb-tab" href="showcase.html"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M4 20h16M7 20v-7M12 20V5M17 20v-10"/></svg><span><b>検証値</b><small>16年の過去レース</small></span></a><a class="sb-tab" href="explain.html" aria-current="page"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="m12 4 8.5 4.5L12 13 3.5 8.5z"/><path d="m3.5 13 8.5 4.5 8.5-4.5"/></svg><span><b>しくみ</b><small>AIの中身</small></span></a></nav><a class="sb-x" href="https://x.com/hassomae_ai" rel="me"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M18.24 2.25h3.31l-7.23 8.26 8.5 11.24h-6.65l-5.21-6.82-5.97 6.82H1.68l7.73-8.84L1.25 2.25h6.83l4.71 6.23zm-1.16 17.52h1.83L7.08 4.13H5.12z"/></svg><span>@hassomae_ai</span></a></div></div><div class="wrap">
   <header>
     <div class="kicker">keiba-ai ・ JRA 中央競馬の予想 AI</div>
     <h1>1頭のデータが、買い目になるまで</h1>
