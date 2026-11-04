@@ -312,9 +312,6 @@ p { max-width: var(--w-text); }
 .num { font-variant-numeric: tabular-nums; }
 .muted { color: var(--muted); } .small { font-size: var(--t-small); }
 .good { color: var(--plus); } .bad { color: var(--minus); }
-.lead, .hero-note { max-width: 40em; }
-.hero-note { font: 700 13px/1.7 var(--f-body); }
-.return-example { margin-top: var(--s-4); padding: var(--s-3) var(--s-4); background: var(--brand-ink); color: var(--brand-paper); font: 700 14px/1.75 var(--f-body); max-width: 46em; }
 .jumpnav { display: flex; flex-wrap: wrap; gap: var(--s-2); }
 .jumpnav a { display: inline-flex; align-items: center; min-height: 32px; padding: 0 13px; border: var(--bw-2) solid var(--ink); border-radius: var(--r-pill);
   color: var(--ink); font: 800 13px/1 var(--f-body); text-decoration: none; transition: background-color var(--dur-2) var(--ease), color var(--dur-2) var(--ease); }
@@ -324,7 +321,7 @@ p { max-width: var(--w-text); }
 .terms > div { border-top: var(--bw-2) solid var(--rule); padding-top: var(--s-3); }
 .terms dt { font-weight: 900; margin-bottom: 4px; }
 .terms dd { margin: 0; font-size: 14px; color: var(--ink-2); }
-.plain-note { font: 500 13.5px/1.75 var(--f-body); color: var(--ink-2); }
+.plain-note { font: 500 13.5px/1.75 var(--f-body); color: var(--ink-2); text-wrap: pretty; }
 .subtle-note { background: var(--paper-2); padding: var(--s-4) var(--s-5); }
 .course .ci-label { display: block; font-size: 12px; color: var(--muted); margin: 0 0 10px; }
 .course .roi { display: block; margin: 8px 0 2px; }
@@ -407,18 +404,27 @@ td .ci { display: block; font: 500 11.5px/1.4 var(--f-body); color: var(--muted)
 .check p { font-size: 14px; color: var(--ink-2); }
 .check h3 { margin-bottom: 2px; font-size: 16px; }
 /* 買い方の関係 */
-.nest { display: flex; flex-direction: column; }
-.nest .n { border: var(--bw-2) solid; padding: 10px 12px 12px; background: var(--paper); display: flex; flex-direction: column; gap: 8px; min-width: 0; }
-.nest .n > .hd { display: flex; flex-wrap: wrap; gap: 4px 10px; align-items: baseline; }
+.nest { --nest-pad: var(--s-3); --nest-in: calc(var(--nest-pad) + var(--bw-2)); --nest-name: 152px; --nest-rate: 76px; --nest-count: 186px;
+  display: flex; flex-direction: column; gap: var(--s-3); }
+.nest .n { border: var(--bw-2) solid; padding: var(--nest-pad); background: var(--paper); display: flex; flex-direction: column; gap: var(--s-3); min-width: 0; }
+.nest .hd { display: grid; grid-template-columns: var(--nest-name) minmax(0, 1fr) var(--nest-rate) var(--nest-count); gap: 4px var(--s-4); align-items: baseline; }
+.nest .n3 .hd { grid-template-columns: calc(var(--nest-name) - var(--nest-in)) minmax(0, 1fr) var(--nest-rate) calc(var(--nest-count) - var(--nest-in)); }   /* 名前・説明・回収率・レース数の列が外の行と同じ位置になる */
 .nest .n b { font: 900 16px/1.4 var(--f-body); }
-.nest .n .d { font-size: 13px; color: var(--ink-2); flex: 1 1 14em; }
-.nest .n .r { font: 400 24px/1 var(--f-display); color: var(--ink); }
-.nest .n .c { font-size: 12px; color: var(--muted); font-variant-numeric: tabular-nums; }
+.nest .n .d { font-size: 13px; line-height: 1.7; color: var(--ink-2); word-break: keep-all; overflow-wrap: anywhere; }   /* 折り返すのは <wbr> の語の切れ目だけ */
+.nest .nb { white-space: nowrap; }
+.nest .n .r { font: 400 24px/1 var(--f-display); color: var(--ink); text-align: right; white-space: nowrap; }
+.nest .n .c { font-size: 12px; line-height: 1.5; color: var(--muted); font-variant-numeric: tabular-nums; }
+@media (max-width: 860px) {   /* 4列が入らない幅: 1行目に名前と回収率、その下に説明とレース数。回収率の右端は入れ子の箱とそろえる */
+  .nest .hd, .nest .n3 .hd { grid-template-columns: minmax(0, 1fr) auto; grid-template-areas: "name rate" "desc desc" "count count"; }
+  .nest .n b { grid-area: name; } .nest .n .d { grid-area: desc; } .nest .n .r { grid-area: rate; } .nest .n .c { grid-area: count; }
+  .nest .n1 > .hd, .nest .n2 > .hd { padding-right: var(--nest-in); }
+}
 .nest .n1 { border-color: var(--s1); } .nest .n2 { border-color: var(--s2); } .nest .n3 { border-color: var(--s3); }
 .vnote { display: grid; grid-template-columns: repeat(auto-fit, minmax(230px, 1fr)); gap: var(--s-4); }
 .vnote .check { grid-template-columns: 30px minmax(0, 1fr); }
 .foot { font: 500 12.5px/1.7 var(--f-body); color: var(--muted); border-top: var(--bw-2) solid var(--rule); padding-top: var(--s-3); }
 @media (max-width: 640px) {
+  .subtle-note { padding: var(--s-4); }
   .terms { grid-template-columns: 1fr; gap: var(--s-4); }
   .board { grid-template-columns: repeat(2, minmax(0, 1fr)); }
   .courses { grid-template-columns: 1fr; }
@@ -437,18 +443,18 @@ td .ci { display: block; font: 500 11.5px/1.4 var(--f-body); color: var(--muted)
 <svg class="ds-sprite" aria-hidden="true" focusable="false"><symbol id="k-pick" viewBox="0 0 24 24"><path d="M6.5 3.5h11l4 5.5L12 21 2.5 9z"/><path d="M2.5 9h19M9.5 3.5 8 9l4 12 4-12-1.5-5.5"/></symbol><symbol id="k-rec" viewBox="0 0 24 24"><circle cx="12" cy="12" r="9"/><path d="m7.6 12.4 3 3 5.8-6.4"/></symbol><symbol id="k-long" viewBox="0 0 24 24"><circle cx="12" cy="12" r="9"/><circle cx="12" cy="12" r="4.6"/><circle cx="12" cy="12" r="1.5" fill="currentColor" stroke="none"/></symbol><symbol id="k-g1" viewBox="0 0 24 24"><path d="M7 4h10v4.5a5 5 0 0 1-10 0z"/><path d="M7 6H4.2a3 3 0 0 0 3.3 4M17 6h2.8a3 3 0 0 1-3.3 4M12 13.5V17M9.5 17h5v3.5h-5z"/></symbol><symbol id="k-hit" viewBox="0 0 24 24"><path d="m12 3.2 2.6 5.5 6 .8-4.4 4.1 1.1 6L12 16.7l-5.3 2.9 1.1-6-4.4-4.1 6-.8z"/></symbol><symbol id="k-flag" viewBox="0 0 24 24"><path d="M5 21V4"/><path d="M5 4h13l-2.6 4.2L18 12.5H5"/></symbol><symbol id="k-info" viewBox="0 0 24 24"><circle cx="12" cy="12" r="9"/><path d="M12 11v5.5M12 7.8v.1"/></symbol><symbol id="k-alert" viewBox="0 0 24 24"><path d="M12 3.6 21.4 20H2.6z"/><path d="M12 10v4.4M12 17.2v.1"/></symbol></svg><header class="ds-header" id="top"><div class="ds-wrap ds-header-in"><a class="ds-logo" href="index.html"><svg viewBox="0 0 100 100" aria-hidden="true"><circle cx="50" cy="50" r="50" fill="#070807"/><circle cx="50" cy="50" r="38.5" fill="none" stroke="rgba(255,255,255,.16)" stroke-width="5"/><path d="M50 11.5 A38.5 38.5 0 1 1 16.66 30.75" fill="none" stroke="#00fa27" stroke-width="5" stroke-linecap="round"/><circle cx="16.66" cy="30.75" r="4.6" fill="#ffc400"/><text x="50" y="47" text-anchor="middle" font-size="17" font-weight="900" fill="#ffffff" font-family="Zen Kaku Gothic New, Hiragino Sans, sans-serif">発走前</text><text x="50" y="68" text-anchor="middle" font-size="17" font-weight="900" fill="#00fa27" font-family="Zen Kaku Gothic New, Hiragino Sans, sans-serif">ラボ</text></svg><span><b>発走前ラボ</b><small>Hassomae Lab</small></span></a><nav class="ds-nav" aria-label="サイト内のページ"><a href="index.html"><span class="en">Ledger</span><span class="jp">帳簿</span></a><a href="guide.html"><span class="en">Guide</span><span class="jp">見方</span></a><a href="showcase.html" aria-current="page"><span class="en">Record</span><span class="jp">検証値</span></a><a href="explain.html"><span class="en">System</span><span class="jp">しくみ</span></a></nav><div class="ds-ext"><a class="ds-pill ds-pill--sm" href="https://note.com/hassomae_ai" rel="me">note</a><a class="ds-pill ds-pill--ink ds-pill--sm" href="https://x.com/hassomae_ai" rel="me" aria-label="X @hassomae_ai"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M18.24 2.25h3.31l-7.23 8.26 8.5 11.24h-6.65l-5.21-6.82-5.97 6.82H1.68l7.73-8.84L1.25 2.25h6.83l4.71 6.23zm-1.16 17.52h1.83L7.08 4.13H5.12z"/></svg><span class="ds-hide-sm">@hassomae_ai</span></a></div></div></header>
 <section class="ds-hero"><div class="ds-wrap ds-hero-in">
   <div class="ds-hero-top"><span>Record ・ 過去16年の検証値</span><span class="r">Backtested<br>before the start</span></div>
-  <h1 class="ds-hero-titles"><span><span class="ds-mkline">推奨コースで回収率 <span id="h-rec">110.9</span>%。</span></span><span><span class="ds-mkline">厳選コースなら <span id="h-star">137.2</span>%。</span></span></h1>
+  <h1 class="ds-hero-titles"><span><span class="ds-mkline">いまの買い方を、</span></span><span><span class="ds-mkline">過去16年で試した結果。</span></span></h1>
   <span class="ds-giant" style="--chars:6" aria-hidden="true">Record</span>
-  <p class="ds-lead lead" id="lead"></p>
-  <p class="hero-note" id="hero-scope"></p>
-  <p class="hero-note" id="hero-wf" hidden></p>
-  <p class="return-example" id="return-example"></p>
-  <div class="ds-hero-foot"><span>JRA 中央競馬の予測AI</span><span>過去データでの検証結果</span><span>Scroll ↓</span></div>
+  <p class="ds-lead">Xに出す買い目と同じ決め方を、過去のレースに当てはめて採点したページです。発走6分前までの情報で選び、実際の払戻で精算しました。実運用の成績(帳簿)とは別の数字です。</p>
+  <div class="ds-hero-foot"><span id="hero-range"></span><span id="hero-asof"></span><span>Scroll ↓</span></div>
 </div></section>
 <main class="ds-wrap ds-main">
   <section class="ds-sec">
     <div class="ds-sec-head"><span class="ds-label">00 ・ Summary</span><h2 class="ds-jp">結論の数字</h2></div>
+    <p class="plain-note" id="sum-scope"></p>
     <div class="board" id="board"></div>
+    <p class="plain-note subtle-note" id="return-example"></p>
+    <p class="plain-note" id="sum-wf" hidden></p>
     <nav class="jumpnav" aria-label="このページの内容"><a href="#basics">数字の読み方</a><a href="#courses-section">3つの買い方</a><a href="#app-guide">アプリでの確認方法</a><a href="#results">詳しい成績</a><a href="#wf" id="wf-jump" hidden>期間を広げた検証</a><a href="#method">検証方法</a></nav>
   </section>
 
@@ -526,7 +532,7 @@ td .ci { display: block; font: 500 11.5px/1.4 var(--f-body); color: var(--muted)
       <div class="check"><span class="mk ok">2</span><div><h3>確定オッズの列は、比較用の参考値</h3>
         <p>締切後に分かるオッズで選び直すと、推奨コースの回収率は <span id="g-final">99</span>% でした。購入対象も変わるため、確率予測が正確になることと、回収率が上がることは別です。実際の購入判断には使えない時点です。</p></div></div>
       <div class="check"><span class="mk warn">!</span><div><h3>前日版は、翌日のレースを検討するために</h3>
-        <p>前日21時のオッズは発走までに大きく動くことがあります。この検証で前日版の推奨コースは <span id="g-prev">92</span>%。冒頭の<span id="g-hl">110.9%と137.2%</span>は、直前の情報で判断した成績です。</p></div></div>
+        <p>前日21時のオッズは発走までに大きく動くことがあります。この検証で前日版の推奨コースは <span id="g-prev">92</span>%。結論の数字の<span id="g-hl">110.9%と137.2%</span>は、直前の情報で判断した成績です。</p></div></div>
     </div>
     <p class="plain-note">表の「確率予測の誤差（logloss）」は、各馬に付けた勝率と結果のずれを測る指標です。小さいほど良く、回収率や的中率とは別の尺度です。前日版と直前版では対象レース数が異なります。</p>
   </section>
@@ -632,11 +638,10 @@ const raceCount = s => `${s.races.toLocaleString()} / ${META.races.toLocaleStrin
 const per13 = s => `1日13Rなら 約${s.per13.races.toFixed(1)}R・${s.per13.bets.toFixed(1)}点・約${(Math.round(s.per13.stake / 10) * 10).toLocaleString()}円`;
 
 // 見出しと結論の数字
-document.getElementById("h-rec").textContent = pct(M.rec.roi);
-document.getElementById("h-star").textContent = pct(M.pick.roi);
-document.getElementById("lead").innerHTML = `keiba-aiは、馬の過去成績などから予測した的中確率とオッズを比べ、全レースで期待値の高い順に「買い目リスト」を出します。
-  札の付いた推奨を全部買う「推奨」と、特に期待値が大きい◆厳選の1点に絞る「厳選」。その買い方を、過去の ${META.races.toLocaleString()} レースで検証しました。`;
-document.getElementById("hero-scope").textContent = `${META.period} ／ 発走6分前までの情報で判断 ／ 単勝、複勝、枠連の検証。アプリの金額(◆厳選は1点100円、そのうち期待値が特に高い上位10%は1000円。推奨は100円)で集計。毎レース1位と大穴枠の金額は各コースの説明のとおり。`;
+const [asofY, asofM, asofD] = META.period.split("〜").pop().trim().split("/");
+document.getElementById("hero-range").textContent = `検証値 ・ ${META.period} ・ ${META.races.toLocaleString()}レース`;   // 期間を広げた検証があれば下で書き換える
+document.getElementById("hero-asof").textContent = `数字は ${asofY}年${asofM}月${asofD}日 時点`;
+document.getElementById("sum-scope").innerHTML = `<b>検証値</b>。${META.period} の ${META.races.toLocaleString()} レースを、発走6分前までの情報で判断しました(単勝・複勝・枠連)。金額はアプリのとおりです(◆厳選は100円、そのうち期待値が特に高い上位10%は1000円。推奨は100円)。`;
 document.getElementById("return-example").innerHTML = `<b>回収率を金額に置き換えると</b><br>総購入額1万円あたりの払戻は、推奨コースで約${Math.round(M.rec.roi * 10000).toLocaleString()}円、厳選コースで約${Math.round(M.pick.roi * 10000).toLocaleString()}円だった計算です。毎回この額が戻るという意味ではありません。`;
 const BOARD = ["rec", "pick", "fav_tan", "rnd_tan"];
 document.getElementById("board").innerHTML = BOARD.map(k => {
@@ -664,10 +669,10 @@ document.getElementById("courses").innerHTML = COURSES.map(([k, n, d, w, main]) 
 
 // 3つのコースの関係(直前6分前)
 document.getElementById("nest").innerHTML = `
-  <div class="n n1"><div class="hd"><b>推奨コース</b><span class="d">◆厳選と推奨の札をすべて、アプリの金額で</span><span class="r">${pct(M.rec.roi)}%</span><span class="c">${M.rec.races.toLocaleString()}レース / ${M.rec.bets.toLocaleString()}点</span></div>
-    <div class="n n3"><div class="hd"><b>厳選コース（◆）</b><span class="d">その中の、期待値が過去の上位10%の線を越えた1点(1レース1点まで)</span><span class="r">${pct(M.pick.roi)}%</span><span class="c">${M.pick.races.toLocaleString()}レース / 1点100円か1000円</span></div></div>
+  <div class="n n1"><div class="hd"><b>推奨コース</b><span class="d">◆厳選と推奨の札をすべて、<wbr>アプリの金額で</span><span class="r">${pct(M.rec.roi)}%</span><span class="c">${M.rec.races.toLocaleString()}レース / ${M.rec.bets.toLocaleString()}点</span></div>
+    <div class="n n3"><div class="hd"><b>厳選コース（◆）</b><span class="d">その中の、<wbr>期待値が<wbr>過去の上位10%の線を<wbr>越えた1点<wbr>(1レース1点まで)</span><span class="r">${pct(M.pick.roi)}%</span><span class="c">${M.pick.races.toLocaleString()}レース / 1点100円か1000円</span></div></div>
   </div>
-  <div class="n n2" style="margin-top:10px"><div class="hd"><b>毎レース1位コース</b><span class="d">全レースでリストの1位を、◆厳選なら1000円・ほかは100円で。1位のうち推奨にも入るのは${pct(META.nest.top1_in_rec, 0)}%、◆厳選のうちリストの1位は${pct(META.nest.pick_is_top1, 0)}%</span><span class="r ${M.top1.roi >= 1 ? "" : "bad"}">${pct(M.top1.roi)}%</span><span class="c">${M.top1.races.toLocaleString()}レース / 1点100〜500円</span></div></div>`;
+  <div class="n n2"><div class="hd"><b>毎レース1位コース</b><span class="d">全レースでリストの1位を、<wbr><span class="nb">◆厳選</span>なら1000円・<wbr>ほかは100円で。<br>1位のうち推奨にも入るのは${pct(META.nest.top1_in_rec, 0)}%、<wbr><span class="nb">◆厳選</span>のうちリストの1位は${pct(META.nest.pick_is_top1, 0)}%</span><span class="r ${M.top1.roi >= 1 ? "" : "bad"}">${pct(M.top1.roi)}%</span><span class="c">${M.top1.races.toLocaleString()}レース / 1点100円か1000円</span></div></div>`;
 document.getElementById("vn1").textContent = `リストのうち推奨の条件に届かない「検討」の買い目を全部100円で買うと、回収率は${pct(M.consider.roi)}%でした。同じリストでも、推奨は${pct(M.rec_flat.roi)}%(100円一律)。毎レース1位コースで ◆厳選だけ厚く買うのはこのためで、毎レース100円一律の${pct(M.top1_flat.roi)}%から${pct(M.top1.roi)}%に上がります。`;
 document.getElementById("vn2").textContent = `「大穴枠」は的中確率が低い別枠の候補です。大穴枠の的中率は${pct(M.longshot.hit)}%、回収率は${pct(M.longshot.roi)}%。推奨のあるレースの大穴は${pct(M.long_rec.roi)}%、ないレースは${pct(M.long_norec.roi)}%でした。3コースには追加せず、下の表で別に比較しています。`;
 
@@ -760,7 +765,8 @@ if (WF.periods && WF.periods.length > 1) {
   document.getElementById("wf-title").textContent = `期間を${ys.length}年に広げた検証`;
   document.getElementById("wf-jump").textContent = `${ys.length}年の検証`;
   document.getElementById("wf-q").textContent = `${span}・${WF.races.toLocaleString()}レース`;
-  const hw = document.getElementById("hero-wf");
+  document.getElementById("hero-range").textContent = `検証値 ・ ${span} ・ ${WF.races.toLocaleString()}レース`;
+  const hw = document.getElementById("sum-wf");
   hw.innerHTML = `同じ手順で${span}の${ys.length}年・${WF.races.toLocaleString()}レースに広げた検証でも、厳選コース ${pct(WF.total.pick.roi)}%・推奨コース ${pct(WF.total.rec.roi)}%(<a href="#wf">期間ごとの成績</a>)。`;
   hw.hidden = false;
   document.getElementById("wf-intro").innerHTML = `上の成績(${last.name}年)と同じ手順で、${span}の各年を「その年より前のデータだけ」で学習し直したモデルで予測し、同じ買い方で精算しました。
