@@ -1,219 +1,439 @@
-<!doctype html><html lang="ja"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><style>
-html{scroll-padding-top:76px}
-.sb{position:sticky;top:0;z-index:50;background:rgba(11,18,32,.94);-webkit-backdrop-filter:saturate(160%) blur(12px);backdrop-filter:saturate(160%) blur(12px);
- border-bottom:1px solid #26324d;color:#f6f8fc;line-height:1.3;font-family:"Zen Kaku Gothic New","Noto Sans JP",-apple-system,"Segoe UI","Hiragino Sans",sans-serif}
-.sb *{box-sizing:border-box}
-.sb-in{max-width:960px;margin:0 auto;padding:0 max(16px,env(safe-area-inset-left,0px));display:flex;align-items:center;gap:18px;min-height:64px}
-.sb a{text-decoration:none}
-.sb-brand{display:flex;align-items:center;gap:10px;color:#f6f8fc;flex:none}
-.sb-brand svg{width:36px;height:36px;display:block}
-.sb-brand b{display:block;font-size:16px;font-weight:900;letter-spacing:.03em}
-.sb-brand small{display:block;font-size:11px;color:#8a96af;font-weight:500}
-.sb-tabs{display:flex;flex:1;align-self:stretch;gap:2px}
-.sb-tab{position:relative;display:flex;align-items:center;gap:8px;padding:0 12px;color:#c3cbdc;transition:color .15s,background-color .15s}
-.sb-tab svg{width:19px;height:19px;flex:none;fill:none;stroke:currentColor;stroke-width:1.8;stroke-linecap:round;stroke-linejoin:round;opacity:.75}
-.sb-tab b{display:block;font-size:14px;font-weight:700}
-.sb-tab small{display:block;font-size:10.5px;color:#8a96af;font-weight:500}
-.sb-tab:hover{color:#f6f8fc;background:rgba(255,255,255,.05)}
-.sb-tab:active{background:rgba(255,255,255,.09)}
-.sb-tab[aria-current=page]{color:#f6f8fc}
-.sb-tab[aria-current=page] svg{stroke:#3cc4cf;opacity:1}
-.sb-tab[aria-current=page]::after{content:"";position:absolute;left:12px;right:12px;bottom:0;height:3px;border-radius:3px 3px 0 0;background:#3cc4cf}
-.sb-x{flex:none;display:flex;align-items:center;gap:7px;padding:7px 13px;border:1px solid #3a4766;border-radius:999px;color:#f6f8fc;font-size:13px;font-weight:700;
- transition:background-color .15s,border-color .15s}
-.sb-x:hover{background:#1c2740;border-color:#46526e}
-.sb-x svg{width:13px;height:13px;fill:currentColor}
-@media (max-width:760px){
- html{scroll-padding-top:110px}
- .sb-in{flex-wrap:wrap;gap:0;min-height:0;padding-top:8px}
- .sb-brand{flex:1}.sb-brand svg{width:30px;height:30px}.sb-brand small{display:none}
- .sb-x{padding:5px 11px;font-size:12px}
- .sb-tabs{order:3;flex-basis:100%;display:grid;grid-template-columns:repeat(4,1fr);gap:0;margin-top:4px}
- .sb-tab{flex-direction:column;justify-content:center;gap:2px;padding:7px 0 9px;text-align:center}
- .sb-tab b{font-size:12.5px}.sb-tab small{display:none}
- .sb-tab[aria-current=page]::after{left:22%;right:22%}
-}
-@media (prefers-reduced-motion:reduce){.sb-tab,.sb-x{transition:none}}
-body{padding:0!important}.wrap{padding:28px 18px 64px}</style><title>keiba-ai の成績と使い方</title>
-<link rel="preconnect" href="https://fonts.googleapis.com">
-<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Zen+Kaku+Gothic+New:wght@500;700;900&family=Noto+Sans+JP:wght@400;500;700&family=JetBrains+Mono:wght@500&display=swap">
-<style>
-/* 成績と使い方: 結論 → 数字の読み方 → 買い方 → アプリでの確認 → 比較 → 検証方法。
-   数字とグラフのデータは scripts/build_showcase.py が埋め込む(const META / TIMING / SERIES の行) */
+<!doctype html><html lang="ja"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover"><title>発走前ラボの検証値</title>
+<link rel="preconnect" href="https://fonts.googleapis.com"><link rel="preconnect" href="https://fonts.gstatic.com" crossorigin><link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Anton&family=Inter+Tight:wght@600;700;800&family=Zen+Kaku+Gothic+New:wght@500;700;900&display=swap"><style>/* ==========================================================================
+   発走前ラボ デザインシステム(DS)v1 ・ 2026-11-04
+   定義書: docs/design-system.md(UI を作る・直すときは必ずそれに従う)。
+   下敷き: novasell.com = 黒・白・蛍光グリーンの3色、縦長の英字の大見出し、文字に敷くマーカーの帯、丸いボタン、矢印の導線、大きい数字。
+   緑は「発走の合図」。全ページで同じ箱(--w-page)に左端をそろえ、上 = 緑の帯(ヒーロー)、中 = 紙、下 = 黒の帯(フッター)
+   ========================================================================== */
 :root {
-  --bg: #f6f6f2; --surface: #fcfcfb; --ink: #14150f; --ink-2: #4b4c45; --muted: #7a7b72; --line: #e2e2da; --turf: #1f6b45;
-  --s1: #2a78d6; --s2: #eb6834; --s3: #1baf7a; --s4: #eda100; --s5: #e87ba4; --s6: #008300; --s7: #4a3aa7; --good: #1f6b45; --bad: #b4382c;
-  --display: "Zen Kaku Gothic New", "Hiragino Sans", "Yu Gothic", sans-serif;
-  --body: "Noto Sans JP", "Hiragino Sans", "Yu Gothic", sans-serif;
-  --mono: "JetBrains Mono", ui-monospace, Consolas, monospace;
+  /* --- 色: ブランドの帯(テーマで変えない) --- */
+  --signal: #00fa27;          /* 発走の合図の緑。帯・マーカー・暗い面の強調。白い紙の上の文字には使わない */
+  --brand-ink: #070807;       /* 黒の帯(フッター)・緑の帯の上の文字 */
+  --brand-paper: #ffffff;     /* 黒の帯の上の文字 */
+  --brand-muted: #b6bbb1;     /* 黒の帯の上の控えめな文字 */
+  --on-signal: #070807;       /* 緑の上の文字 */
+  /* --- 色: 紙と文字(明るい表示) --- */
+  --paper: #ffffff; --paper-2: #f3f4f1; --paper-3: #e7e9e3;
+  --ink: #0b0d0a; --ink-2: #393d36; --muted: #5f645c;
+  --line: #d8dbd3; --rule: #0b0d0a;
+  --accent: #007a14;          /* 紙の上の緑の文字・リンク(白に対してコントラスト 5.5) */
+  /* --- 色: 意味(アプリ・X の画像と同じ意味) --- */
+  --pick: #cc3a00; --pick-bg: #ffe9de;      /* 🔥厳選 */
+  --rec: #007a14;  --rec-bg: #dcfbe1;       /* 🟢推奨 */
+  --long: #1f45d6; --long-bg: #e3e9ff;      /* 🎯大穴 */
+  --watch: #5f645c; --watch-bg: #ebede8;    /* 検討・比べる相手(1番人気など) */
+  --hit: #ffc400; --hit-ink: #7a5800; --hit-bg: #fff2c2;   /* 的中 = 金 */
+  --g1: #b0308f; --g1-bg: #fbe5f5;          /* G1 の当てにいく枠 */
+  --plus: #007a14; --minus: #c41d22; --warn: #955500; --warn-bg: #fff0cf;
+  --bar: #0b0d0a; --bar-2: #c6cac1; --hl: #eafdec;
+  /* --- 文字 --- */
+  --f-display: "Anton", "Zen Kaku Gothic New", "Hiragino Sans", "Yu Gothic", sans-serif;     /* 英字の大見出し・大きい数字 */
+  --f-label: "Inter Tight", "Zen Kaku Gothic New", "Segoe UI", system-ui, sans-serif;        /* 英字の小さいラベル */
+  --f-body: "Zen Kaku Gothic New", "Hiragino Sans", "Hiragino Kaku Gothic ProN", "Yu Gothic", "Meiryo", sans-serif;
+  --f-num: "Inter Tight", "Segoe UI", system-ui, sans-serif;                                 /* 表の数字(桁をそろえる) */
+  --t-giant: clamp(84px, 23vw, 300px);
+  --t-d1: clamp(44px, 7.4vw, 96px);
+  --t-d2: clamp(34px, 5.2vw, 64px);
+  --t-d3: clamp(24px, 3.1vw, 36px);
+  --t-h1: clamp(24px, 3.9vw, 40px);
+  --t-h2: clamp(20px, 2.5vw, 26px);
+  --t-h3: 17px;
+  --t-body: 16px; --t-small: 13px; --t-label: 11.5px;
+  /* --- 余白・幅 --- */
+  --s-1: 4px; --s-2: 8px; --s-3: 12px; --s-4: 16px; --s-5: 24px; --s-6: 32px; --s-7: 48px; --s-8: 72px; --s-9: 112px;
+  --w-page: 1120px;           /* 全ページ共通の箱。ヘッダー・ヒーロー・本文・フッターの左端はここでそろう */
+  --w-text: 42em;             /* 長い文章の行の長さ(左端は箱にそろえたまま) */
+  --gutter: clamp(16px, 4vw, 40px);
+  /* --- 形 --- */
+  --r-box: 0px;               /* 面は角を落とさない(帳簿の罫線) */
+  --r-pill: 999px;            /* ボタン・札・切り替えは丸 */
+  --bw: 1px; --bw-2: 2px;
+  /* --- 動き --- */
+  --ease: cubic-bezier(.2, .7, .2, 1); --dur-1: 120ms; --dur-2: 220ms; --dur-3: 650ms;
+  --mk-wipe: 1;               /* マーカーを左から引く演出。暗い表示では 0(文字が背景に沈むため) */
+  color-scheme: light;
 }
-@media (prefers-color-scheme: dark) { :root:not([data-theme="light"]) {
-  --bg: #0f100d; --surface: #1a1a19; --ink: #f2f2ec; --ink-2: #c3c2b7; --muted: #8e8e85; --line: #2c2d27; --turf: #5fbf8b;
-  --s1: #3987e5; --s2: #d95926; --s3: #199e70; --s4: #c98500; --s5: #d55181; --s6: #008300; --s7: #9085e9; --good: #5fbf8b; --bad: #ef7b6e; color-scheme: dark; } }
+/* いつも暗い表示にする面(配信画面 /live/ など): 暗い表示と同じ値をその要素から下に入れる */
+.ds-dark {
+  --paper: #060706; --paper-2: #121411; --paper-3: #1d201b;
+  --ink: #f2f4ef; --ink-2: #c5c9c0; --muted: #969c91;
+  --line: #2a2e27; --rule: #f2f4ef; --accent: #00fa27;
+  --pick: #ff7a3d; --pick-bg: #35170a; --rec: #3dfc5c; --rec-bg: #0a2b10; --long: #7d9dff; --long-bg: #141d3f;
+  --watch: #969c91; --watch-bg: #1d201b; --hit: #ffd233; --hit-ink: #ffd233; --hit-bg: #3a2e05;
+  --g1: #f08ad9; --g1-bg: #3a1533; --plus: #3dfc5c; --minus: #ff6b6b; --warn: #ffb547; --warn-bg: #352306;
+  --bar: #f2f4ef; --bar-2: #3b3f37; --hl: #0c2611; --mk-wipe: 0; color-scheme: dark;
+}
+/* 以前の名前(古いページとテンプレートのため。新しく書くときは上の名前を使う)。.ds-dark でも計算し直すため、両方に置く */
+:root, .ds-dark {
+  --bg: var(--paper); --surface: var(--paper); --surface-2: var(--paper-2);
+  --text: var(--ink); --text-2: var(--ink-2); --line-2: var(--paper-3);
+  --gold: var(--hit-ink); --gold-bg: var(--hit-bg);
+  --good: var(--plus); --bad: var(--minus);
+}
+@media (prefers-color-scheme: dark) {
+  :root:not([data-theme="light"]) {
+    --paper: #060706; --paper-2: #121411; --paper-3: #1d201b;
+    --ink: #f2f4ef; --ink-2: #c5c9c0; --muted: #969c91;
+    --line: #2a2e27; --rule: #f2f4ef; --accent: #00fa27;
+    --pick: #ff7a3d; --pick-bg: #35170a; --rec: #3dfc5c; --rec-bg: #0a2b10; --long: #7d9dff; --long-bg: #141d3f;
+    --watch: #969c91; --watch-bg: #1d201b; --hit: #ffd233; --hit-ink: #ffd233; --hit-bg: #3a2e05;
+    --g1: #f08ad9; --g1-bg: #3a1533; --plus: #3dfc5c; --minus: #ff6b6b; --warn: #ffb547; --warn-bg: #352306;
+    --bar: #f2f4ef; --bar-2: #3b3f37; --hl: #0c2611; --mk-wipe: 0; color-scheme: dark;
+  }
+}
 :root[data-theme="dark"] {
-  --bg: #0f100d; --surface: #1a1a19; --ink: #f2f2ec; --ink-2: #c3c2b7; --muted: #8e8e85; --line: #2c2d27; --turf: #5fbf8b;
-  --s1: #3987e5; --s2: #d95926; --s3: #199e70; --s4: #c98500; --s5: #d55181; --s6: #008300; --s7: #9085e9; --good: #5fbf8b; --bad: #ef7b6e; color-scheme: dark; }
-* { box-sizing: border-box; }
-body { background: var(--bg); color: var(--ink); font: 15px/1.75 var(--body); padding-inline: 18px; padding-block: 28px 64px; margin: 0; }
-.wrap { max-width: 960px; margin: 0 auto; display: flex; flex-direction: column; gap: 44px; }
-h1, h2, h3 { font-family: var(--display); text-wrap: balance; margin: 0; letter-spacing: .01em; }
-h1 { font-size: clamp(28px, 6vw, 44px); font-weight: 900; line-height: 1.2; }
-h2 { font-size: 21px; font-weight: 900; }
-h3 { font-size: 16px; font-weight: 700; }
-p { margin: 0; max-width: 66ch; }
+  --paper: #060706; --paper-2: #121411; --paper-3: #1d201b;
+  --ink: #f2f4ef; --ink-2: #c5c9c0; --muted: #969c91;
+  --line: #2a2e27; --rule: #f2f4ef; --accent: #00fa27;
+  --pick: #ff7a3d; --pick-bg: #35170a; --rec: #3dfc5c; --rec-bg: #0a2b10; --long: #7d9dff; --long-bg: #141d3f;
+  --watch: #969c91; --watch-bg: #1d201b; --hit: #ffd233; --hit-ink: #ffd233; --hit-bg: #3a2e05;
+  --g1: #f08ad9; --g1-bg: #3a1533; --plus: #3dfc5c; --minus: #ff6b6b; --warn: #ffb547; --warn-bg: #352306;
+  --bar: #f2f4ef; --bar-2: #3b3f37; --hl: #0c2611; --mk-wipe: 0; color-scheme: dark;
+}
+
+/* ========== 土台 ========== */
+*, *::before, *::after { box-sizing: border-box; }
+html { -webkit-text-size-adjust: 100%; text-size-adjust: 100%; scroll-padding-top: 88px; }   /* 固定ヘッダーの高さ + 余白(ページ内リンク) */
+@media (max-width: 860px) { html { scroll-padding-top: 112px; } }
+body { margin: 0; background: var(--paper); color: var(--ink); font: 500 var(--t-body)/1.85 var(--f-body); -webkit-font-smoothing: antialiased; }
+h1, h2, h3, h4 { margin: 0; font-family: var(--f-body); font-weight: 900; line-height: 1.35; letter-spacing: .01em; text-wrap: balance; }
+p { margin: 0; }
+b, strong { font-weight: 700; }
+a { color: var(--accent); text-decoration-thickness: 1.5px; text-underline-offset: .22em; }
+::selection { background: var(--signal); color: var(--on-signal); }
+:focus-visible { outline: 3px solid var(--ink); outline-offset: 2px; }
+img, svg { max-width: 100%; }
+
+/* ========== 箱(全ページ共通の左端) ========== */
+.ds-wrap { width: 100%; max-width: calc(var(--w-page) + 2 * var(--gutter)); margin-inline: auto;
+  padding-left: max(var(--gutter), env(safe-area-inset-left, 0px)); padding-right: max(var(--gutter), env(safe-area-inset-right, 0px)); }
+.ds-main { display: grid; gap: var(--s-8); padding-block: var(--s-7) var(--s-8); }
+.ds-prose { max-width: var(--w-text); }
+.ds-prose > * + * { margin-top: var(--s-4); }
+.ds-scroll { overflow-x: auto; -webkit-overflow-scrolling: touch; }
+
+/* ========== ヘッダー(上部のバー。サイト・アプリ・見方/検証値/しくみで同じもの) ========== */
+body::before { content: ""; position: fixed; inset: 0 0 auto; height: env(safe-area-inset-top, 0px); z-index: 60; background: var(--paper); }
+.ds-header { position: sticky; top: env(safe-area-inset-top, 0px); z-index: 50; background: var(--paper); border-bottom: var(--bw-2) solid var(--rule); }
+.ds-header-in { display: flex; align-items: center; gap: var(--s-5); min-height: 64px; }
+.ds-logo { display: inline-flex; align-items: center; gap: 10px; color: var(--ink); text-decoration: none; flex: none; }
+.ds-logo svg { width: 38px; height: 38px; flex: none; display: block; }
+.ds-logo b { display: block; font: 900 17px/1.15 var(--f-body); letter-spacing: .02em; }
+.ds-logo small { display: block; font: 800 10px/1.2 var(--f-label); letter-spacing: .14em; text-transform: uppercase; color: var(--muted); }
+.ds-nav { display: flex; align-self: stretch; flex: 1; min-width: 0; }
+/* ページ名は英字(上)と日本語(下)。1つのページ = 同じ幅の区域(--nav-zone)で、文字は区域の中央。今のページの線は区域の幅いっぱいに引き、
+   バーの下の罫線に重ねる(2026-11-04 v2.1。文字の幅に合わせた線は不自然 = ユーザーの指摘) */
+.ds-nav { --nav-zone: 116px; }
+.ds-nav a { position: relative; flex: 0 0 var(--nav-zone); display: flex; flex-direction: column; justify-content: center; align-items: center; gap: 3px;
+  padding: 0 6px; color: var(--ink); text-decoration: none; text-align: center; }
+.ds-nav a::after { content: ""; position: absolute; left: 0; right: 0; bottom: calc(-1 * var(--bw-2)); height: 5px; background: transparent; }
+.ds-nav a:hover::after { background: var(--line); }
+.ds-nav a[aria-current="page"]::after { background: var(--signal); }
+.ds-nav .en { font: 800 10.5px/1 var(--f-label); letter-spacing: .12em; text-transform: uppercase; color: var(--muted); }
+.ds-nav .jp { position: relative; font: 800 14px/1.2 var(--f-body); }
+.ds-nav a[aria-current="page"] .en { color: var(--ink); }
+.ds-ext { display: flex; align-items: center; gap: var(--s-2); flex: none; }
+@media (max-width: 860px) {
+  .ds-header-in { flex-wrap: wrap; gap: 0; min-height: 0; padding-top: 8px; }
+  .ds-logo { flex: 1; } .ds-logo svg { width: 32px; height: 32px; } .ds-logo small { display: none; }
+  .ds-nav { order: 3; flex-basis: 100%; display: grid; grid-template-columns: repeat(4, minmax(0, 1fr)); margin-top: 6px; }
+  .ds-nav a { padding: 6px 4px 10px; }   /* 4つの区域が横いっぱい(grid の列) */
+  .ds-ext .ds-pill { min-height: 32px; padding: 0 12px; font-size: 12.5px; }
+  .ds-ext .ds-hide-sm { display: none; }
+}
+
+/* ========== 線のアイコン(🔥🟢🎯 の代わり。図形は dskit.ICONS、元のスプライトはヘッダー・base.html が入れる) ==========
+   <svg class="ki ki-pick"><use href="#k-pick"/></svg>。太さ 2.4 の線・文字の 1.2 倍。色は種類の色(札の中では札の文字の色) */
+.ds-sprite { position: absolute; width: 0; height: 0; overflow: hidden; }
+.ki { width: 1.2em; height: 1.2em; flex: none; vertical-align: -.24em; fill: none; stroke: currentColor; stroke-width: 2.4;
+  stroke-linecap: round; stroke-linejoin: round; overflow: visible; }
+.ki-pick { color: var(--pick); } .ki-rec { color: var(--rec); } .ki-long { color: var(--long); } .ki-g1 { color: var(--g1); } .ki-hit { color: var(--hit-ink); }
+.kl { display: inline-flex; align-items: center; gap: .3em; font-weight: 800; white-space: nowrap; }
+
+/* ========== ボタン(丸) ========== */
+.ds-pill { display: inline-flex; align-items: center; justify-content: center; gap: 8px; min-height: 40px; padding: 0 18px; border-radius: var(--r-pill);
+  border: var(--bw-2) solid var(--ink); background: var(--paper); color: var(--ink); font: 800 14px/1 var(--f-body); text-decoration: none;
+  white-space: nowrap; cursor: pointer; transition: transform var(--dur-1) var(--ease), background-color var(--dur-2) var(--ease), color var(--dur-2) var(--ease); }
+.ds-pill:hover { background: var(--ink); color: var(--paper); }
+.ds-pill:active { transform: scale(.97); }
+.ds-pill svg { width: 14px; height: 14px; fill: currentColor; }
+.ds-pill--ink { background: var(--ink); color: var(--paper); }
+.ds-pill--ink:hover { background: var(--signal); color: var(--on-signal); }
+.ds-pill--signal { background: var(--signal); border-color: var(--signal); color: var(--on-signal); }
+.ds-pill--signal:hover { background: var(--brand-ink); border-color: var(--brand-ink); color: var(--signal); }
+.ds-pill--sm { min-height: 32px; padding: 0 13px; font-size: 13px; }
+
+/* ========== ヒーロー(各ページの頭。緑の帯) ========== */
+.ds-hero { background: var(--signal); color: var(--on-signal); overflow: hidden; }
+.ds-hero a { color: var(--on-signal); }
+.ds-hero-in { padding-block: var(--s-5) var(--s-4); }
+.ds-hero-top { display: flex; justify-content: space-between; align-items: flex-start; gap: var(--s-4);
+  font: 800 var(--t-label)/1.35 var(--f-label); letter-spacing: .1em; text-transform: uppercase; }
+.ds-hero-top .r { text-align: right; }
+.ds-hero-titles { display: flex; flex-direction: column; align-items: flex-start; gap: 8px; margin-top: var(--s-7); }
+.ds-mkline { display: inline; background: var(--brand-ink); color: var(--signal); font: 900 var(--t-h1)/1.32 var(--f-body);
+  padding: .04em .26em; letter-spacing: .02em; -webkit-box-decoration-break: clone; box-decoration-break: clone; }
+.ds-giant { display: block; margin: var(--s-4) 0 0 -.035em; font: 400 var(--t-giant)/.88 var(--f-display); letter-spacing: -.005em;
+  text-transform: uppercase; white-space: nowrap; color: var(--on-signal);
+  /* 語の文字数(--chars)から、箱の幅いっぱいになる大きさに(novasell の全幅の英字) */
+  font-size: min(calc((100vw - 2 * var(--gutter) - 16px) / (var(--chars, 6) * .47)), calc(var(--w-page) / (var(--chars, 6) * .47)), 360px); }   /* 360px まで(帯が画面を埋めて中身が押し出されないように) */
+.ds-lead { max-width: 36em; margin-top: var(--s-5); font: 700 clamp(15.5px, 1.9vw, 18.5px)/1.85 var(--f-body); }
+.ds-hero-foot { display: flex; justify-content: space-between; flex-wrap: wrap; gap: var(--s-2) var(--s-5); margin-top: var(--s-6); padding-top: var(--s-3);
+  border-top: var(--bw-2) solid var(--on-signal); font: 800 var(--t-label)/1.5 var(--f-label); letter-spacing: .1em; text-transform: uppercase; }
+/* 読み込んだときの動きは、大きい英字のせり上がりだけ(位置だけ動かす。文字を隠す演出は使わない = 裏で開いても全部見える) */
+@media (prefers-reduced-motion: no-preference) { .ds-hero .ds-giant { animation: ds-rise .7s var(--ease) both; } }
+@keyframes ds-rise { from { transform: translateY(12%); } to { transform: none; } }
+
+/* ========== 見出し ========== */
+.ds-sec { display: grid; gap: var(--s-5); min-width: 0; scroll-margin-top: 96px; }
+.ds-sec-head { display: grid; gap: 6px; padding-top: var(--s-3); border-top: var(--bw-2) solid var(--rule); }
+.ds-label { font: 800 var(--t-label)/1.35 var(--f-label); letter-spacing: .1em; text-transform: uppercase; color: var(--muted); }
+/* .ds-en = 節の英字の大見出し。定義書 v2 で使わなくなった(日本語の見出しが主役)。新しく使わない */
+.ds-en { display: block; font: 400 var(--t-d2)/.9 var(--f-display); text-transform: uppercase; letter-spacing: .005em; color: var(--ink); }
+.ds-jp { font: 900 clamp(22px, 3vw, 32px)/1.35 var(--f-body); }   /* 節の主役(日本語の見出し) */
+.ds-sec-head .ds-jp { margin-top: 2px; }
+.ds-h3 { font: 900 var(--t-h3)/1.45 var(--f-body); }
+
+/* ========== マーカー(文字に敷く緑の帯) ========== */
+.ds-mk { background-image: linear-gradient(var(--signal), var(--signal)); background-repeat: no-repeat; background-size: 100% 100%;
+  color: var(--on-signal); padding: .02em .18em; -webkit-box-decoration-break: clone; box-decoration-break: clone; }
+.ds-mk.is-in { transition: background-size var(--dur-3) var(--ease); }
+.ds-mk.is-pending { background-size: 0% 100%; }
+.ds-mk--ink { background-image: linear-gradient(var(--brand-ink), var(--brand-ink)); color: var(--signal); }
+
+/* ========== 大きい数字 ========== */
+.ds-stats { display: grid; grid-template-columns: repeat(auto-fit, minmax(min(100%, 220px), 1fr)); gap: var(--s-5) var(--s-5); }
+.ds-stat { display: grid; gap: 6px; align-content: start; padding-top: var(--s-3); border-top: var(--bw-2) solid var(--rule); min-width: 0; }
+.ds-stat-k { display: flex; align-items: flex-end; flex-wrap: wrap; gap: 4px 8px; font: 800 14px/1.4 var(--f-body); min-height: 2.8em; }   /* 2行分。数字の位置をそろえる */
+.ds-stat-v { font: 400 var(--t-d2)/.95 var(--f-display); letter-spacing: .005em; }
+.ds-stat-v small { font: 800 .34em/1 var(--f-body); margin-left: .2em; letter-spacing: 0; }
+.ds-stat-s { font: 500 var(--t-small)/1.65 var(--f-body); color: var(--muted); }
+
+/* ========== 面 ========== */
+.ds-card { background: var(--paper); border: var(--bw-2) solid var(--rule); border-radius: var(--r-box); padding: var(--s-5); min-width: 0; }
+.ds-card--soft { background: var(--paper-2); border: var(--bw) solid var(--line); }
+.ds-band { background: var(--brand-ink); color: var(--brand-paper); }
+
+/* ========== 導線の行(矢印 + 英字 + 日本語) ========== */
+.ds-rows { display: grid; border-top: var(--bw-2) solid var(--rule); }
+.ds-row { display: grid; grid-template-columns: auto minmax(0, 1fr) auto; align-items: center; gap: var(--s-2) var(--s-5); padding: var(--s-4) 0;
+  border-bottom: var(--bw-2) solid var(--rule); color: var(--ink); text-decoration: none; }
+.ds-row-arrow { font: 400 clamp(26px, 3.6vw, 42px)/1 var(--f-display); transition: transform var(--dur-2) var(--ease); }
+.ds-row-en { display: block; font: 400 var(--t-d3)/1 var(--f-display); text-transform: uppercase; }
+.ds-row-jp { display: block; margin-top: 6px; font: 700 14px/1.5 var(--f-body); color: var(--ink-2); }
+.ds-row-end { font: 800 var(--t-label)/1 var(--f-label); letter-spacing: .1em; text-transform: uppercase; color: var(--muted); }
+.ds-row:hover .ds-row-arrow { transform: translateX(8px); }
+.ds-row:hover .ds-row-en { text-decoration: underline; text-decoration-thickness: 3px; text-underline-offset: .12em; }
+
+/* ========== 札(買い目の種類・状態) ========== */
+.ds-tag { display: inline-flex; align-items: center; gap: 6px; padding: 5px 11px; border-radius: var(--r-pill); font: 800 13px/1 var(--f-body);
+  white-space: nowrap; background: var(--paper-2); color: var(--ink-2); }
+.ds-tag--pick { background: var(--pick-bg); color: var(--pick); }
+.ds-tag--rec { background: var(--rec-bg); color: var(--rec); }
+.ds-tag--long { background: var(--long-bg); color: var(--long); }
+.ds-tag--hit { background: var(--hit); color: var(--on-signal); }
+.ds-tag--g1 { background: var(--g1-bg); color: var(--g1); }
+.ds-tag--ink { background: var(--ink); color: var(--paper); }
+
+/* ========== 表 ========== */
+.ds-table { width: 100%; border-collapse: collapse; font-variant-numeric: tabular-nums; }
+.ds-table th, .ds-table td { padding: 12px 10px; border-bottom: var(--bw) solid var(--line); text-align: right; white-space: nowrap; vertical-align: middle; }
+.ds-table th:first-child, .ds-table td:first-child { text-align: left; padding-left: 0; }
+.ds-table thead th { font: 800 12px/1.35 var(--f-body); color: var(--muted); border-bottom: var(--bw-2) solid var(--rule); white-space: normal; vertical-align: bottom; }
+.ds-table .ds-n { font-family: var(--f-num); font-weight: 700; }
+
+/* ========== 流れる文字の帯 ========== */
+.ds-ticker { overflow: hidden; background: var(--brand-ink); color: var(--signal); white-space: nowrap; }
+.ds-ticker-track { display: inline-flex; animation: ds-tick 42s linear infinite; will-change: transform; }
+.ds-ticker span { padding: 13px 0; font: 400 clamp(17px, 2vw, 24px)/1 var(--f-display); text-transform: uppercase; letter-spacing: .03em; }
+.ds-ticker span::after { content: "/"; margin: 0 .9em; color: var(--brand-muted); }
+.ds-ticker:hover .ds-ticker-track { animation-play-state: paused; }
+@keyframes ds-tick { to { transform: translateX(-50%); } }
+
+/* ========== 開くと続き ========== */
+.ds-acc { border-top: var(--bw-2) solid var(--rule); }
+.ds-acc > summary { list-style: none; cursor: pointer; display: flex; justify-content: space-between; align-items: center; gap: var(--s-3);
+  padding: var(--s-3) 0; font: 900 16px/1.45 var(--f-body); }
+.ds-acc > summary::-webkit-details-marker { display: none; }
+.ds-acc > summary::after { content: "+"; flex: none; font: 400 30px/1 var(--f-display); }
+.ds-acc[open] > summary::after { content: "−"; }
+
+/* ========== 小さい文字 ========== */
+.ds-note { font: 500 var(--t-small)/1.75 var(--f-body); color: var(--muted); }
+.ds-num { font-family: var(--f-num); font-variant-numeric: tabular-nums; }
+
+/* ========== フッター(黒の帯) ========== */
+.ds-footer { background: var(--brand-ink); color: var(--brand-paper); overflow: hidden; }
+.ds-footer a { color: var(--brand-paper); text-decoration: none; }
+.ds-footer-in { padding-block: var(--s-7) var(--s-4); }
+.ds-foot-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(min(100%, 150px), 1fr)); gap: var(--s-5); }
+.ds-foot-grid a { display: grid; gap: 4px; }
+.ds-foot-grid .en { font: 400 clamp(26px, 3vw, 34px)/1 var(--f-display); text-transform: uppercase; }
+.ds-foot-grid .jp { font: 700 12.5px/1.4 var(--f-body); color: var(--brand-muted); }
+.ds-foot-grid a:hover .en { color: var(--signal); }
+.ds-foot-pills { display: flex; flex-wrap: wrap; gap: var(--s-2); margin-top: var(--s-6); }
+.ds-foot-pills .ds-pill { background: var(--brand-paper); border-color: var(--brand-paper); color: var(--brand-ink); }
+.ds-foot-pills .ds-pill--signal { background: var(--signal); border-color: var(--signal); }
+.ds-foot-pills .ds-pill:hover { background: var(--brand-ink); color: var(--signal); border-color: var(--signal); }
+.ds-foot-note { margin-top: var(--s-6); max-width: 52em; font: 500 12.5px/1.8 var(--f-body); color: var(--brand-muted); }
+.ds-foot-meta { display: flex; justify-content: space-between; flex-wrap: wrap; gap: var(--s-3); margin-top: var(--s-6);
+  font: 800 var(--t-label)/1.5 var(--f-label); letter-spacing: .1em; text-transform: uppercase; color: var(--brand-muted); }
+.ds-foot-word { display: block; margin: var(--s-4) 0 0 -.03em; font: 400 clamp(60px, 14.5vw, 196px)/.82 var(--f-display); text-transform: uppercase;
+  color: var(--signal); white-space: nowrap; }
+
+/* ========== 動きを減らす設定 ========== */
+@media (prefers-reduced-motion: reduce) {
+  .ds-ticker-track { animation: none; }
+  .ds-pill, .ds-row-arrow, .ds-mk.is-in { transition: none; }
+}
+</style>
+<style>
+/* 成績と使い方(過去16年の検証値): 結論 → 数字の読み方 → 買い方 → アプリでの確認 → 比較 → 検証方法。見た目は DS(docs/design-system.md)、
+   色・書体・余白は DS のトークンだけ。数字とグラフのデータは scripts/build_showcase.py が埋め込む(const META / TIMING / SERIES の行) */
+:root {
+  --turf: var(--accent);
+  /* グラフの系列(COLORS の名前のまま): 推奨 = 緑・厳選 = 橙・大穴 = 青・毎レース1位 = 黒・ケリー = 赤紫・1番人気 = 灰・でたらめ = 金 */
+  --s1: var(--rec); --s2: var(--g1); --s3: var(--pick); --s4: var(--muted); --s5: var(--hit-ink); --s6: var(--long); --s7: var(--ink);
+  --display: var(--f-body); --body: var(--f-body); --mono: var(--f-num);
+}
+p { max-width: var(--w-text); }
 .num { font-variant-numeric: tabular-nums; }
-.kicker { font-family: var(--mono); font-size: 12px; letter-spacing: .12em; color: var(--turf); text-transform: uppercase; }
-.lead { color: var(--ink-2); font-size: 16px; margin-top: 10px; }
-section { display: flex; flex-direction: column; gap: 14px; min-width: 0; }
-section > header { display: flex; flex-wrap: wrap; gap: 4px 12px; align-items: baseline; border-bottom: 2px solid var(--ink); padding-bottom: 8px; }
-section > header .q { font-family: var(--mono); font-size: 13px; color: var(--muted); }
-.muted { color: var(--muted); } .small { font-size: 13px; }
-.good { color: var(--good); } .bad { color: var(--bad); }
-a { color: var(--turf); text-underline-offset: 4px; }
-a:focus-visible, summary:focus-visible { outline: 2px solid var(--turf); outline-offset: 4px; }
-.topnav, .jumpnav { display: flex; flex-wrap: wrap; gap: 8px 20px; font-size: 13px; }
-.topnav { justify-content: space-between; margin-bottom: 22px; }
-.hero h1 { margin-top: 12px; line-height: 1.45; }
-.hero h1 .headline-line { display: block; }
-.hero h1 .num { color: var(--turf); white-space: nowrap; }
-.hero-note { font-size: 13px; color: var(--ink-2); margin-top: 12px; }
-.return-example { border-left: 3px solid var(--turf); padding: 10px 14px; margin-top: 20px; font-size: 14px; background: var(--surface); }
-.jumpnav { border-bottom: 1px solid var(--line); padding-bottom: 16px; }
+.muted { color: var(--muted); } .small { font-size: var(--t-small); }
+.good { color: var(--plus); } .bad { color: var(--minus); }
+.lead, .hero-note { max-width: 40em; }
+.hero-note { font: 700 13px/1.7 var(--f-body); }
+.return-example { margin-top: var(--s-4); padding: var(--s-3) var(--s-4); background: var(--brand-ink); color: var(--brand-paper); font: 700 14px/1.75 var(--f-body); max-width: 46em; }
+.jumpnav { display: flex; flex-wrap: wrap; gap: var(--s-2); }
+.jumpnav a { display: inline-flex; align-items: center; min-height: 32px; padding: 0 13px; border: var(--bw-2) solid var(--ink); border-radius: var(--r-pill);
+  color: var(--ink); font: 800 13px/1 var(--f-body); text-decoration: none; transition: background-color var(--dur-2) var(--ease), color var(--dur-2) var(--ease); }
+.jumpnav a:hover { background: var(--ink); color: var(--paper); }
 .intro { color: var(--ink-2); }
-.terms { margin: 0; display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 22px; }
-.terms dt { font-weight: 700; margin-bottom: 4px; }
+.terms { margin: 0; display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: var(--s-5); }
+.terms > div { border-top: var(--bw-2) solid var(--rule); padding-top: var(--s-3); }
+.terms dt { font-weight: 900; margin-bottom: 4px; }
 .terms dd { margin: 0; font-size: 14px; color: var(--ink-2); }
-.plain-note { font-size: 13px; color: var(--ink-2); }
-.subtle-note { background: var(--surface); border-left: 3px solid var(--line); padding: 12px 16px; }
+.plain-note { font: 500 13.5px/1.75 var(--f-body); color: var(--ink-2); }
+.subtle-note { background: var(--paper-2); padding: var(--s-4) var(--s-5); }
 .course .ci-label { display: block; font-size: 12px; color: var(--muted); margin: 0 0 10px; }
 .course .roi { display: block; margin: 8px 0 2px; }
-.course .who { border-top: 1px solid var(--line); padding-top: 9px; margin-top: 12px; line-height: 1.8; }
+.course .who { border-top: var(--bw) solid var(--line); padding-top: 9px; margin-top: 12px; line-height: 1.8; }
 .course .who span { display: block; }
-.course .eyebrow { font-size: 12px; color: var(--turf); }
-.course.star { border-color: var(--turf); }
+.course .eyebrow { font: 800 var(--t-label)/1.3 var(--f-label); letter-spacing: .1em; text-transform: uppercase; color: var(--muted); }
+.course.star { border-color: var(--pick); }
 .course p { font-size: 14px; }
-.tablewrap:focus-visible { outline: 2px solid var(--turf); outline-offset: 3px; }
+.tablewrap:focus-visible { outline: 3px solid var(--ink); outline-offset: 3px; }
 .tablewrap td:first-child { min-width: 235px; max-width: 300px; }
-.technical { border-top: 1px solid var(--line); padding-top: 12px; font-size: 13px; color: var(--ink-2); }
-.technical summary { cursor: pointer; color: var(--ink); font-weight: 700; }
+.technical { border-top: var(--bw-2) solid var(--rule); padding-top: var(--s-3); font-size: 13px; color: var(--ink-2); }
+.technical summary { cursor: pointer; color: var(--ink); font-weight: 900; }
 .technical p { margin-top: 8px; }
-.timeline { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 14px; margin-top: 4px; }
-.timeline div { border-top: 2px solid var(--line); padding-top: 8px; }
+.timeline { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: var(--s-4); }
+.timeline div { border-top: var(--bw-2) solid var(--rule); padding-top: 8px; }
 .timeline b, .timeline span { display: block; }
+.timeline b { font: 400 24px/1.1 var(--f-display); }
 .timeline span { color: var(--ink-2); font-size: 13px; }
-section[id] { scroll-margin-top: 20px; }
-
 /* 結論の数字 */
-.board { display: grid; grid-template-columns: repeat(auto-fit, minmax(150px, 1fr)); gap: 1px; background: var(--line); border: 1px solid var(--line); border-radius: 12px; overflow: hidden; margin-top: 22px; }
-.cell { background: var(--surface); padding: 14px 16px; display: flex; flex-direction: column; gap: 2px; min-width: 0; }
-.cell .k { font-size: 13px; color: var(--ink-2); font-weight: 500; display: flex; align-items: center; gap: 7px; }
-.cell .v { font-family: var(--display); font-size: 32px; font-weight: 900; line-height: 1.15; font-variant-numeric: tabular-nums; }
-.cell .v small { font-size: 15px; font-weight: 700; margin-left: 2px; }
+.board { display: grid; grid-template-columns: repeat(auto-fit, minmax(160px, 1fr)); gap: var(--s-5); }
+.cell { display: flex; flex-direction: column; gap: 4px; min-width: 0; padding-top: var(--s-3); border-top: var(--bw-2) solid var(--rule); }
+.cell .k { font: 800 13px/1.4 var(--f-body); color: var(--ink); display: flex; align-items: flex-end; gap: 7px; min-height: 2.8em; }   /* 2行分 */
+.cell .v { font: 400 var(--t-d3)/1 var(--f-display); }
+.cell .v small { font: 800 .42em/1 var(--f-body); margin-left: 2px; }
 .cell .s { font-size: 12px; color: var(--muted); font-variant-numeric: tabular-nums; }
-.sw { width: 10px; height: 10px; border-radius: 3px; flex: none; }
-
+.sw { width: 10px; height: 10px; border-radius: 50%; flex: none; }
 /* 買い方 */
-.steps3 { display: grid; grid-template-columns: repeat(auto-fit, minmax(220px, 1fr)); gap: 10px; }
-.stp { background: var(--surface); border: 1px solid var(--line); border-radius: 12px; padding: 14px 16px; min-width: 0; }
-.stp .no { font-family: var(--mono); font-size: 12px; color: var(--turf); letter-spacing: .1em; }
-.stp h3 { margin: 2px 0 4px; }
+.steps3 { display: grid; grid-template-columns: repeat(auto-fit, minmax(220px, 1fr)); gap: var(--s-5); }
+.stp { border-top: var(--bw-2) solid var(--rule); padding-top: var(--s-3); min-width: 0; }
+.stp .no { font: 800 var(--t-label)/1 var(--f-label); color: var(--accent); letter-spacing: .1em; }
+.stp h3 { margin: 6px 0 4px; font-size: 16px; }
 .stp p { font-size: 14px; color: var(--ink-2); }
-.courses { display: grid; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); gap: 10px; }
-.course { border: 2px solid var(--line); border-radius: 12px; padding: 12px 14px; background: var(--surface); min-width: 0; }
-.course.main { border-color: var(--turf); }
-.course .roi { font-family: var(--display); font-weight: 900; font-size: 24px; font-variant-numeric: tabular-nums; }
+.courses { display: grid; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); gap: var(--s-4); }
+.course { border: var(--bw-2) solid var(--rule); padding: var(--s-4); background: var(--paper); min-width: 0; }
+.course.main { border: 3px solid var(--rec); box-shadow: none; }   /* 主役のコース = 緑の太い枠(上の帯はやめた) */
+.course .roi { font: 400 30px/1 var(--f-display); }
 .course p { font-size: 13px; color: var(--ink-2); }
 .course .who { font-size: 12px; color: var(--muted); margin-top: 4px; }
-
 /* 条件 */
-.facts { display: grid; grid-template-columns: repeat(auto-fit, minmax(220px, 1fr)); gap: 10px 22px; }
-.fact { border-left: 3px solid var(--turf); padding-left: 12px; min-width: 0; }
-.fact b { display: block; font-family: var(--display); font-size: 18px; }
+.facts { display: grid; grid-template-columns: repeat(auto-fit, minmax(220px, 1fr)); gap: var(--s-5); }
+.fact { border-top: var(--bw-2) solid var(--rule); padding-top: var(--s-3); min-width: 0; }
+.fact b { display: block; font: 900 17px/1.5 var(--f-body); }
 .fact span { font-size: 13px; color: var(--ink-2); }
-
 /* 表 */
-.tablewrap { overflow-x: auto; background: var(--surface); border: 1px solid var(--line); border-radius: 12px; }
-table { width: 100%; border-collapse: collapse; font-variant-numeric: tabular-nums; min-width: 600px; }
-th, td { padding: 11px 14px; border-bottom: 1px solid var(--line); text-align: right; white-space: nowrap; }
-th { font-size: 12px; color: var(--muted); font-weight: 700; }
-td:first-child, th:first-child { text-align: left; white-space: normal; }
-tr:last-child td { border-bottom: 0; }
-tr.sep td { border-top: 2px solid var(--line); }
-td .nm { display: flex; align-items: center; gap: 8px; font-weight: 700; }
-td .ds { display: block; font-size: 12px; color: var(--muted); font-weight: 400; margin-left: 18px; }
-td.roi { font-family: var(--display); font-size: 18px; font-weight: 900; }
-th.hl, td.hl { background: color-mix(in srgb, var(--turf) 9%, transparent); }
-td .ci { display: block; font-size: 11.5px; color: var(--muted); font-weight: 400; font-family: var(--body); }
-
+.tablewrap { overflow-x: auto; border-top: var(--bw-2) solid var(--rule); }
+.tablewrap table { width: 100%; border-collapse: collapse; font-variant-numeric: tabular-nums; min-width: 600px; }
+.tablewrap th, .tablewrap td { padding: 11px 12px; border-bottom: var(--bw) solid var(--line); text-align: right; white-space: nowrap; }
+.tablewrap th { font: 800 12px/1.35 var(--f-body); color: var(--muted); }
+.tablewrap td:first-child, .tablewrap th:first-child { text-align: left; white-space: normal; padding-left: 0; }
+.tablewrap tr.sep td { border-top: var(--bw-2) solid var(--rule); }
+td .nm { display: flex; align-items: center; gap: 8px; font-weight: 900; }
+td .ds { display: block; font-size: 12px; color: var(--muted); font-weight: 500; margin-left: 18px; }
+td.roi { font: 400 22px/1 var(--f-display); }
+th.hl, td.hl { background: var(--hl); }
+td .ci { display: block; font: 500 11.5px/1.4 var(--f-body); color: var(--muted); }
 /* グラフ */
-.chartbox { background: var(--surface); border: 1px solid var(--line); border-radius: 12px; padding: 14px 10px 10px; position: relative; }
-.legend { display: flex; flex-wrap: wrap; gap: 6px; padding: 0 8px 10px; }
-.legend button { font: inherit; font-size: 12.5px; display: inline-flex; align-items: center; gap: 6px; padding: 2px 10px; border-radius: 999px;
-  border: 1px solid var(--line); background: var(--surface); color: var(--ink); cursor: pointer; line-height: 1.7; }
-.legend button:hover { border-color: var(--muted); }
-.legend button[aria-pressed="false"] { color: var(--muted); text-decoration: line-through; }
+.chartbox { border-top: var(--bw-2) solid var(--rule); padding-top: var(--s-3); position: relative; }
+.legend { display: flex; flex-wrap: wrap; gap: 6px; padding: 0 0 10px; }
+.legend button { font: 700 12.5px/1 var(--f-body); display: inline-flex; align-items: center; gap: 6px; min-height: 30px; padding: 0 12px; border-radius: var(--r-pill);
+  border: var(--bw-2) solid var(--ink); background: var(--paper); color: var(--ink); cursor: pointer; }
+.legend button:hover { background: var(--paper-2); }
+.legend button[aria-pressed="false"] { color: var(--muted); border-color: var(--line); text-decoration: line-through; }
 .legend button[aria-pressed="false"] i { opacity: .25; }
-.legend button:focus-visible { outline: 2px solid var(--turf); outline-offset: 2px; }
-.legend i { width: 18px; height: 3px; border-radius: 2px; display: inline-block; }
-svg { display: block; width: 100%; height: auto; }
-.ax { stroke: var(--line); } .ax.ref { stroke: var(--muted); stroke-dasharray: 4 4; }
-.tk { font: 11px var(--mono); fill: var(--muted); }
-.lbl { font: 700 12px var(--body); fill: var(--ink-2); }
+.legend i { width: 18px; height: 4px; display: inline-block; }
+.chartbox svg { display: block; width: 100%; height: auto; }
+.ax { stroke: var(--line); } .ax.ref { stroke: var(--ink); stroke-dasharray: 4 4; }
+.tk { font: 600 11px var(--f-num); fill: var(--muted); }
+.lbl { font: 800 12px var(--f-body); fill: var(--ink-2); }
 .cross { stroke: var(--muted); stroke-width: 1; }
-#tip { position: absolute; pointer-events: none; background: var(--ink); color: var(--bg); font-size: 12px; line-height: 1.6; padding: 8px 10px; border-radius: 8px; min-width: 190px; font-variant-numeric: tabular-nums; }
-#tip b { font-weight: 700; } #tip .r { display: flex; justify-content: space-between; gap: 12px; } #tip i { display: inline-block; width: 8px; height: 8px; border-radius: 50%; margin-right: 6px; }
-.tipbox { position: absolute; pointer-events: none; background: var(--ink); color: var(--bg); font-size: 12px; line-height: 1.6; padding: 8px 10px; border-radius: 8px; min-width: 200px; font-variant-numeric: tabular-nums; }
-.tipbox .r { display: flex; justify-content: space-between; gap: 12px; } .tipbox i { display: inline-block; width: 8px; height: 8px; border-radius: 50%; margin-right: 6px; }
-.pband { fill: var(--ink); opacity: .035; } .plbl { font: 700 11.5px var(--body); fill: var(--muted); }
+#tip, .tipbox { position: absolute; pointer-events: none; background: var(--brand-ink); color: var(--brand-paper); font: 500 12px/1.6 var(--f-body); padding: 8px 10px; min-width: 190px; font-variant-numeric: tabular-nums; }
+#tip b, .tipbox b { font-weight: 800; } #tip .r, .tipbox .r { display: flex; justify-content: space-between; gap: 12px; }
+#tip i, .tipbox i { display: inline-block; width: 8px; height: 8px; border-radius: 50%; margin-right: 6px; }
+.pband { fill: var(--ink); opacity: .04; } .plbl { font: 800 11.5px var(--f-body); fill: var(--muted); }
 #wf .tablewrap td:first-child { min-width: 150px; }
-
 /* テストの正しさ */
-.checks { display: grid; gap: 10px; }
-.check { display: grid; grid-template-columns: 28px minmax(0, 1fr); gap: 10px; background: var(--surface); border: 1px solid var(--line); border-radius: 12px; padding: 13px 15px; }
-.check .mk { font-family: var(--display); font-weight: 900; font-size: 18px; line-height: 1.4; text-align: center; }
-.check .mk.ok { color: var(--good); } .check .mk.warn { color: var(--s4); }
+.checks { display: grid; gap: var(--s-3); }
+.check { display: grid; grid-template-columns: 30px minmax(0, 1fr); gap: var(--s-3); border-top: var(--bw) solid var(--line); padding-top: var(--s-3); }
+.check .mk { width: 30px; height: 30px; display: grid; place-items: center; background: var(--brand-ink); color: var(--signal); font: 800 14px/1 var(--f-num); }
+.check .mk.warn { background: var(--hit); color: var(--on-signal); }
 .check p { font-size: 14px; color: var(--ink-2); }
-.check h3 { margin-bottom: 2px; }
-
+.check h3 { margin-bottom: 2px; font-size: 16px; }
 /* 買い方の関係 */
 .nest { display: flex; flex-direction: column; }
-.nest .n { border: 2px solid; border-radius: 12px; padding: 10px 12px 12px; background: var(--surface); display: flex; flex-direction: column; gap: 8px; min-width: 0; }
+.nest .n { border: var(--bw-2) solid; padding: 10px 12px 12px; background: var(--paper); display: flex; flex-direction: column; gap: 8px; min-width: 0; }
 .nest .n > .hd { display: flex; flex-wrap: wrap; gap: 4px 10px; align-items: baseline; }
-.nest .n b { font-family: var(--display); font-size: 16px; }
+.nest .n b { font: 900 16px/1.4 var(--f-body); }
 .nest .n .d { font-size: 13px; color: var(--ink-2); flex: 1 1 14em; }
-.nest .n .r { font-family: var(--display); font-weight: 900; font-size: 20px; color: var(--good); font-variant-numeric: tabular-nums; }
+.nest .n .r { font: 400 24px/1 var(--f-display); color: var(--ink); }
 .nest .n .c { font-size: 12px; color: var(--muted); font-variant-numeric: tabular-nums; }
 .nest .n1 { border-color: var(--s1); } .nest .n2 { border-color: var(--s2); } .nest .n3 { border-color: var(--s3); }
-.vnote { display: grid; grid-template-columns: repeat(auto-fit, minmax(230px, 1fr)); gap: 10px; }
-.vnote .check { grid-template-columns: 22px minmax(0, 1fr); }
-.foot { font-size: 12px; color: var(--muted); border-top: 1px solid var(--line); padding-top: 14px; }
+.vnote { display: grid; grid-template-columns: repeat(auto-fit, minmax(230px, 1fr)); gap: var(--s-4); }
+.vnote .check { grid-template-columns: 30px minmax(0, 1fr); }
+.foot { font: 500 12.5px/1.7 var(--f-body); color: var(--muted); border-top: var(--bw-2) solid var(--rule); padding-top: var(--s-3); }
 @media (max-width: 640px) {
-  .terms { grid-template-columns: 1fr; gap: 16px; }
-  .hero h1 { font-size: clamp(25px, 6.5vw, 36px); }
+  .terms { grid-template-columns: 1fr; gap: var(--s-4); }
   .board { grid-template-columns: repeat(2, minmax(0, 1fr)); }
   .courses { grid-template-columns: 1fr; }
   .timeline { gap: 8px; }
-  .timeline b { font-size: 14px; }
 }
-@media (max-width: 520px) { .cell .v { font-size: 26px; } th, td { padding: 9px 10px; } .wrap { gap: 34px; } }
+@media (max-width: 520px) { .tablewrap th, .tablewrap td { padding: 9px 8px; } }
 </style>
-
-<div class="sb"><div class="sb-in"><a class="sb-brand" href="index.html"><svg viewBox="0 0 100 100" aria-hidden="true"><circle cx="50" cy="50" r="50" fill="#121a2e"/><circle cx="50" cy="50" r="38.5" fill="none" stroke="rgba(255,255,255,.14)" stroke-width="5"/><path d="M50 11.5 A38.5 38.5 0 1 1 16.66 30.75" fill="none" stroke="#3cc4cf" stroke-width="5" stroke-linecap="round"/><circle cx="16.66" cy="30.75" r="4.2" fill="#f0c040"/><text x="50" y="47" text-anchor="middle" font-size="17" font-weight="900" fill="#f6f8fc">発走前</text><text x="50" y="68" text-anchor="middle" font-size="17" font-weight="900" fill="#3cc4cf">ラボ</text></svg><span><b>発走前ラボ</b><small>競馬AIの予想と帳簿</small></span></a><nav class="sb-tabs" aria-label="サイト内のページ"><a class="sb-tab" href="index.html"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M5 4h10a3 3 0 0 1 3 3v13H8a3 3 0 0 1-3-3z"/><path d="M9 9h5M9 13h5"/></svg><span><b>帳簿</b><small>実運用の成績</small></span></a><a class="sb-tab" href="guide.html"><svg viewBox="0 0 24 24" aria-hidden="true"><circle cx="12" cy="12" r="8.5"/><path d="M12 11v5.5M12 7.6v.4"/></svg><span><b>見方</b><small>はじめての人へ</small></span></a><a class="sb-tab" href="showcase.html" aria-current="page"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M4 20h16M7 20v-7M12 20V5M17 20v-10"/></svg><span><b>検証値</b><small>16年の過去レース</small></span></a><a class="sb-tab" href="explain.html"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="m12 4 8.5 4.5L12 13 3.5 8.5z"/><path d="m3.5 13 8.5 4.5 8.5-4.5"/></svg><span><b>しくみ</b><small>AIの中身</small></span></a></nav><a class="sb-x" href="https://x.com/hassomae_ai" rel="me"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M18.24 2.25h3.31l-7.23 8.26 8.5 11.24h-6.65l-5.21-6.82-5.97 6.82H1.68l7.73-8.84L1.25 2.25h6.83l4.71 6.23zm-1.16 17.52h1.83L7.08 4.13H5.12z"/></svg><span>@hassomae_ai</span></a></div></div><div class="wrap">
-  <header class="hero">
-    
-    <div class="kicker">JRA 中央競馬の予測AI / 過去データでの検証結果</div>
-    <h1><span class="headline-line">推奨コースで回収率 <span class="num"><span id="h-rec">110.9</span>%</span>。</span><span class="headline-line">厳選コースなら <span class="num"><span id="h-star">137.2</span>%</span>。</span></h1>
-    <p class="lead" id="lead"></p>
-    <p class="hero-note" id="hero-scope"></p>
-    <p class="hero-note" id="hero-wf" hidden></p>
-    <p class="return-example" id="return-example"></p>
+<svg class="ds-sprite" aria-hidden="true" focusable="false"><symbol id="k-pick" viewBox="0 0 24 24"><path d="M6.5 3.5h11l4 5.5L12 21 2.5 9z"/><path d="M2.5 9h19M9.5 3.5 8 9l4 12 4-12-1.5-5.5"/></symbol><symbol id="k-rec" viewBox="0 0 24 24"><circle cx="12" cy="12" r="9"/><path d="m7.6 12.4 3 3 5.8-6.4"/></symbol><symbol id="k-long" viewBox="0 0 24 24"><circle cx="12" cy="12" r="9"/><circle cx="12" cy="12" r="4.6"/><circle cx="12" cy="12" r="1.5" fill="currentColor" stroke="none"/></symbol><symbol id="k-g1" viewBox="0 0 24 24"><path d="M7 4h10v4.5a5 5 0 0 1-10 0z"/><path d="M7 6H4.2a3 3 0 0 0 3.3 4M17 6h2.8a3 3 0 0 1-3.3 4M12 13.5V17M9.5 17h5v3.5h-5z"/></symbol><symbol id="k-hit" viewBox="0 0 24 24"><path d="m12 3.2 2.6 5.5 6 .8-4.4 4.1 1.1 6L12 16.7l-5.3 2.9 1.1-6-4.4-4.1 6-.8z"/></symbol><symbol id="k-flag" viewBox="0 0 24 24"><path d="M5 21V4"/><path d="M5 4h13l-2.6 4.2L18 12.5H5"/></symbol><symbol id="k-info" viewBox="0 0 24 24"><circle cx="12" cy="12" r="9"/><path d="M12 11v5.5M12 7.8v.1"/></symbol><symbol id="k-alert" viewBox="0 0 24 24"><path d="M12 3.6 21.4 20H2.6z"/><path d="M12 10v4.4M12 17.2v.1"/></symbol></svg><header class="ds-header" id="top"><div class="ds-wrap ds-header-in"><a class="ds-logo" href="index.html"><svg viewBox="0 0 100 100" aria-hidden="true"><circle cx="50" cy="50" r="50" fill="#070807"/><circle cx="50" cy="50" r="38.5" fill="none" stroke="rgba(255,255,255,.16)" stroke-width="5"/><path d="M50 11.5 A38.5 38.5 0 1 1 16.66 30.75" fill="none" stroke="#00fa27" stroke-width="5" stroke-linecap="round"/><circle cx="16.66" cy="30.75" r="4.6" fill="#ffc400"/><text x="50" y="47" text-anchor="middle" font-size="17" font-weight="900" fill="#ffffff" font-family="Zen Kaku Gothic New, Hiragino Sans, sans-serif">発走前</text><text x="50" y="68" text-anchor="middle" font-size="17" font-weight="900" fill="#00fa27" font-family="Zen Kaku Gothic New, Hiragino Sans, sans-serif">ラボ</text></svg><span><b>発走前ラボ</b><small>Hassomae Lab</small></span></a><nav class="ds-nav" aria-label="サイト内のページ"><a href="index.html"><span class="en">Ledger</span><span class="jp">帳簿</span></a><a href="guide.html"><span class="en">Guide</span><span class="jp">見方</span></a><a href="showcase.html" aria-current="page"><span class="en">Record</span><span class="jp">検証値</span></a><a href="explain.html"><span class="en">System</span><span class="jp">しくみ</span></a></nav><div class="ds-ext"><a class="ds-pill ds-pill--sm" href="https://note.com/hassomae_ai" rel="me">note</a><a class="ds-pill ds-pill--ink ds-pill--sm" href="https://x.com/hassomae_ai" rel="me" aria-label="X @hassomae_ai"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M18.24 2.25h3.31l-7.23 8.26 8.5 11.24h-6.65l-5.21-6.82-5.97 6.82H1.68l7.73-8.84L1.25 2.25h6.83l4.71 6.23zm-1.16 17.52h1.83L7.08 4.13H5.12z"/></svg><span class="ds-hide-sm">@hassomae_ai</span></a></div></div></header>
+<section class="ds-hero"><div class="ds-wrap ds-hero-in">
+  <div class="ds-hero-top"><span>Record ・ 過去16年の検証値</span><span class="r">Backtested<br>before the start</span></div>
+  <h1 class="ds-hero-titles"><span><span class="ds-mkline">推奨コースで回収率 <span id="h-rec">110.9</span>%。</span></span><span><span class="ds-mkline">厳選コースなら <span id="h-star">137.2</span>%。</span></span></h1>
+  <span class="ds-giant" style="--chars:6" aria-hidden="true">Record</span>
+  <p class="ds-lead lead" id="lead"></p>
+  <p class="hero-note" id="hero-scope"></p>
+  <p class="hero-note" id="hero-wf" hidden></p>
+  <p class="return-example" id="return-example"></p>
+  <div class="ds-hero-foot"><span>JRA 中央競馬の予測AI</span><span>過去データでの検証結果</span><span>Scroll ↓</span></div>
+</div></section>
+<main class="ds-wrap ds-main">
+  <section class="ds-sec">
+    <div class="ds-sec-head"><span class="ds-label">00 ・ Summary</span><h2 class="ds-jp">結論の数字</h2></div>
     <div class="board" id="board"></div>
-  </header>
+    <nav class="jumpnav" aria-label="このページの内容"><a href="#basics">数字の読み方</a><a href="#courses-section">3つの買い方</a><a href="#app-guide">アプリでの確認方法</a><a href="#results">詳しい成績</a><a href="#wf" id="wf-jump" hidden>期間を広げた検証</a><a href="#method">検証方法</a></nav>
+  </section>
 
-  <nav class="jumpnav" aria-label="このページの内容"><a href="#basics">数字の読み方</a><a href="#courses-section">3つの買い方</a><a href="#app-guide">アプリでの確認方法</a><a href="#results">詳しい成績</a><a href="#wf" id="wf-jump" hidden>期間を広げた検証</a><a href="#method">検証方法</a></nav>
-
-  <section id="basics">
-    <header><h2>回収率と、当たりやすさの違い</h2></header>
+  <section class="ds-sec" id="basics">
+    <div class="ds-sec-head"><span class="ds-label">01</span><h2 class="ds-jp">回収率と、当たりやすさの違い</h2></div>
     <dl class="terms">
       <div><dt>回収率：使った金額に対する払戻</dt><dd>払戻の合計を、購入額の合計で割った数字です。100%で収支ゼロ。100%を上回った分が利益です。</dd></div>
       <div><dt>的中率：買った馬券が当たった割合</dt><dd>10%なら、買った100点のうち10点が的中した計算です。少ない的中でも払戻が大きければ、回収率は高くなります。</dd></div>
@@ -222,16 +442,16 @@ svg { display: block; width: 100%; height: auto; }
     <p class="plain-note">期待値はAIの予測、回収率と的中率は過去の結果です。◆厳選は期待値が特に大きい買い目の印で、的中率の高さを示す印ではありません。</p>
   </section>
 
-  <section id="courses-section">
-    <header><h2>予算と買う回数に合わせた、3つの買い方</h2></header>
+  <section class="ds-sec" id="courses-section">
+    <div class="ds-sec-head"><span class="ds-label">02</span><h2 class="ds-jp">予算と買う回数に合わせた、3つの買い方</h2></div>
     <p class="intro">アプリは全レースで<b>「買い目リスト」</b>(単勝・複勝・枠連のうち期待値の高い順に5件)を出し、それぞれに<b>◆厳選・推奨・検討</b>の札と金額を付けます。どの札まで買うかで3つのコースに分けています。<b>コース名はこのページでの説明用</b>で、アプリにコースを切り替えるボタンはありません。</p>
     <div class="courses" id="courses"></div>
     <p class="plain-note">各コースの「95%信頼区間」は、過去の成績にどの程度のばらつきがあるかを示す目安です。詳しい読み方は<a href="#interval-note">比較表の下</a>にあります。</p>
     <p class="plain-note subtle-note">厳選の印は<b>「◆厳選」</b>です(レース名の近くにある「信頼度 ★☆☆〜★★★」とは別の表示)。厳選のレースは、レース一覧で青緑の色が付き、レース画面の上に「厳選レース」の帯が出ます。</p>
   </section>
 
-  <section id="app-guide">
-    <header><h2>アプリでは、この順番で確認</h2><span class="q">3ステップ</span></header>
+  <section class="ds-sec" id="app-guide">
+    <div class="ds-sec-head"><span class="ds-label">03 ・ <span>3ステップ</span></span><h2 class="ds-jp">アプリでは、この順番で確認</h2></div>
     <div class="steps3">
       <div class="stp"><span class="no">STEP 1</span><h3>「最終予測」の確定を確認</h3><p>直前版のレース画面を開きます。最終予測の目標は発走4分前ごろ。このアプリの締切表示は発走2分前なので、締切のおよそ2分前です。画面の「最終予測 ○:○ 確定」と、使ったオッズの時刻を確認します。</p></div>
       <div class="stp"><span class="no">STEP 2</span><h3>「買い目リスト」を見る</h3><p>期待値の高い順に5件と、札(◆厳選・推奨・検討)、金額が並びます。買い目とは券種と馬番号(または枠番号)の組み合わせで、例えば「単勝 6番」や「枠連 3−8」が1点です。「検討」は推奨の条件に届かない参考で、買いません。</p></div>
@@ -241,8 +461,8 @@ svg { display: block; width: 100%; height: auto; }
     <p class="plain-note">上は15時発走の場合の例です。更新処理の状況で確定時刻は変わります。確定前の買い目は暫定で、オッズの更新により変わることがあります。</p>
   </section>
 
-  <section>
-    <header><h2>3つのコースの関係</h2></header>
+  <section class="ds-sec">
+    <div class="ds-sec-head"><span class="ds-label">04</span><h2 class="ds-jp">3つのコースの関係</h2></div>
     <p class="intro">◆厳選は推奨の中の1点なので、<b>厳選コースは推奨コースの中に入ります</b>。毎レース1位コースは別の切り口で、推奨のないレースも買います。<b>推奨と厳選はアプリの金額(◆厳選 100円か1000円・推奨 100円)、毎レース1位は1位が◆厳選なら1000円・ほかは100円、大穴枠は100円か1000円</b>で集計しています。</p>
     <div class="nest" id="nest"></div>
     <div class="vnote">
@@ -251,8 +471,8 @@ svg { display: block; width: 100%; height: auto; }
     </div>
   </section>
 
-  <section>
-    <header><h2>この成績の集計条件</h2></header>
+  <section class="ds-sec">
+    <div class="ds-sec-head"><span class="ds-label">05</span><h2 class="ds-jp">この成績の集計条件</h2></div>
     <div class="facts">
       <div class="fact"><b>発走6分前までのオッズ</b><span>その時点までに公表された最後のオッズで選び、実際の払戻金で精算。本番の最終予測に近い時点を再現しています。</span></div>
       <div class="fact"><b id="f-period">2022/1/5 〜 2026/10/4</b><span id="f-races"></span></div>
@@ -261,8 +481,8 @@ svg { display: block; width: 100%; height: auto; }
     <p class="plain-note">各年を前年までのデータで予測しています。ただし、方式の改善にはこの期間の成績も参照しています。完全に独立した最終テストではありません。</p>
   </section>
 
-  <section id="results">
-    <header><h2>買い方ごとの成績を比較</h2><span class="q">発走6分前までの情報で判断</span></header>
+  <section class="ds-sec" id="results">
+    <div class="ds-sec-head"><span class="ds-label">06 ・ <span>発走6分前までの情報で判断</span></span><h2 class="ds-jp">買い方ごとの成績を比較</h2></div>
     <p class="plain-note">的中率は馬券1点ごとの割合です。「購入レース数」は、対象の全レースのうち、その買い方で実際に購入したレース数を示します。横に長い表は左右にスクロールできます。</p>
     <div class="tablewrap" tabindex="0" role="region" aria-label="買い方ごとの成績比較"><table>
       <thead><tr><th scope="col">買い方</th><th scope="col">回収率</th><th scope="col">95%信頼区間</th><th scope="col">的中率</th><th scope="col">購入レース数</th><th scope="col">購入点数</th></tr></thead>
@@ -273,8 +493,8 @@ svg { display: block; width: 100%; height: auto; }
     <details class="technical"><summary>購入金額と券種の補足</summary><p>アプリの金額は、100〜1000円の17通りの決め方(一律100円・期待値で3段階や5段階・期待値に比例・ケリー基準など)を、2011年からの3つの期間の検証用データとテストで比べて選びました。期待値が特に高い◆厳選ほど回収率が高い傾向が、どの期間でも見られたためです。参考に載せた「ケリーの金額」は、資金10万円を基準に、予測した確率と払戻の見込みから購入額を決める「ケリー基準」の4分の1(1レース上限1万円)。回収率は下がりますが、金額が大きいぶん利益の額は大きくなります。</p><p>単勝は選んだ馬の1着、複勝は選んだ馬の3着以内（発売時の頭数が7頭以下なら2着以内）、枠連は1着と2着の枠番号の組み合わせを当てる馬券です。</p></details>
   </section>
 
-  <section>
-    <header><h2>予測する時刻で、成績はどう変わるか</h2></header>
+  <section class="ds-sec">
+    <div class="ds-sec-head"><span class="ds-label">07</span><h2 class="ds-jp">予測する時刻で、成績はどう変わるか</h2></div>
     <p class="plain-note">時刻ごとに、その時点の情報と専用の補正を使って買い目を選び直した結果です。同じ馬券のオッズだけを比べた表ではありません。各欄は回収率、95%信頼区間、購入点数の順です。</p>
     <div class="tablewrap" tabindex="0" role="region" aria-label="判断時刻ごとの成績比較"><table>
       <thead id="t-head"></thead>
@@ -291,8 +511,8 @@ svg { display: block; width: 100%; height: auto; }
     <p class="plain-note">表の「確率予測の誤差（logloss）」は、各馬に付けた勝率と結果のずれを測る指標です。小さいほど良く、回収率や的中率とは別の尺度です。前日版と直前版では対象レース数が異なります。</p>
   </section>
 
-  <section>
-    <header><h2>レースを重ねるごとの回収率</h2><span class="q">直前(6分前)</span></header>
+  <section class="ds-sec">
+    <div class="ds-sec-head"><span class="ds-label">08 ・ <span>直前(6分前)</span></span><h2 class="ds-jp">レースを重ねるごとの回収率</h2></div>
     <p class="intro">横軸は対象レースを日付順に並べた通し番号、縦軸はその時点までの累計回収率です。見送ったレースも横軸に含みます。購入が少ない時期は一度の的中で線が大きく動き、購入を重ねると一度の結果の影響は小さくなります。</p>
     <p class="plain-note">名前を押すと線の表示を切り替えられます。グラフにマウスを重ねるかタップすると数値が出ます。点線の100%が収支ゼロです。最初の200レース未満の線は省略し、表示範囲は40〜200%に収めています。</p>
     <div class="chartbox">
@@ -302,8 +522,8 @@ svg { display: block; width: 100%; height: auto; }
     </div>
   </section>
 
-  <section id="wf" hidden>
-    <header><h2 id="wf-title">期間を広げた検証</h2><span class="q" id="wf-q"></span></header>
+  <section class="ds-sec" id="wf" hidden>
+    <div class="ds-sec-head"><span class="ds-label">09 ・ <span id="wf-q"></span></span><h2 class="ds-jp" id="wf-title">期間を広げた検証</h2></div>
     <p class="intro" id="wf-intro"></p>
     <div class="tablewrap" tabindex="0" role="region" aria-label="期間ごとの成績"><table>
       <thead id="wf-head"></thead>
@@ -324,8 +544,8 @@ svg { display: block; width: 100%; height: auto; }
     <div class="checks" id="wf-notes"></div>
   </section>
 
-  <section id="method">
-    <header><h2>検証方法と、この数字から分かる範囲</h2></header>
+  <section class="ds-sec" id="method">
+    <div class="ds-sec-head"><span class="ds-label">10</span><h2 class="ds-jp">検証方法と、この数字から分かる範囲</h2></div>
     <div class="checks">
       <div class="check"><span class="mk ok">✓</span><div><h3>未来のデータを見ていない</h3>
         <p>年ごとに「その年より前のデータだけ」で学習し直したモデルで、その年を予測しています(ウォークフォワード)。2024年のレースは、2023年までのデータで作ったモデルが予測した結果です。</p></div></div>
@@ -343,8 +563,31 @@ svg { display: block; width: 100%; height: auto; }
   </section>
 
   <p class="foot" id="foot">回収率 = 払戻の合計 ÷ 購入額の合計。結果は過去の検証で、将来の利益を約束するものではありません。</p>
-</div>
-
+</main>
+<footer class="ds-footer"><div class="ds-wrap ds-footer-in"><div class="ds-foot-grid"><a href="index.html"><span class="en">Ledger</span><span class="jp">帳簿</span></a><a href="guide.html"><span class="en">Guide</span><span class="jp">見方</span></a><a href="showcase.html"><span class="en">Record</span><span class="jp">検証値</span></a><a href="explain.html"><span class="en">System</span><span class="jp">しくみ</span></a><a href="https://note.com/hassomae_ai"><span class="en">Note</span><span class="jp">G1 の全頭診断</span></a><a href="https://x.com/hassomae_ai"><span class="en">X</span><span class="jp">全レースの予想</span></a></div><div class="ds-foot-pills"><a class="ds-pill ds-pill--signal" href="https://x.com/hassomae_ai" rel="me"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M18.24 2.25h3.31l-7.23 8.26 8.5 11.24h-6.65l-5.21-6.82-5.97 6.82H1.68l7.73-8.84L1.25 2.25h6.83l4.71 6.23zm-1.16 17.52h1.83L7.08 4.13H5.12z"/></svg>X でフォロー</a><a class="ds-pill" href="https://note.com/hassomae_ai" rel="me">note を読む</a></div><p class="ds-foot-note">AIの予想で、的中や利益を約束するものではありません。回収率の数字は過去のデータでの検証値で、実際の成績は帳簿に外れも含めて全部載せています。馬券は20歳になってから。</p><div class="ds-foot-meta"><span>© 2026 Hassomae Lab ・ @hassomae_ai</span><a href="#top">Page top ↑</a></div><span class="ds-foot-word" aria-hidden="true">Hassomae Lab</span></div></footer>
+<script>/* 発走前ラボ DS の動き(docs/design-system.md「動き」)。読み込んだ時点で中身は全部見えている。ここでするのは飾りだけ:
+   1. 流れる文字の帯(.ds-ticker-track)の中身を2つ並べて、途切れなく回す
+   2. 画面の外にあるマーカー(.ds-mk)を、見えたときに左から引く(明るい表示だけ・動きを減らす設定では何もしない) */
+(function () {
+  document.querySelectorAll(".ds-ticker-track").forEach(function (t) {
+    if (!t.dataset.dup) { t.innerHTML += t.innerHTML; t.dataset.dup = "1"; }
+  });
+  if (matchMedia("(prefers-reduced-motion: reduce)").matches || !("IntersectionObserver" in window)) return;
+  if (getComputedStyle(document.documentElement).getPropertyValue("--mk-wipe").trim() !== "1") return;
+  var io = new IntersectionObserver(function (es) {
+    es.forEach(function (e) {
+      if (!e.isIntersecting) return;
+      var m = e.target;
+      m.classList.add("is-in");
+      requestAnimationFrame(function () { requestAnimationFrame(function () { m.classList.remove("is-pending"); }); });
+      io.unobserve(m);
+    });
+  }, { rootMargin: "0px 0px -10% 0px" });
+  document.querySelectorAll(".ds-mk").forEach(function (m) {
+    if (m.getBoundingClientRect().top > innerHeight) { m.classList.add("is-pending"); io.observe(m); }
+  });
+})();
+</script>
 <script>
 const META = {"races":16153,"period":"2022/1/5 〜 2026/10/25","generated":"2026-11-03","cats":{"pick":{"name":"厳選コース（◆）","short":"厳選（◆）","desc":"推奨のうち、期待値が過去の上位10%の線を越えた1点(1レース1点まで)。金額は100円、◆厳選の中でも期待値が上位10%のものは1000円","roi":1.449820590670715,"ci":[1.048554042769309,1.8969257264034138],"hit":0.09513513513513513,"bets":1850,"races":1850,"per13":{"races":1.488887513155451,"bets":1.488887513155451,"stake":291.58051136011886}},"pick_flat":{"name":"厳選コース（一律100円の場合）","short":"厳選100円","desc":"同じ◆厳選の買い目を、金額を変えずに1点100円ずつ買った場合(参考)","roi":1.3107567567567568,"ci":[1.1288747535308143,1.5167941878220457],"hit":0.09513513513513513,"bets":1850,"races":1850,"per13":{"races":1.488887513155451,"bets":1.488887513155451,"stake":148.8887513155451}},"rec":{"name":"推奨コース","short":"推奨","desc":"推奨の買い目をすべて、アプリの金額で購入(◆厳選は100円か1000円、ほかは100円)。1レースに複数点のことも","roi":1.1475048892814332,"ci":[1.0847823579689277,1.2091482293738123],"hit":0.12011761168097831,"bets":29929,"races":12161,"per13":{"races":9.787222187828887,"bets":24.086980746610536,"stake":2551.3898347056274}},"rec_flat":{"name":"推奨コース（一律100円の場合）","short":"推奨100円","desc":"同じ推奨の買い目を、1点100円ずつ買った場合(参考)","roi":1.1209996992883158,"ci":[1.0776638548820412,1.1654049391377983],"hit":0.12011761168097831,"bets":29929,"races":12161,"per13":{"races":9.787222187828887,"bets":24.086980746610536,"stake":2408.698074661054}},"rec_kelly":{"name":"推奨をケリーの金額で（参考）","short":"ケリー","desc":"同じ推奨の買い目を、資金10万円・1/4ケリー基準の金額で購入(1レース上限1万円)。回収率は下がるが、金額が大きいぶん利益の額は大きい","roi":1.1394599866687578,"ci":[1.0996532089158753,1.1816120318065275],"hit":0.12011761168097831,"bets":29929,"races":12161,"per13":{"races":9.787222187828887,"bets":24.086980746610536,"stake":16420.578220763946}},"top1":{"name":"毎レース1位コース","short":"毎レース1位","desc":"推奨のないレースも含め、全レースで買い目リストの1位(期待値が最も高い1点)を、1位が◆厳選なら1000円、推奨・検討なら100円で購入","roi":1.214855348596165,"ci":[1.099453842078559,1.3254380686412714],"hit":0.11911100105243608,"bets":16153,"races":16153,"per13":{"races":13.0,"bets":13.0,"stake":2639.998761839906}},"top1_flat":{"name":"毎レース1位コース（一律100円の場合）","short":"1位100円","desc":"同じ1位を、金額を変えずに毎レース100円ずつ買った場合(参考)","roi":1.1160032192162446,"ci":[1.0578766847988061,1.1737030739478644],"hit":0.11911100105243608,"bets":16153,"races":16153,"per13":{"races":13.0,"bets":13.0,"stake":1300.0}},"top1_rec":{"name":"1位に札があるときだけ（参考）","short":"1位・札あり","desc":"リストの1位に◆厳選か推奨の札があるレースだけ、アプリの金額(◆厳選100円か1000円・推奨100円)で購入。検討の1位は見送り","roi":1.2265515497435155,"ci":[1.1015809828065204,1.3448314252211993],"hit":0.11045740802121312,"bets":12068,"races":12068,"per13":{"races":9.712375410140531,"bets":9.712375410140531,"stake":1113.9293010586268}},"consider":{"name":"検討（リストの残り）","short":"検討","desc":"リストのうち推奨の条件に届かない買い目を、1点100円ずつ買った場合(参考。アプリでは「買わない」)","roi":0.9394384716528734,"ci":[0.914169110269513,0.9634664549383969],"hit":0.17081754195993504,"bets":51716,"races":15134,"per13":{"races":12.179904661672754,"bets":41.621246827214755,"stake":4162.124682721476}},"long_rec":{"name":"大穴枠・推奨のあるレース","short":"大穴（推奨あり）","desc":"推奨が1点以上あるレースで、大穴枠の買い目をアプリの金額で購入","roi":1.3428953945019635,"ci":[1.0997061581129013,1.5777862766577433],"hit":0.025705175374049545,"bets":20385,"races":9276,"per13":{"races":7.4653624713675475,"bets":16.40593078685074,"stake":4057.6611155822447}},"long_norec":{"name":"大穴枠・推奨のないレース","short":"大穴（推奨なし）","desc":"推奨がないレースで、大穴枠の買い目をアプリの金額で購入","roi":1.2581941544885178,"ci":[0.748356657560848,1.8904208947401477],"hit":0.026872498570611778,"bets":3498,"races":1879,"per13":{"races":1.512226830929239,"bets":2.81520460595555,"stake":462.60137435770446}},"longshot":{"name":"大穴枠","short":"大穴","desc":"当たる確率は低いものの、確率と配当から見込む払戻しが購入額以上の候補。1レース最大3点。金額は100円、大穴枠の中でも期待値が上位15%なら1000円","roi":1.334227112487982,"ci":[1.1126976395599562,1.568246883494863],"hit":0.02587614621278734,"bets":23883,"races":11155,"per13":{"races":8.977589302296787,"bets":19.22113539280629,"stake":4520.262489939949}},"fav_tan":{"name":"1番人気の単勝","short":"1番人気","desc":"発走6分前に1番人気の馬の単勝を毎レース100円","roi":0.7684145359995047,"ci":[0.7501494119621855,0.7870972526920698],"hit":0.3252646567201139,"bets":16153,"races":16153,"per13":{"races":13.0,"bets":13.0,"stake":1300.0}},"fav_fuku":{"name":"1番人気の複勝","short":"1番人気（複）","desc":"発走6分前に1番人気の馬の複勝を毎レース100円","roi":0.8346127654305702,"ci":[0.8254912429750202,0.8446389786620452],"hit":0.6398192286262614,"bets":16153,"races":16153,"per13":{"races":13.0,"bets":13.0,"stake":1300.0}},"rnd_tan":{"name":"ランダムに1頭（単勝）","short":"ランダム","desc":"毎レース、全出走馬から同じ確率で1頭を選び、単勝を100円買うと仮定した平均の払戻し。実際に抽選した成績ではない","roi":0.7086885394062717,"ci":[0.6873073387308929,0.728308613912126],"hit":0.07725815788919164,"bets":16153,"races":16153,"per13":{"races":13.0,"bets":13.0,"stake":1300.0}},"rnd_fuku":{"name":"ランダムに1頭（複勝）","short":"ランダム（複）","desc":"毎レース、全出走馬から同じ確率で1頭を選び、複勝を100円買うと仮定した平均の払戻し。実際に抽選した成績ではない","roi":0.7270682194342887,"ci":[0.7169162281113217,0.7370055726702279],"hit":0.2277746269635866,"bets":16153,"races":16153,"per13":{"races":13.0,"bets":13.0,"stake":1300.0}}},"nest":{"top1_in_rec":0.7471058007800409,"pick_is_top1":1.0,"rec_races":0.7528632452176066}};
 const TIMING = {"prev":{"pick":{"roi":1.1382806573957016,"ci":[0.9231123266331288,1.3822584198698222],"bets":1993},"pick_flat":{"roi":1.0183642749623683,"ci":[0.9010660934221476,1.1516830657641826],"bets":1993},"rec":{"roi":0.9176337970955621,"ci":[0.8911364197356999,0.9454381545494976],"bets":47273},"rec_kelly":{"roi":0.9036044981505107,"ci":[0.8849300102903953,0.921809882514554],"bets":47273},"top1":{"roi":0.9812453247957871,"ci":[0.9104118293366268,1.050656999280364],"bets":15484},"longshot":{"roi":0.762971342383107,"ci":[0.48822028129124223,1.095364178500613],"bets":3747},"logloss":1.9364769784045557},"20":{"pick":{"roi":1.2998902907295666,"ci":[0.9415259407918292,1.723842825250482],"bets":1747},"pick_flat":{"roi":1.2111619919862622,"ci":[1.0351310412026724,1.3947165938592987],"bets":1747},"rec":{"roi":1.1172108359733626,"ci":[1.0619603282253598,1.1768109019090882],"bets":29035},"rec_kelly":{"roi":1.1122737971028558,"ci":[1.0716324539228859,1.151543423169035],"bets":29035},"top1":{"roi":1.1549943531183335,"ci":[1.0538522030087631,1.2677994654006695],"bets":16153},"longshot":{"roi":1.282648796960743,"ci":[1.0205379770588092,1.5750436612851615],"bets":19795},"logloss":1.901655416824963},"6":{"pick":{"roi":1.449820590670715,"ci":[1.048554042769309,1.8969257264034138],"bets":1850},"pick_flat":{"roi":1.3107567567567568,"ci":[1.1288747535308143,1.5167941878220457],"bets":1850},"rec":{"roi":1.1475048892814332,"ci":[1.0847823579689277,1.2091482293738123],"bets":29929},"rec_kelly":{"roi":1.1394599866687578,"ci":[1.0996532089158753,1.1816120318065275],"bets":29929},"top1":{"roi":1.214855348596165,"ci":[1.099453842078559,1.3254380686412714],"bets":16153},"longshot":{"roi":1.334227112487982,"ci":[1.1126976395599562,1.568246883494863],"bets":23883},"logloss":1.8991376567382292},"final":{"pick":{"roi":0.6412251655629139,"ci":[0.4220118148999016,0.9310594471208619],"bets":1670},"pick_flat":{"roi":0.8464670658682635,"ci":[0.6391602621486273,1.0632038836298405],"bets":1670},"rec":{"roi":1.0102472836268266,"ci":[0.9216201946335009,1.1077645946201966],"bets":9326},"rec_kelly":{"roi":1.0813843243612826,"ci":[1.0084373464242107,1.1527254798243083],"bets":9326},"top1":{"roi":0.9316197928358401,"ci":[0.8262724721860685,1.0476306518511844],"bets":16153},"longshot":{"roi":1.58581244040608,"ci":[1.2237881667254278,2.021052133155786],"bets":16722},"logloss":1.8928944744018295}};
@@ -360,7 +603,6 @@ const per13 = s => `1日13Rなら 約${s.per13.races.toFixed(1)}R・${s.per13.be
 // 見出しと結論の数字
 document.getElementById("h-rec").textContent = pct(M.rec.roi);
 document.getElementById("h-star").textContent = pct(M.pick.roi);
-document.title = `推奨${pct(M.rec.roi)}%・厳選${pct(M.pick.roi)}% | keiba-aiの成績`;
 document.getElementById("lead").innerHTML = `keiba-aiは、馬の過去成績などから予測した的中確率とオッズを比べ、全レースで期待値の高い順に「買い目リスト」を出します。
   札の付いた推奨を全部買う「推奨」と、特に期待値が大きい◆厳選の1点に絞る「厳選」。その買い方を、過去の ${META.races.toLocaleString()} レースで検証しました。`;
 document.getElementById("hero-scope").textContent = `${META.period} ／ 発走6分前までの情報で判断 ／ 単勝、複勝、枠連の検証。アプリの金額(◆厳選は1点100円、そのうち期待値が特に高い上位10%は1000円。推奨は100円)で集計。毎レース1位と大穴枠の金額は各コースの説明のとおり。`;
