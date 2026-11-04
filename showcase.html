@@ -107,7 +107,7 @@ img, svg { max-width: 100%; }
 /* ========== 箱(全ページ共通の左端) ========== */
 .ds-wrap { width: 100%; max-width: calc(var(--w-page) + 2 * var(--gutter)); margin-inline: auto;
   padding-left: max(var(--gutter), env(safe-area-inset-left, 0px)); padding-right: max(var(--gutter), env(safe-area-inset-right, 0px)); }
-.ds-main { display: grid; gap: var(--s-8); padding-block: var(--s-7) var(--s-8); }
+.ds-main { display: grid; grid-template-columns: minmax(0, 1fr); gap: var(--s-8); padding-block: var(--s-7) var(--s-8); }
 .ds-prose { max-width: var(--w-text); }
 .ds-prose > * + * { margin-top: var(--s-4); }
 .ds-scroll { overflow-x: auto; -webkit-overflow-scrolling: touch; }
@@ -185,7 +185,8 @@ body::before { content: ""; position: fixed; inset: 0 0 auto; height: env(safe-a
 @keyframes ds-rise { from { transform: translateY(12%); } to { transform: none; } }
 
 /* ========== 見出し ========== */
-.ds-sec { display: grid; gap: var(--s-5); min-width: 0; scroll-margin-top: 96px; }
+.ds-sec { display: grid; grid-template-columns: minmax(0, 1fr); gap: var(--s-5); min-width: 0; scroll-margin-top: 96px; }   /* 列は 0〜1fr: 中の広い表で節が画面より広がらない(表は .ds-scroll の中で横に動く) */
+.ds-sec > * { min-width: 0; }
 .ds-sec-head { display: grid; gap: 6px; padding-top: var(--s-3); border-top: var(--bw-2) solid var(--rule); }
 .ds-label { font: 800 var(--t-label)/1.35 var(--f-label); letter-spacing: .1em; text-transform: uppercase; color: var(--muted); }
 /* .ds-en = 節の英字の大見出し。定義書 v2 で使わなくなった(日本語の見出しが主役)。新しく使わない */
@@ -239,6 +240,17 @@ body::before { content: ""; position: fixed; inset: 0 0 auto; height: env(safe-a
 .ds-table { width: 100%; border-collapse: collapse; font-variant-numeric: tabular-nums; }
 .ds-table th, .ds-table td { padding: 12px 10px; border-bottom: var(--bw) solid var(--line); text-align: right; white-space: nowrap; vertical-align: middle; }
 .ds-table th:first-child, .ds-table td:first-child { text-align: left; padding-left: 0; }
+/* スマホで縦に積む表(.ds-stack。560px 以下): 1行 = 1つのまとまり。1列目(名前)を頭に、ほかは「見出し」と値を2列で。
+   見出しの文字は ds.js が thead から各セルの data-label に写す(JS で作る表は window.dsStack(表) を呼ぶ) */
+@media (max-width: 560px) {
+  table.ds-stack thead { display: none; }
+  table.ds-stack, table.ds-stack tbody { display: block; width: 100%; }
+  table.ds-stack tr { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 12px 16px; padding: 14px 0; border-bottom: var(--bw) solid var(--line); }
+  table.ds-stack tr:first-child { border-top: var(--bw-2) solid var(--rule); }
+  table.ds-stack td { display: block; padding: 0; border: 0; text-align: left; white-space: normal; }
+  table.ds-stack td:first-child { grid-column: 1 / -1; }
+  table.ds-stack td[data-label]:not(:first-child)::before { content: attr(data-label); display: block; font: 800 11.5px/1.4 var(--f-body); color: var(--muted); margin-bottom: 3px; }
+}
 .ds-table thead th { font: 800 12px/1.35 var(--f-body); color: var(--muted); border-bottom: var(--bw-2) solid var(--rule); white-space: normal; vertical-align: bottom; }
 .ds-table .ds-n { font-family: var(--f-num); font-weight: 700; }
 
@@ -413,6 +425,14 @@ td .ci { display: block; font: 500 11.5px/1.4 var(--f-body); color: var(--muted)
   .timeline { gap: 8px; }
 }
 @media (max-width: 520px) { .tablewrap th, .tablewrap td { padding: 9px 8px; } }
+@media (max-width: 560px) {   /* スマホは表を縦に積む(ds.css の .ds-stack)。横に長い表の最小幅・1列目の幅を外す */
+  .tablewrap table.ds-stack { min-width: 0; }
+  .tablewrap table.ds-stack td:first-child { min-width: 0; max-width: none; font-weight: 800; }
+  .tablewrap table.ds-stack td { padding: 0; white-space: normal; text-align: left; }
+  .tablewrap table.ds-stack tr.sep td { border-top: 0; }
+  .tablewrap table.ds-stack tr:first-child { border-top: 0; }   /* 上の太い罫線は .tablewrap にある */
+  #wf .tablewrap td:first-child { min-width: 0; }
+}
 </style>
 <svg class="ds-sprite" aria-hidden="true" focusable="false"><symbol id="k-pick" viewBox="0 0 24 24"><path d="M6.5 3.5h11l4 5.5L12 21 2.5 9z"/><path d="M2.5 9h19M9.5 3.5 8 9l4 12 4-12-1.5-5.5"/></symbol><symbol id="k-rec" viewBox="0 0 24 24"><circle cx="12" cy="12" r="9"/><path d="m7.6 12.4 3 3 5.8-6.4"/></symbol><symbol id="k-long" viewBox="0 0 24 24"><circle cx="12" cy="12" r="9"/><circle cx="12" cy="12" r="4.6"/><circle cx="12" cy="12" r="1.5" fill="currentColor" stroke="none"/></symbol><symbol id="k-g1" viewBox="0 0 24 24"><path d="M7 4h10v4.5a5 5 0 0 1-10 0z"/><path d="M7 6H4.2a3 3 0 0 0 3.3 4M17 6h2.8a3 3 0 0 1-3.3 4M12 13.5V17M9.5 17h5v3.5h-5z"/></symbol><symbol id="k-hit" viewBox="0 0 24 24"><path d="m12 3.2 2.6 5.5 6 .8-4.4 4.1 1.1 6L12 16.7l-5.3 2.9 1.1-6-4.4-4.1 6-.8z"/></symbol><symbol id="k-flag" viewBox="0 0 24 24"><path d="M5 21V4"/><path d="M5 4h13l-2.6 4.2L18 12.5H5"/></symbol><symbol id="k-info" viewBox="0 0 24 24"><circle cx="12" cy="12" r="9"/><path d="M12 11v5.5M12 7.8v.1"/></symbol><symbol id="k-alert" viewBox="0 0 24 24"><path d="M12 3.6 21.4 20H2.6z"/><path d="M12 10v4.4M12 17.2v.1"/></symbol></svg><header class="ds-header" id="top"><div class="ds-wrap ds-header-in"><a class="ds-logo" href="index.html"><svg viewBox="0 0 100 100" aria-hidden="true"><circle cx="50" cy="50" r="50" fill="#070807"/><circle cx="50" cy="50" r="38.5" fill="none" stroke="rgba(255,255,255,.16)" stroke-width="5"/><path d="M50 11.5 A38.5 38.5 0 1 1 16.66 30.75" fill="none" stroke="#00fa27" stroke-width="5" stroke-linecap="round"/><circle cx="16.66" cy="30.75" r="4.6" fill="#ffc400"/><text x="50" y="47" text-anchor="middle" font-size="17" font-weight="900" fill="#ffffff" font-family="Zen Kaku Gothic New, Hiragino Sans, sans-serif">発走前</text><text x="50" y="68" text-anchor="middle" font-size="17" font-weight="900" fill="#00fa27" font-family="Zen Kaku Gothic New, Hiragino Sans, sans-serif">ラボ</text></svg><span><b>発走前ラボ</b><small>Hassomae Lab</small></span></a><nav class="ds-nav" aria-label="サイト内のページ"><a href="index.html"><span class="en">Ledger</span><span class="jp">帳簿</span></a><a href="guide.html"><span class="en">Guide</span><span class="jp">見方</span></a><a href="showcase.html" aria-current="page"><span class="en">Record</span><span class="jp">検証値</span></a><a href="explain.html"><span class="en">System</span><span class="jp">しくみ</span></a></nav><div class="ds-ext"><a class="ds-pill ds-pill--sm" href="https://note.com/hassomae_ai" rel="me">note</a><a class="ds-pill ds-pill--ink ds-pill--sm" href="https://x.com/hassomae_ai" rel="me" aria-label="X @hassomae_ai"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M18.24 2.25h3.31l-7.23 8.26 8.5 11.24h-6.65l-5.21-6.82-5.97 6.82H1.68l7.73-8.84L1.25 2.25h6.83l4.71 6.23zm-1.16 17.52h1.83L7.08 4.13H5.12z"/></svg><span class="ds-hide-sm">@hassomae_ai</span></a></div></div></header>
 <section class="ds-hero"><div class="ds-wrap ds-hero-in">
@@ -484,7 +504,7 @@ td .ci { display: block; font: 500 11.5px/1.4 var(--f-body); color: var(--muted)
   <section class="ds-sec" id="results">
     <div class="ds-sec-head"><span class="ds-label">06 ・ <span>発走6分前までの情報で判断</span></span><h2 class="ds-jp">買い方ごとの成績を比較</h2></div>
     <p class="plain-note">的中率は馬券1点ごとの割合です。「購入レース数」は、対象の全レースのうち、その買い方で実際に購入したレース数を示します。横に長い表は左右にスクロールできます。</p>
-    <div class="tablewrap" tabindex="0" role="region" aria-label="買い方ごとの成績比較"><table>
+    <div class="tablewrap" tabindex="0" role="region" aria-label="買い方ごとの成績比較"><table class="ds-stack">
       <thead><tr><th scope="col">買い方</th><th scope="col">回収率</th><th scope="col">95%信頼区間</th><th scope="col">的中率</th><th scope="col">購入レース数</th><th scope="col">購入点数</th></tr></thead>
       <tbody id="rows"></tbody>
     </table></div>
@@ -496,7 +516,7 @@ td .ci { display: block; font: 500 11.5px/1.4 var(--f-body); color: var(--muted)
   <section class="ds-sec">
     <div class="ds-sec-head"><span class="ds-label">07</span><h2 class="ds-jp">予測する時刻で、成績はどう変わるか</h2></div>
     <p class="plain-note">時刻ごとに、その時点の情報と専用の補正を使って買い目を選び直した結果です。同じ馬券のオッズだけを比べた表ではありません。各欄は回収率、95%信頼区間、購入点数の順です。</p>
-    <div class="tablewrap" tabindex="0" role="region" aria-label="判断時刻ごとの成績比較"><table>
+    <div class="tablewrap" tabindex="0" role="region" aria-label="判断時刻ごとの成績比較"><table class="ds-stack">
       <thead id="t-head"></thead>
       <tbody id="t-rows"></tbody>
     </table></div>
@@ -525,7 +545,7 @@ td .ci { display: block; font: 500 11.5px/1.4 var(--f-body); color: var(--muted)
   <section class="ds-sec" id="wf" hidden>
     <div class="ds-sec-head"><span class="ds-label">09 ・ <span id="wf-q"></span></span><h2 class="ds-jp" id="wf-title">期間を広げた検証</h2></div>
     <p class="intro" id="wf-intro"></p>
-    <div class="tablewrap" tabindex="0" role="region" aria-label="期間ごとの成績"><table>
+    <div class="tablewrap" tabindex="0" role="region" aria-label="期間ごとの成績"><table class="ds-stack">
       <thead id="wf-head"></thead>
       <tbody id="wf-rows"></tbody>
     </table></div>
@@ -536,7 +556,7 @@ td .ci { display: block; font: 500 11.5px/1.4 var(--f-body); color: var(--muted)
       <div id="wf-tip" class="tipbox" hidden></div>
     </div>
     <details class="technical"><summary>年ごとの数字を表で見る</summary>
-      <div class="tablewrap" tabindex="0" role="region" aria-label="年ごとの回収率" style="margin-top:10px"><table>
+      <div class="tablewrap" tabindex="0" role="region" aria-label="年ごとの回収率" style="margin-top:10px"><table class="ds-stack">
         <thead><tr><th scope="col">年</th><th scope="col">対象レース</th><th scope="col">厳選コース（◆）</th><th scope="col">推奨コース</th><th scope="col">毎レース1位コース</th></tr></thead>
         <tbody id="wf-years"></tbody>
       </table></div>
@@ -567,8 +587,19 @@ td .ci { display: block; font: 500 11.5px/1.4 var(--f-body); color: var(--muted)
 <footer class="ds-footer"><div class="ds-wrap ds-footer-in"><div class="ds-foot-grid"><a href="index.html"><span class="en">Ledger</span><span class="jp">帳簿</span></a><a href="guide.html"><span class="en">Guide</span><span class="jp">見方</span></a><a href="showcase.html"><span class="en">Record</span><span class="jp">検証値</span></a><a href="explain.html"><span class="en">System</span><span class="jp">しくみ</span></a><a href="https://note.com/hassomae_ai"><span class="en">Note</span><span class="jp">G1 の全頭診断</span></a><a href="https://x.com/hassomae_ai"><span class="en">X</span><span class="jp">全レースの予想</span></a></div><div class="ds-foot-pills"><a class="ds-pill ds-pill--signal" href="https://x.com/hassomae_ai" rel="me"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M18.24 2.25h3.31l-7.23 8.26 8.5 11.24h-6.65l-5.21-6.82-5.97 6.82H1.68l7.73-8.84L1.25 2.25h6.83l4.71 6.23zm-1.16 17.52h1.83L7.08 4.13H5.12z"/></svg>X でフォロー</a><a class="ds-pill" href="https://note.com/hassomae_ai" rel="me">note を読む</a></div><p class="ds-foot-note">AIの予想で、的中や利益を約束するものではありません。回収率の数字は過去のデータでの検証値で、実際の成績は帳簿に外れも含めて全部載せています。馬券は20歳になってから。</p><div class="ds-foot-meta"><span>© 2026 Hassomae Lab ・ @hassomae_ai</span><a href="#top">Page top ↑</a></div><span class="ds-foot-word" aria-hidden="true">Hassomae Lab</span></div></footer>
 <script>/* 発走前ラボ DS の動き(docs/design-system.md「動き」)。読み込んだ時点で中身は全部見えている。ここでするのは飾りだけ:
    1. 流れる文字の帯(.ds-ticker-track)の中身を2つ並べて、途切れなく回す
-   2. 画面の外にあるマーカー(.ds-mk)を、見えたときに左から引く(明るい表示だけ・動きを減らす設定では何もしない) */
+   2. 画面の外にあるマーカー(.ds-mk)を、見えたときに左から引く(明るい表示だけ・動きを減らす設定では何もしない)
+   3. スマホで縦に積む表(table.ds-stack)の各セルに、見出しの文字を data-label で持たせる(CSS が出す。JS で作る表は window.dsStack(表)) */
 (function () {
+  function stack(t) {
+    var heads = [].map.call(t.querySelectorAll("thead tr:last-child th"), function (th) {
+      return [].map.call(th.childNodes, function (n) { return n.textContent.trim(); }).filter(Boolean).join(" ");
+    });
+    [].forEach.call(t.querySelectorAll("tbody tr"), function (tr) {
+      [].forEach.call(tr.children, function (td, i) { if (heads[i] && !td.hasAttribute("data-label")) td.setAttribute("data-label", heads[i]); });
+    });
+  }
+  window.dsStack = stack;
+  document.querySelectorAll("table.ds-stack").forEach(stack);
   document.querySelectorAll(".ds-ticker-track").forEach(function (t) {
     if (!t.dataset.dup) { t.innerHTML += t.innerHTML; t.dataset.dup = "1"; }
   });
@@ -816,4 +847,5 @@ if (WF.periods && WF.periods.length > 1) {
      "買い目は発走6分前までに発表されたオッズだけで選び、払戻は確定した払戻金で計算しています。全期間の各年で、判断に使ったオッズの発表時刻と、払戻(単勝なら確定オッズと一致)を突き合わせて確かめました。"]];
   document.getElementById("wf-notes").innerHTML = notes.map(([c, h, t]) => `<div class="check"><span class="mk ${c}">${c === "ok" ? "✓" : "!"}</span><div><h3>${h}</h3><p>${t}</p></div></div>`).join("");
 }
+  if (window.dsStack) document.querySelectorAll('table.ds-stack').forEach(window.dsStack);   // スマホで縦に積む表の見出し(中身を作ったあと)
 </script>

@@ -108,7 +108,7 @@ img, svg { max-width: 100%; }
 /* ========== 箱(全ページ共通の左端) ========== */
 .ds-wrap { width: 100%; max-width: calc(var(--w-page) + 2 * var(--gutter)); margin-inline: auto;
   padding-left: max(var(--gutter), env(safe-area-inset-left, 0px)); padding-right: max(var(--gutter), env(safe-area-inset-right, 0px)); }
-.ds-main { display: grid; gap: var(--s-8); padding-block: var(--s-7) var(--s-8); }
+.ds-main { display: grid; grid-template-columns: minmax(0, 1fr); gap: var(--s-8); padding-block: var(--s-7) var(--s-8); }
 .ds-prose { max-width: var(--w-text); }
 .ds-prose > * + * { margin-top: var(--s-4); }
 .ds-scroll { overflow-x: auto; -webkit-overflow-scrolling: touch; }
@@ -186,7 +186,8 @@ body::before { content: ""; position: fixed; inset: 0 0 auto; height: env(safe-a
 @keyframes ds-rise { from { transform: translateY(12%); } to { transform: none; } }
 
 /* ========== 見出し ========== */
-.ds-sec { display: grid; gap: var(--s-5); min-width: 0; scroll-margin-top: 96px; }
+.ds-sec { display: grid; grid-template-columns: minmax(0, 1fr); gap: var(--s-5); min-width: 0; scroll-margin-top: 96px; }   /* 列は 0〜1fr: 中の広い表で節が画面より広がらない(表は .ds-scroll の中で横に動く) */
+.ds-sec > * { min-width: 0; }
 .ds-sec-head { display: grid; gap: 6px; padding-top: var(--s-3); border-top: var(--bw-2) solid var(--rule); }
 .ds-label { font: 800 var(--t-label)/1.35 var(--f-label); letter-spacing: .1em; text-transform: uppercase; color: var(--muted); }
 /* .ds-en = 節の英字の大見出し。定義書 v2 で使わなくなった(日本語の見出しが主役)。新しく使わない */
@@ -240,6 +241,17 @@ body::before { content: ""; position: fixed; inset: 0 0 auto; height: env(safe-a
 .ds-table { width: 100%; border-collapse: collapse; font-variant-numeric: tabular-nums; }
 .ds-table th, .ds-table td { padding: 12px 10px; border-bottom: var(--bw) solid var(--line); text-align: right; white-space: nowrap; vertical-align: middle; }
 .ds-table th:first-child, .ds-table td:first-child { text-align: left; padding-left: 0; }
+/* スマホで縦に積む表(.ds-stack。560px 以下): 1行 = 1つのまとまり。1列目(名前)を頭に、ほかは「見出し」と値を2列で。
+   見出しの文字は ds.js が thead から各セルの data-label に写す(JS で作る表は window.dsStack(表) を呼ぶ) */
+@media (max-width: 560px) {
+  table.ds-stack thead { display: none; }
+  table.ds-stack, table.ds-stack tbody { display: block; width: 100%; }
+  table.ds-stack tr { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 12px 16px; padding: 14px 0; border-bottom: var(--bw) solid var(--line); }
+  table.ds-stack tr:first-child { border-top: var(--bw-2) solid var(--rule); }
+  table.ds-stack td { display: block; padding: 0; border: 0; text-align: left; white-space: normal; }
+  table.ds-stack td:first-child { grid-column: 1 / -1; }
+  table.ds-stack td[data-label]:not(:first-child)::before { content: attr(data-label); display: block; font: 800 11.5px/1.4 var(--f-body); color: var(--muted); margin-bottom: 3px; }
+}
 .ds-table thead th { font: 800 12px/1.35 var(--f-body); color: var(--muted); border-bottom: var(--bw-2) solid var(--rule); white-space: normal; vertical-align: bottom; }
 .ds-table .ds-n { font-family: var(--f-num); font-weight: 700; }
 
@@ -387,7 +399,7 @@ svg text { font-family: var(--f-body); }
 <section class="ds-sec" aria-labelledby="s-sum">
   <div class="ds-sec-head"><span class="ds-label">01 ・ Summary</span><h2 class="ds-jp" id="s-sum">3種類の買い目の数字</h2></div>
   <div class="ds-scroll">
-    <table class="ds-table gd-sum" aria-label="買い目の3種類の数字">
+    <table class="ds-table gd-sum ds-stack" aria-label="買い目の3種類の数字">
       <thead><tr><th>買い目</th><th>出るレース</th><th>1点あたりの的中率</th><th>当たったときの配当(平均)</th><th>回収率</th></tr></thead>
       <tbody>
         <tr><td><span class="tag pick"><svg class="ki ki-pick" aria-hidden="true"><use href="#k-pick"/></svg>厳選</span></td><td><span class="num">12.6%</span><small>8レースに1回</small></td><td><span class="num">8.2%</span><small>12回に1回</small></td><td><span class="num">17.3倍</span></td><td class="roi"><span class="num">160%</span></td></tr>
@@ -475,7 +487,7 @@ svg text { font-family: var(--f-body); }
       <figcaption>2026年7月〜10月の厳選100点。金色が当たり、橙の輪は1,000円の点。<b>10回当たって回収率78%</b>。100点だけで見ると、16年の中でも回収率は40%台〜380%台まで、時期によって大きくぶれます(よくある範囲。もっと極端な時期もありました)。</figcaption></figure>
   </div>
   <div class="ds-scroll">
-    <table class="ds-table gd-sum" aria-label="勝ち負けの続き方">
+    <table class="ds-table gd-sum ds-stack" aria-label="勝ち負けの続き方">
       <thead><tr><th>買い目</th><th>一番長い連続はずれ</th><th>プラスの月</th><th>プラスの年</th></tr></thead>
       <tbody>
         <tr><td><span class="tag pick"><svg class="ki ki-pick" aria-hidden="true"><use href="#k-pick"/></svg>厳選</span></td><td><span class="num">56回</span><small>およそ7週</small></td><td><span class="num">45%</span><small>2か月に1回くらい</small></td><td><span class="num">13 / 16年</span><small>負け: 2016・2021・2026年(10月まで)</small></td></tr>
@@ -490,7 +502,7 @@ svg text { font-family: var(--f-body); }
 <section class="ds-sec" aria-labelledby="s-real">
   <div class="ds-sec-head"><span class="ds-label">06 ・ 実際の成績</span><h2 class="ds-jp" id="s-real">2026年10月17日から(<span id="real-span">3日・108レース</span>)</h2></div>
   <div class="ds-scroll">
-    <table class="ds-table gd-real">
+    <table class="ds-table gd-real ds-stack">
       <thead><tr><th>買い目</th><th>点数</th><th>的中</th><th>買ったお金</th><th>戻ったお金</th><th>回収率</th></tr></thead>
       <tbody id="real"></tbody>
     </table>
@@ -570,8 +582,19 @@ svg text { font-family: var(--f-body); }
 <footer class="ds-footer"><div class="ds-wrap ds-footer-in"><div class="ds-foot-grid"><a href="index.html"><span class="en">Ledger</span><span class="jp">帳簿</span></a><a href="guide.html"><span class="en">Guide</span><span class="jp">見方</span></a><a href="showcase.html"><span class="en">Record</span><span class="jp">検証値</span></a><a href="explain.html"><span class="en">System</span><span class="jp">しくみ</span></a><a href="https://note.com/hassomae_ai"><span class="en">Note</span><span class="jp">G1 の全頭診断</span></a><a href="https://x.com/hassomae_ai"><span class="en">X</span><span class="jp">全レースの予想</span></a></div><div class="ds-foot-pills"><a class="ds-pill ds-pill--signal" href="https://x.com/hassomae_ai" rel="me"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M18.24 2.25h3.31l-7.23 8.26 8.5 11.24h-6.65l-5.21-6.82-5.97 6.82H1.68l7.73-8.84L1.25 2.25h6.83l4.71 6.23zm-1.16 17.52h1.83L7.08 4.13H5.12z"/></svg>X でフォロー</a><a class="ds-pill" href="https://note.com/hassomae_ai" rel="me">note を読む</a></div><p class="ds-foot-note">AIの予想で、的中や利益を約束するものではありません。回収率の数字は過去のデータでの検証値で、実際の成績は帳簿に外れも含めて全部載せています。馬券は20歳になってから。</p><div class="ds-foot-meta"><span>© 2026 Hassomae Lab ・ @hassomae_ai</span><a href="#top">Page top ↑</a></div><span class="ds-foot-word" aria-hidden="true">Hassomae Lab</span></div></footer>
 <script>/* 発走前ラボ DS の動き(docs/design-system.md「動き」)。読み込んだ時点で中身は全部見えている。ここでするのは飾りだけ:
    1. 流れる文字の帯(.ds-ticker-track)の中身を2つ並べて、途切れなく回す
-   2. 画面の外にあるマーカー(.ds-mk)を、見えたときに左から引く(明るい表示だけ・動きを減らす設定では何もしない) */
+   2. 画面の外にあるマーカー(.ds-mk)を、見えたときに左から引く(明るい表示だけ・動きを減らす設定では何もしない)
+   3. スマホで縦に積む表(table.ds-stack)の各セルに、見出しの文字を data-label で持たせる(CSS が出す。JS で作る表は window.dsStack(表)) */
 (function () {
+  function stack(t) {
+    var heads = [].map.call(t.querySelectorAll("thead tr:last-child th"), function (th) {
+      return [].map.call(th.childNodes, function (n) { return n.textContent.trim(); }).filter(Boolean).join(" ");
+    });
+    [].forEach.call(t.querySelectorAll("tbody tr"), function (tr) {
+      [].forEach.call(tr.children, function (td, i) { if (heads[i] && !td.hasAttribute("data-label")) td.setAttribute("data-label", heads[i]); });
+    });
+  }
+  window.dsStack = stack;
+  document.querySelectorAll("table.ds-stack").forEach(stack);
   document.querySelectorAll(".ds-ticker-track").forEach(function (t) {
     if (!t.dataset.dup) { t.innerHTML += t.innerHTML; t.dataset.dup = "1"; }
   });
@@ -683,6 +706,7 @@ const DATA = {"cmp": {"pick_hit": 8.162348360041936, "pick_roi": 159.52915736607
     // KI = 線のアイコン(ヘッダーと一緒に入るスプライト)
     document.getElementById("real").innerHTML = R.map(([k, name]) => { const x = t[k];
       return `<tr><td><span class="tag ${k === "longshots" ? "long" : k}">${name}</span></td><td class="num">${x.bets}点</td><td class="num">${x.hits}点</td><td class="num">${yen(x.stake)}</td><td class="num">${yen(x.ret)}</td><td class="roi">${x.stake ? Math.round(x.ret / x.stake * 100) + "%" : "-"}</td></tr>`; }).join("");
+    if (window.dsStack) window.dsStack(document.querySelector("table.gd-real"));   // スマホで縦に積む見出し
   }
 
   function realNote() {

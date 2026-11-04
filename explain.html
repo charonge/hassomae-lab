@@ -107,7 +107,7 @@ img, svg { max-width: 100%; }
 /* ========== 箱(全ページ共通の左端) ========== */
 .ds-wrap { width: 100%; max-width: calc(var(--w-page) + 2 * var(--gutter)); margin-inline: auto;
   padding-left: max(var(--gutter), env(safe-area-inset-left, 0px)); padding-right: max(var(--gutter), env(safe-area-inset-right, 0px)); }
-.ds-main { display: grid; gap: var(--s-8); padding-block: var(--s-7) var(--s-8); }
+.ds-main { display: grid; grid-template-columns: minmax(0, 1fr); gap: var(--s-8); padding-block: var(--s-7) var(--s-8); }
 .ds-prose { max-width: var(--w-text); }
 .ds-prose > * + * { margin-top: var(--s-4); }
 .ds-scroll { overflow-x: auto; -webkit-overflow-scrolling: touch; }
@@ -185,7 +185,8 @@ body::before { content: ""; position: fixed; inset: 0 0 auto; height: env(safe-a
 @keyframes ds-rise { from { transform: translateY(12%); } to { transform: none; } }
 
 /* ========== 見出し ========== */
-.ds-sec { display: grid; gap: var(--s-5); min-width: 0; scroll-margin-top: 96px; }
+.ds-sec { display: grid; grid-template-columns: minmax(0, 1fr); gap: var(--s-5); min-width: 0; scroll-margin-top: 96px; }   /* 列は 0〜1fr: 中の広い表で節が画面より広がらない(表は .ds-scroll の中で横に動く) */
+.ds-sec > * { min-width: 0; }
 .ds-sec-head { display: grid; gap: 6px; padding-top: var(--s-3); border-top: var(--bw-2) solid var(--rule); }
 .ds-label { font: 800 var(--t-label)/1.35 var(--f-label); letter-spacing: .1em; text-transform: uppercase; color: var(--muted); }
 /* .ds-en = 節の英字の大見出し。定義書 v2 で使わなくなった(日本語の見出しが主役)。新しく使わない */
@@ -239,6 +240,17 @@ body::before { content: ""; position: fixed; inset: 0 0 auto; height: env(safe-a
 .ds-table { width: 100%; border-collapse: collapse; font-variant-numeric: tabular-nums; }
 .ds-table th, .ds-table td { padding: 12px 10px; border-bottom: var(--bw) solid var(--line); text-align: right; white-space: nowrap; vertical-align: middle; }
 .ds-table th:first-child, .ds-table td:first-child { text-align: left; padding-left: 0; }
+/* スマホで縦に積む表(.ds-stack。560px 以下): 1行 = 1つのまとまり。1列目(名前)を頭に、ほかは「見出し」と値を2列で。
+   見出しの文字は ds.js が thead から各セルの data-label に写す(JS で作る表は window.dsStack(表) を呼ぶ) */
+@media (max-width: 560px) {
+  table.ds-stack thead { display: none; }
+  table.ds-stack, table.ds-stack tbody { display: block; width: 100%; }
+  table.ds-stack tr { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 12px 16px; padding: 14px 0; border-bottom: var(--bw) solid var(--line); }
+  table.ds-stack tr:first-child { border-top: var(--bw-2) solid var(--rule); }
+  table.ds-stack td { display: block; padding: 0; border: 0; text-align: left; white-space: normal; }
+  table.ds-stack td:first-child { grid-column: 1 / -1; }
+  table.ds-stack td[data-label]:not(:first-child)::before { content: attr(data-label); display: block; font: 800 11.5px/1.4 var(--f-body); color: var(--muted); margin-bottom: 3px; }
+}
 .ds-table thead th { font: 800 12px/1.35 var(--f-body); color: var(--muted); border-bottom: var(--bw-2) solid var(--rule); white-space: normal; vertical-align: bottom; }
 .ds-table .ds-n { font-family: var(--f-num); font-weight: 700; }
 
@@ -379,6 +391,7 @@ code, .mono { font-family: var(--f-num); font-size: 12px; }
 .result { background: var(--mix-bg); border-color: color-mix(in srgb, var(--mix) 45%, var(--line)); text-align: center; }
 .result b { font-size: 18px; }
 .formula { font-family: var(--mono); font-size: 13px; text-align: center; color: var(--ink-2); overflow-x: auto; white-space: nowrap; padding: 4px 0; }
+@media (max-width: 560px) { .formula { white-space: normal; text-align: left; font-size: 12.5px; line-height: 1.7; } }   /* スマホは折り返す(横に動かさない) */
 .stage { display: grid; grid-template-columns: repeat(4, minmax(0, 1fr)); gap: 8px; }
 @media (max-width: 560px) { .stage { grid-template-columns: repeat(2, minmax(0, 1fr)); } .merge { grid-template-columns: 1fr; } }
 .stage .box { text-align: center; padding: 8px; } .stage .box b { display: block; } .stage .box span { font-size: 12px; color: var(--muted); font-variant-numeric: tabular-nums; }
@@ -648,8 +661,19 @@ ol.tl span:not(.t) { font-size: 13px; color: var(--ink-2); }
 <footer class="ds-footer"><div class="ds-wrap ds-footer-in"><div class="ds-foot-grid"><a href="index.html"><span class="en">Ledger</span><span class="jp">帳簿</span></a><a href="guide.html"><span class="en">Guide</span><span class="jp">見方</span></a><a href="showcase.html"><span class="en">Record</span><span class="jp">検証値</span></a><a href="explain.html"><span class="en">System</span><span class="jp">しくみ</span></a><a href="https://note.com/hassomae_ai"><span class="en">Note</span><span class="jp">G1 の全頭診断</span></a><a href="https://x.com/hassomae_ai"><span class="en">X</span><span class="jp">全レースの予想</span></a></div><div class="ds-foot-pills"><a class="ds-pill ds-pill--signal" href="https://x.com/hassomae_ai" rel="me"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M18.24 2.25h3.31l-7.23 8.26 8.5 11.24h-6.65l-5.21-6.82-5.97 6.82H1.68l7.73-8.84L1.25 2.25h6.83l4.71 6.23zm-1.16 17.52h1.83L7.08 4.13H5.12z"/></svg>X でフォロー</a><a class="ds-pill" href="https://note.com/hassomae_ai" rel="me">note を読む</a></div><p class="ds-foot-note">AIの予想で、的中や利益を約束するものではありません。回収率の数字は過去のデータでの検証値で、実際の成績は帳簿に外れも含めて全部載せています。馬券は20歳になってから。</p><div class="ds-foot-meta"><span>© 2026 Hassomae Lab ・ @hassomae_ai</span><a href="#top">Page top ↑</a></div><span class="ds-foot-word" aria-hidden="true">Hassomae Lab</span></div></footer>
 <script>/* 発走前ラボ DS の動き(docs/design-system.md「動き」)。読み込んだ時点で中身は全部見えている。ここでするのは飾りだけ:
    1. 流れる文字の帯(.ds-ticker-track)の中身を2つ並べて、途切れなく回す
-   2. 画面の外にあるマーカー(.ds-mk)を、見えたときに左から引く(明るい表示だけ・動きを減らす設定では何もしない) */
+   2. 画面の外にあるマーカー(.ds-mk)を、見えたときに左から引く(明るい表示だけ・動きを減らす設定では何もしない)
+   3. スマホで縦に積む表(table.ds-stack)の各セルに、見出しの文字を data-label で持たせる(CSS が出す。JS で作る表は window.dsStack(表)) */
 (function () {
+  function stack(t) {
+    var heads = [].map.call(t.querySelectorAll("thead tr:last-child th"), function (th) {
+      return [].map.call(th.childNodes, function (n) { return n.textContent.trim(); }).filter(Boolean).join(" ");
+    });
+    [].forEach.call(t.querySelectorAll("tbody tr"), function (tr) {
+      [].forEach.call(tr.children, function (td, i) { if (heads[i] && !td.hasAttribute("data-label")) td.setAttribute("data-label", heads[i]); });
+    });
+  }
+  window.dsStack = stack;
+  document.querySelectorAll("table.ds-stack").forEach(stack);
   document.querySelectorAll(".ds-ticker-track").forEach(function (t) {
     if (!t.dataset.dup) { t.innerHTML += t.innerHTML; t.dataset.dup = "1"; }
   });
