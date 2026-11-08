@@ -1,0 +1,349 @@
+<!doctype html><html lang="ja"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover"><title>更新の記録 ・ 発走前ラボ</title><meta name="description" content="予想モデル DeepOddsAI とサービスのバージョンと変更内容。モデルの変更は logloss つき。"><link rel="preconnect" href="https://fonts.googleapis.com"><link rel="preconnect" href="https://fonts.gstatic.com" crossorigin><link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Anton&family=Inter+Tight:wght@600;700;800&family=Zen+Kaku+Gothic+New:wght@500;700;900&display=swap"><style>/* ==========================================================================
+   発走前ラボ デザインシステム(DS)v1 ・ 2026-11-04
+   定義書: docs/design-system.md(UI を作る・直すときは必ずそれに従う)。
+   下敷き: novasell.com = 黒・白・蛍光グリーンの3色、縦長の英字の大見出し、文字に敷くマーカーの帯、丸いボタン、矢印の導線、大きい数字。
+   緑は「発走の合図」。全ページで同じ箱(--w-page)に左端をそろえ、上 = 緑の帯(ヒーロー)、中 = 紙、下 = 黒の帯(フッター)
+   ========================================================================== */
+:root {
+  /* --- 色: ブランドの帯(テーマで変えない) --- */
+  --signal: #00fa27;          /* 発走の合図の緑。帯・マーカー・暗い面の強調。白い紙の上の文字には使わない */
+  --brand-ink: #070807;       /* 黒の帯(フッター)・緑の帯の上の文字 */
+  --brand-paper: #ffffff;     /* 黒の帯の上の文字 */
+  --brand-muted: #b6bbb1;     /* 黒の帯の上の控えめな文字 */
+  --on-signal: #070807;       /* 緑の上の文字 */
+  /* --- 色: 紙と文字(明るい表示) --- */
+  --paper: #ffffff; --paper-2: #f3f4f1; --paper-3: #e7e9e3;
+  --ink: #0b0d0a; --ink-2: #393d36; --muted: #5f645c;
+  --line: #d8dbd3; --rule: #0b0d0a;
+  --accent: #007a14;          /* 紙の上の緑の文字・リンク(白に対してコントラスト 5.5) */
+  /* --- 色: 意味(アプリ・X の画像と同じ意味) --- */
+  --pick: #cc3a00; --pick-bg: #ffe9de;      /* 🔥厳選 */
+  --rec: #007a14;  --rec-bg: #dcfbe1;       /* 🟢推奨 */
+  --long: #1f45d6; --long-bg: #e3e9ff;      /* 🎯大穴 */
+  --watch: #5f645c; --watch-bg: #ebede8;    /* 検討・比べる相手(1番人気など) */
+  --hit: #ffc400; --hit-ink: #7a5800; --hit-bg: #fff2c2;   /* 的中 = 金 */
+  --g1: #b0308f; --g1-bg: #fbe5f5;          /* G1 の当てにいく枠 */
+  --plus: #007a14; --minus: #c41d22; --warn: #955500; --warn-bg: #fff0cf;
+  --bar: #0b0d0a; --bar-2: #c6cac1; --hl: #eafdec;
+  /* --- 文字 --- */
+  --f-display: "Anton", "Zen Kaku Gothic New", "Hiragino Sans", "Yu Gothic", sans-serif;     /* 英字の大見出し・大きい数字 */
+  --f-label: "Inter Tight", "Zen Kaku Gothic New", "Segoe UI", system-ui, sans-serif;        /* 英字の小さいラベル */
+  --f-body: "Zen Kaku Gothic New", "Hiragino Sans", "Hiragino Kaku Gothic ProN", "Yu Gothic", "Meiryo", sans-serif;
+  --f-num: "Inter Tight", "Segoe UI", system-ui, sans-serif;                                 /* 表の数字(桁をそろえる) */
+  --t-giant: clamp(84px, 23vw, 300px);
+  --t-d1: clamp(44px, 7.4vw, 96px);
+  --t-d2: clamp(34px, 5.2vw, 64px);
+  --t-d3: clamp(24px, 3.1vw, 36px);
+  --t-h1: clamp(24px, 3.9vw, 40px);
+  --t-h2: clamp(20px, 2.5vw, 26px);
+  --t-h3: 17px;
+  --t-body: 16px; --t-small: 13px; --t-label: 11.5px;
+  /* --- 余白・幅 --- */
+  --s-1: 4px; --s-2: 8px; --s-3: 12px; --s-4: 16px; --s-5: 24px; --s-6: 32px; --s-7: 48px; --s-8: 72px; --s-9: 112px;
+  --w-page: 1120px;           /* 全ページ共通の箱。ヘッダー・ヒーロー・本文・フッターの左端はここでそろう */
+  --w-text: 42em;             /* 長い文章の行の長さ(左端は箱にそろえたまま) */
+  --gutter: clamp(16px, 4vw, 40px);
+  /* --- 形 --- */
+  --r-box: 0px;               /* 面は角を落とさない(帳簿の罫線) */
+  --r-pill: 999px;            /* ボタン・札・切り替えは丸 */
+  --bw: 1px; --bw-2: 2px;
+  /* --- 動き --- */
+  --ease: cubic-bezier(.2, .7, .2, 1); --dur-1: 120ms; --dur-2: 220ms; --dur-3: 650ms;
+  --mk-wipe: 1;               /* マーカーを左から引く演出。暗い表示では 0(文字が背景に沈むため) */
+  color-scheme: light;
+}
+/* いつも暗い表示にする面(配信画面 /live/ など): 暗い表示と同じ値をその要素から下に入れる */
+.ds-dark {
+  --paper: #060706; --paper-2: #121411; --paper-3: #1d201b;
+  --ink: #f2f4ef; --ink-2: #c5c9c0; --muted: #969c91;
+  --line: #2a2e27; --rule: #f2f4ef; --accent: #00fa27;
+  --pick: #ff7a3d; --pick-bg: #35170a; --rec: #3dfc5c; --rec-bg: #0a2b10; --long: #7d9dff; --long-bg: #141d3f;
+  --watch: #969c91; --watch-bg: #1d201b; --hit: #ffd233; --hit-ink: #ffd233; --hit-bg: #3a2e05;
+  --g1: #f08ad9; --g1-bg: #3a1533; --plus: #3dfc5c; --minus: #ff6b6b; --warn: #ffb547; --warn-bg: #352306;
+  --bar: #f2f4ef; --bar-2: #3b3f37; --hl: #0c2611; --mk-wipe: 0; color-scheme: dark;
+}
+/* 以前の名前(古いページとテンプレートのため。新しく書くときは上の名前を使う)。.ds-dark でも計算し直すため、両方に置く */
+:root, .ds-dark {
+  --bg: var(--paper); --surface: var(--paper); --surface-2: var(--paper-2);
+  --text: var(--ink); --text-2: var(--ink-2); --line-2: var(--paper-3);
+  --gold: var(--hit-ink); --gold-bg: var(--hit-bg);
+  --good: var(--plus); --bad: var(--minus);
+}
+@media (prefers-color-scheme: dark) {
+  :root:not([data-theme="light"]) {
+    --paper: #060706; --paper-2: #121411; --paper-3: #1d201b;
+    --ink: #f2f4ef; --ink-2: #c5c9c0; --muted: #969c91;
+    --line: #2a2e27; --rule: #f2f4ef; --accent: #00fa27;
+    --pick: #ff7a3d; --pick-bg: #35170a; --rec: #3dfc5c; --rec-bg: #0a2b10; --long: #7d9dff; --long-bg: #141d3f;
+    --watch: #969c91; --watch-bg: #1d201b; --hit: #ffd233; --hit-ink: #ffd233; --hit-bg: #3a2e05;
+    --g1: #f08ad9; --g1-bg: #3a1533; --plus: #3dfc5c; --minus: #ff6b6b; --warn: #ffb547; --warn-bg: #352306;
+    --bar: #f2f4ef; --bar-2: #3b3f37; --hl: #0c2611; --mk-wipe: 0; color-scheme: dark;
+  }
+}
+:root[data-theme="dark"] {
+  --paper: #060706; --paper-2: #121411; --paper-3: #1d201b;
+  --ink: #f2f4ef; --ink-2: #c5c9c0; --muted: #969c91;
+  --line: #2a2e27; --rule: #f2f4ef; --accent: #00fa27;
+  --pick: #ff7a3d; --pick-bg: #35170a; --rec: #3dfc5c; --rec-bg: #0a2b10; --long: #7d9dff; --long-bg: #141d3f;
+  --watch: #969c91; --watch-bg: #1d201b; --hit: #ffd233; --hit-ink: #ffd233; --hit-bg: #3a2e05;
+  --g1: #f08ad9; --g1-bg: #3a1533; --plus: #3dfc5c; --minus: #ff6b6b; --warn: #ffb547; --warn-bg: #352306;
+  --bar: #f2f4ef; --bar-2: #3b3f37; --hl: #0c2611; --mk-wipe: 0; color-scheme: dark;
+}
+
+/* ========== 土台 ========== */
+*, *::before, *::after { box-sizing: border-box; }
+html { -webkit-text-size-adjust: 100%; text-size-adjust: 100%; scroll-padding-top: 88px; }   /* 固定ヘッダーの高さ + 余白(ページ内リンク) */
+@media (max-width: 860px) { html { scroll-padding-top: 112px; } }
+body { margin: 0; background: var(--paper); color: var(--ink); font: 500 var(--t-body)/1.85 var(--f-body); -webkit-font-smoothing: antialiased; }
+h1, h2, h3, h4 { margin: 0; font-family: var(--f-body); font-weight: 900; line-height: 1.35; letter-spacing: .01em; text-wrap: balance; }
+p { margin: 0; }
+b, strong { font-weight: 700; }
+a { color: var(--accent); text-decoration-thickness: 1.5px; text-underline-offset: .22em; }
+::selection { background: var(--signal); color: var(--on-signal); }
+:focus-visible { outline: 3px solid var(--ink); outline-offset: 2px; }
+img, svg { max-width: 100%; }
+
+/* ========== 箱(全ページ共通の左端) ========== */
+.ds-wrap { width: 100%; max-width: calc(var(--w-page) + 2 * var(--gutter)); margin-inline: auto;
+  padding-left: max(var(--gutter), env(safe-area-inset-left, 0px)); padding-right: max(var(--gutter), env(safe-area-inset-right, 0px)); }
+.ds-main { display: grid; grid-template-columns: minmax(0, 1fr); gap: var(--s-8); padding-block: var(--s-7) var(--s-8); }
+.ds-prose { max-width: var(--w-text); }
+.ds-prose > * + * { margin-top: var(--s-4); }
+.ds-scroll { overflow-x: auto; -webkit-overflow-scrolling: touch; }
+
+/* ========== ヘッダー(上部のバー。サイト・アプリ・見方/検証値/しくみで同じもの) ========== */
+body::before { content: ""; position: fixed; inset: 0 0 auto; height: env(safe-area-inset-top, 0px); z-index: 60; background: var(--paper); }
+.ds-header { position: sticky; top: env(safe-area-inset-top, 0px); z-index: 50; background: var(--paper); border-bottom: var(--bw-2) solid var(--rule); }
+.ds-header-in { display: flex; align-items: center; gap: var(--s-5); min-height: 64px; }
+.ds-logo { display: inline-flex; align-items: center; gap: 10px; color: var(--ink); text-decoration: none; flex: none; }
+.ds-logo svg { width: 38px; height: 38px; flex: none; display: block; }
+.ds-logo b { display: block; font: 900 17px/1.15 var(--f-body); letter-spacing: .02em; }
+.ds-logo small { display: block; font: 800 10px/1.2 var(--f-label); letter-spacing: .14em; text-transform: uppercase; color: var(--muted); }
+.ds-nav { display: flex; align-self: stretch; flex: 1; min-width: 0; }
+/* ページ名は英字(上)と日本語(下)。1つのページ = 同じ幅の区域(--nav-zone)で、文字は区域の中央。今のページの線は区域の幅いっぱいに引き、
+   バーの下の罫線に重ねる(2026-11-04 v2.1。文字の幅に合わせた線は不自然 = ユーザーの指摘) */
+.ds-nav { --nav-zone: 116px; }
+.ds-nav a { position: relative; flex: 0 0 var(--nav-zone); display: flex; flex-direction: column; justify-content: center; align-items: center; gap: 3px;
+  padding: 0 6px; color: var(--ink); text-decoration: none; text-align: center; }
+.ds-nav a::after { content: ""; position: absolute; left: 0; right: 0; bottom: calc(-1 * var(--bw-2)); height: 5px; background: transparent; }
+.ds-nav a:hover::after { background: var(--line); }
+.ds-nav a[aria-current="page"]::after { background: var(--signal); }
+.ds-nav .en { font: 800 10.5px/1 var(--f-label); letter-spacing: .12em; text-transform: uppercase; color: var(--muted); }
+.ds-nav .jp { position: relative; font: 800 14px/1.2 var(--f-body); }
+.ds-nav a[aria-current="page"] .en { color: var(--ink); }
+.ds-ext { display: flex; align-items: center; gap: var(--s-2); flex: none; }
+@media (max-width: 1080px) { .ds-nav { --nav-zone: 92px; } .ds-ext .ds-hide-sm { display: none; } }   /* 5つの区域が1行に入るように */
+@media (max-width: 860px) {
+  .ds-header-in { flex-wrap: wrap; gap: 0; min-height: 0; padding-top: 8px; }
+  .ds-logo { flex: 1; } .ds-logo svg { width: 32px; height: 32px; } .ds-logo small { display: none; }
+  .ds-nav { order: 3; flex-basis: 100%; display: grid; grid-template-columns: repeat(5, minmax(0, 1fr)); margin-top: 6px; }
+  .ds-nav a { padding: 6px 4px 10px; }   /* 5つの区域が横いっぱい(grid の列) */
+  .ds-ext .ds-pill { min-height: 32px; padding: 0 12px; font-size: 12.5px; }
+  .ds-ext .ds-hide-sm { display: none; }
+}
+
+/* ========== 線のアイコン(🔥🟢🎯 の代わり。図形は dskit.ICONS、元のスプライトはヘッダー・base.html が入れる) ==========
+   <svg class="ki ki-pick"><use href="#k-pick"/></svg>。太さ 2.4 の線・文字の 1.2 倍。色は種類の色(札の中では札の文字の色) */
+.ds-sprite { position: absolute; width: 0; height: 0; overflow: hidden; }
+.ki { width: 1.2em; height: 1.2em; flex: none; vertical-align: -.24em; fill: none; stroke: currentColor; stroke-width: 2.4;
+  stroke-linecap: round; stroke-linejoin: round; overflow: visible; }
+.ki-pick { color: var(--pick); } .ki-rec { color: var(--rec); } .ki-long { color: var(--long); } .ki-g1 { color: var(--g1); } .ki-hit { color: var(--hit-ink); }
+.kl { display: inline-flex; align-items: center; gap: .3em; font-weight: 800; white-space: nowrap; }
+
+/* ========== ボタン(丸) ========== */
+.ds-pill { display: inline-flex; align-items: center; justify-content: center; gap: 8px; min-height: 40px; padding: 0 18px; border-radius: var(--r-pill);
+  border: var(--bw-2) solid var(--ink); background: var(--paper); color: var(--ink); font: 800 14px/1 var(--f-body); text-decoration: none;
+  white-space: nowrap; cursor: pointer; transition: transform var(--dur-1) var(--ease), background-color var(--dur-2) var(--ease), color var(--dur-2) var(--ease); }
+.ds-pill:hover { background: var(--ink); color: var(--paper); }
+.ds-pill:active { transform: scale(.97); }
+.ds-pill svg { width: 14px; height: 14px; fill: currentColor; }
+.ds-pill--ink { background: var(--ink); color: var(--paper); }
+.ds-pill--ink:hover { background: var(--signal); color: var(--on-signal); }
+.ds-pill--signal { background: var(--signal); border-color: var(--signal); color: var(--on-signal); }
+.ds-pill--signal:hover { background: var(--brand-ink); border-color: var(--brand-ink); color: var(--signal); }
+.ds-pill--sm { min-height: 32px; padding: 0 13px; font-size: 13px; }
+
+/* ========== ヒーロー(各ページの頭。緑の帯) ========== */
+.ds-hero { background: var(--signal); color: var(--on-signal); overflow: hidden; }
+.ds-hero a { color: var(--on-signal); }
+.ds-hero-in { padding-block: var(--s-5) var(--s-4); }
+.ds-hero-top { display: flex; justify-content: space-between; align-items: flex-start; gap: var(--s-4);
+  font: 800 var(--t-label)/1.35 var(--f-label); letter-spacing: .1em; text-transform: uppercase; }
+.ds-hero-top .r { text-align: right; }
+.ds-hero-titles { display: flex; flex-direction: column; align-items: flex-start; gap: 8px; margin-top: var(--s-7); }
+.ds-mkline { display: inline; background: var(--brand-ink); color: var(--signal); font: 900 var(--t-h1)/1.32 var(--f-body);
+  padding: .04em .26em; letter-spacing: .02em; -webkit-box-decoration-break: clone; box-decoration-break: clone; }
+.ds-giant { display: block; margin: var(--s-4) 0 0 -.035em; font: 400 var(--t-giant)/.88 var(--f-display); letter-spacing: -.005em;
+  text-transform: uppercase; white-space: nowrap; color: var(--on-signal);
+  /* 語の文字数(--chars)から、箱の幅いっぱいになる大きさに(novasell の全幅の英字) */
+  font-size: min(calc((100vw - 2 * var(--gutter) - 16px) / (var(--chars, 6) * .47)), calc(var(--w-page) / (var(--chars, 6) * .47)), 360px); }   /* 360px まで(帯が画面を埋めて中身が押し出されないように) */
+.ds-lead { max-width: 36em; margin-top: var(--s-5); font: 700 clamp(15.5px, 1.9vw, 18.5px)/1.85 var(--f-body); }
+.ds-hero-foot { display: flex; justify-content: space-between; flex-wrap: wrap; gap: var(--s-2) var(--s-5); margin-top: var(--s-6); padding-top: var(--s-3);
+  border-top: var(--bw-2) solid var(--on-signal); font: 800 var(--t-label)/1.5 var(--f-label); letter-spacing: .1em; text-transform: uppercase; }
+/* 読み込んだときの動きは、大きい英字のせり上がりだけ(位置だけ動かす。文字を隠す演出は使わない = 裏で開いても全部見える) */
+@media (prefers-reduced-motion: no-preference) { .ds-hero .ds-giant { animation: ds-rise .7s var(--ease) both; } }
+@keyframes ds-rise { from { transform: translateY(12%); } to { transform: none; } }
+
+/* ========== 見出し ========== */
+.ds-sec { display: grid; grid-template-columns: minmax(0, 1fr); gap: var(--s-5); min-width: 0; scroll-margin-top: 96px; }   /* 列は 0〜1fr: 中の広い表で節が画面より広がらない(表は .ds-scroll の中で横に動く) */
+.ds-sec > * { min-width: 0; }
+.ds-sec-head { display: grid; gap: 6px; padding-top: var(--s-3); border-top: var(--bw-2) solid var(--rule); }
+.ds-label { font: 800 var(--t-label)/1.35 var(--f-label); letter-spacing: .1em; text-transform: uppercase; color: var(--muted); }
+/* .ds-en = 節の英字の大見出し。定義書 v2 で使わなくなった(日本語の見出しが主役)。新しく使わない */
+.ds-en { display: block; font: 400 var(--t-d2)/.9 var(--f-display); text-transform: uppercase; letter-spacing: .005em; color: var(--ink); }
+.ds-jp { font: 900 clamp(22px, 3vw, 32px)/1.35 var(--f-body); }   /* 節の主役(日本語の見出し) */
+.ds-sec-head .ds-jp { margin-top: 2px; }
+.ds-h3 { font: 900 var(--t-h3)/1.45 var(--f-body); }
+
+/* ========== マーカー(文字に敷く緑の帯) ========== */
+.ds-mk { background-image: linear-gradient(var(--signal), var(--signal)); background-repeat: no-repeat; background-size: 100% 100%;
+  color: var(--on-signal); padding: .02em .18em; -webkit-box-decoration-break: clone; box-decoration-break: clone; }
+.ds-mk.is-in { transition: background-size var(--dur-3) var(--ease); }
+.ds-mk.is-pending { background-size: 0% 100%; }
+.ds-mk--ink { background-image: linear-gradient(var(--brand-ink), var(--brand-ink)); color: var(--signal); }
+
+/* ========== 大きい数字 ========== */
+.ds-stats { display: grid; grid-template-columns: repeat(auto-fit, minmax(min(100%, 220px), 1fr)); gap: var(--s-5) var(--s-5); }
+.ds-stat { display: grid; gap: 6px; align-content: start; padding-top: var(--s-3); border-top: var(--bw-2) solid var(--rule); min-width: 0; }
+.ds-stat-k { display: flex; align-items: flex-end; flex-wrap: wrap; gap: 4px 8px; font: 800 14px/1.4 var(--f-body); min-height: 2.8em; }   /* 2行分。数字の位置をそろえる */
+.ds-stat-v { font: 400 var(--t-d2)/.95 var(--f-display); letter-spacing: .005em; }
+.ds-stat-v small { font: 800 .34em/1 var(--f-body); margin-left: .2em; letter-spacing: 0; }
+.ds-stat-s { font: 500 var(--t-small)/1.65 var(--f-body); color: var(--muted); }
+
+/* ========== 面 ========== */
+.ds-card { background: var(--paper); border: var(--bw-2) solid var(--rule); border-radius: var(--r-box); padding: var(--s-5); min-width: 0; }
+.ds-card--soft { background: var(--paper-2); border: var(--bw) solid var(--line); }
+.ds-band { background: var(--brand-ink); color: var(--brand-paper); }
+
+/* ========== 導線の行(矢印 + 英字 + 日本語) ========== */
+.ds-rows { display: grid; border-top: var(--bw-2) solid var(--rule); }
+.ds-row { display: grid; grid-template-columns: auto minmax(0, 1fr) auto; align-items: center; gap: var(--s-2) var(--s-5); padding: var(--s-4) 0;
+  border-bottom: var(--bw-2) solid var(--rule); color: var(--ink); text-decoration: none; }
+.ds-row-arrow { font: 400 clamp(26px, 3.6vw, 42px)/1 var(--f-display); transition: transform var(--dur-2) var(--ease); }
+.ds-row-en { display: block; font: 400 var(--t-d3)/1 var(--f-display); text-transform: uppercase; }
+.ds-row-jp { display: block; margin-top: 6px; font: 700 14px/1.5 var(--f-body); color: var(--ink-2); }
+.ds-row-end { font: 800 var(--t-label)/1 var(--f-label); letter-spacing: .1em; text-transform: uppercase; color: var(--muted); }
+.ds-row:hover .ds-row-arrow { transform: translateX(8px); }
+.ds-row:hover .ds-row-en { text-decoration: underline; text-decoration-thickness: 3px; text-underline-offset: .12em; }
+
+/* ========== 札(買い目の種類・状態) ========== */
+.ds-tag { display: inline-flex; align-items: center; gap: 6px; padding: 5px 11px; border-radius: var(--r-pill); font: 800 13px/1 var(--f-body);
+  white-space: nowrap; background: var(--paper-2); color: var(--ink-2); }
+.ds-tag--pick { background: var(--pick-bg); color: var(--pick); }
+.ds-tag--rec { background: var(--rec-bg); color: var(--rec); }
+.ds-tag--long { background: var(--long-bg); color: var(--long); }
+.ds-tag--hit { background: var(--hit); color: var(--on-signal); }
+.ds-tag--g1 { background: var(--g1-bg); color: var(--g1); }
+.ds-tag--ink { background: var(--ink); color: var(--paper); }
+
+/* ========== 表 ========== */
+.ds-table { width: 100%; border-collapse: collapse; font-variant-numeric: tabular-nums; }
+.ds-table th, .ds-table td { padding: 12px 10px; border-bottom: var(--bw) solid var(--line); text-align: right; white-space: nowrap; vertical-align: middle; }
+.ds-table th:first-child, .ds-table td:first-child { text-align: left; padding-left: 0; }
+/* スマホで縦に積む表(.ds-stack。560px 以下): 1行 = 1つのまとまり。1列目(名前)を頭に、ほかは「見出し」と値を2列で。
+   見出しの文字は ds.js が thead から各セルの data-label に写す(JS で作る表は window.dsStack(表) を呼ぶ) */
+@media (max-width: 560px) {
+  table.ds-stack thead { display: none; }
+  table.ds-stack, table.ds-stack tbody { display: block; width: 100%; }
+  table.ds-stack tr { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 12px 16px; padding: 14px 0; border-bottom: var(--bw) solid var(--line); }
+  table.ds-stack tr:first-child { border-top: var(--bw-2) solid var(--rule); }
+  table.ds-stack td { display: block; padding: 0; border: 0; text-align: left; white-space: normal; }
+  table.ds-stack td:first-child { grid-column: 1 / -1; }
+  table.ds-stack td[data-label]:not(:first-child)::before { content: attr(data-label); display: block; font: 800 11.5px/1.4 var(--f-body); color: var(--muted); margin-bottom: 3px; }
+}
+.ds-table thead th { font: 800 12px/1.35 var(--f-body); color: var(--muted); border-bottom: var(--bw-2) solid var(--rule); white-space: normal; vertical-align: bottom; }
+.ds-table .ds-n { font-family: var(--f-num); font-weight: 700; }
+
+/* ========== 流れる文字の帯 ========== */
+.ds-ticker { overflow: hidden; background: var(--brand-ink); color: var(--signal); white-space: nowrap; }
+.ds-ticker-track { display: inline-flex; animation: ds-tick 42s linear infinite; will-change: transform; }
+.ds-ticker span { padding: 13px 0; font: 400 clamp(17px, 2vw, 24px)/1 var(--f-display); text-transform: uppercase; letter-spacing: .03em; }
+.ds-ticker span::after { content: "/"; margin: 0 .9em; color: var(--brand-muted); }
+.ds-ticker:hover .ds-ticker-track { animation-play-state: paused; }
+@keyframes ds-tick { to { transform: translateX(-50%); } }
+
+/* ========== 開くと続き ========== */
+.ds-acc { border-top: var(--bw-2) solid var(--rule); }
+.ds-acc > summary { list-style: none; cursor: pointer; display: flex; justify-content: space-between; align-items: center; gap: var(--s-3);
+  padding: var(--s-3) 0; font: 900 16px/1.45 var(--f-body); }
+.ds-acc > summary::-webkit-details-marker { display: none; }
+.ds-acc > summary::after { content: "+"; flex: none; font: 400 30px/1 var(--f-display); }
+.ds-acc[open] > summary::after { content: "−"; }
+
+/* ========== 小さい文字 ========== */
+.ds-note { font: 500 var(--t-small)/1.75 var(--f-body); color: var(--muted); }
+.ds-num { font-family: var(--f-num); font-variant-numeric: tabular-nums; }
+
+/* ========== フッター(黒の帯) ========== */
+.ds-footer { background: var(--brand-ink); color: var(--brand-paper); overflow: hidden; }
+.ds-footer a { color: var(--brand-paper); text-decoration: none; }
+.ds-footer-in { padding-block: var(--s-7) var(--s-4); }
+.ds-foot-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(min(100%, 150px), 1fr)); gap: var(--s-5); }
+.ds-foot-grid a { display: grid; gap: 4px; }
+.ds-foot-grid .en { font: 400 clamp(26px, 3vw, 34px)/1 var(--f-display); text-transform: uppercase; }
+.ds-foot-grid .jp { font: 700 12.5px/1.4 var(--f-body); color: var(--brand-muted); }
+.ds-foot-grid a:hover .en { color: var(--signal); }
+.ds-foot-pills { display: flex; flex-wrap: wrap; gap: var(--s-2); margin-top: var(--s-6); }
+.ds-foot-pills .ds-pill { background: var(--brand-paper); border-color: var(--brand-paper); color: var(--brand-ink); }
+.ds-foot-pills .ds-pill--signal { background: var(--signal); border-color: var(--signal); }
+.ds-foot-pills .ds-pill:hover { background: var(--brand-ink); color: var(--signal); border-color: var(--signal); }
+.ds-foot-note { margin-top: var(--s-6); max-width: 52em; font: 500 12.5px/1.8 var(--f-body); color: var(--brand-muted); }
+.ds-foot-ver { text-transform: none; }   /* 版の表示はモデルの名前の大文字小文字のまま */
+.ds-foot-meta { display: flex; justify-content: space-between; flex-wrap: wrap; gap: var(--s-3); margin-top: var(--s-6);
+  font: 800 var(--t-label)/1.5 var(--f-label); letter-spacing: .1em; text-transform: uppercase; color: var(--brand-muted); }
+.ds-foot-word { display: block; margin: var(--s-4) 0 0 -.03em; font: 400 clamp(60px, 14.5vw, 196px)/.82 var(--f-display); text-transform: uppercase;
+  color: var(--signal); white-space: nowrap; }
+
+/* ========== 動きを減らす設定 ========== */
+@media (prefers-reduced-motion: reduce) {
+  .ds-ticker-track { animation: none; }
+  .ds-pill, .ds-row-arrow, .ds-mk.is-in { transition: none; }
+}
+</style><style>
+.hs-table td.t,.hs-table th.t{text-align:left;white-space:normal}
+.hs-table td.t{min-width:20em;line-height:1.75;font-weight:500}
+.hs-v{display:flex;align-items:center;gap:8px;font:800 18px/1.2 var(--f-num)}
+.hs-d{display:block;margin-top:4px;font:600 12px/1.4 var(--f-num);color:var(--muted)}
+.hs-sub{display:block;margin-top:3px;font:600 11.5px/1.4 var(--f-body);color:var(--muted)}
+.hs-major td{background:var(--paper-2);font:800 13.5px/1.5 var(--f-body);white-space:normal;text-align:left;padding-left:12px}
+.hs-list{margin:0;padding-left:1.2em;display:grid;gap:var(--s-2)}
+.hs-case{text-transform:none}
+@media (max-width:560px){
+ table.hs-table tr{grid-template-columns:repeat(3,minmax(0,1fr))}
+ .hs-table td.t{grid-column:1/-1;min-width:0}
+ .hs-major td{padding:8px 12px}
+}
+</style></head><body><svg class="ds-sprite" aria-hidden="true" focusable="false"><symbol id="k-pick" viewBox="0 0 24 24"><path d="M6.5 3.5h11l4 5.5L12 21 2.5 9z"/><path d="M2.5 9h19M9.5 3.5 8 9l4 12 4-12-1.5-5.5"/></symbol><symbol id="k-rec" viewBox="0 0 24 24"><circle cx="12" cy="12" r="9"/><path d="m7.6 12.4 3 3 5.8-6.4"/></symbol><symbol id="k-long" viewBox="0 0 24 24"><circle cx="12" cy="12" r="9"/><circle cx="12" cy="12" r="4.6"/><circle cx="12" cy="12" r="1.5" fill="currentColor" stroke="none"/></symbol><symbol id="k-g1" viewBox="0 0 24 24"><path d="M7 4h10v4.5a5 5 0 0 1-10 0z"/><path d="M7 6H4.2a3 3 0 0 0 3.3 4M17 6h2.8a3 3 0 0 1-3.3 4M12 13.5V17M9.5 17h5v3.5h-5z"/></symbol><symbol id="k-hit" viewBox="0 0 24 24"><path d="m12 3.2 2.6 5.5 6 .8-4.4 4.1 1.1 6L12 16.7l-5.3 2.9 1.1-6-4.4-4.1 6-.8z"/></symbol><symbol id="k-flag" viewBox="0 0 24 24"><path d="M5 21V4"/><path d="M5 4h13l-2.6 4.2L18 12.5H5"/></symbol><symbol id="k-info" viewBox="0 0 24 24"><circle cx="12" cy="12" r="9"/><path d="M12 11v5.5M12 7.8v.1"/></symbol><symbol id="k-alert" viewBox="0 0 24 24"><path d="M12 3.6 21.4 20H2.6z"/><path d="M12 10v4.4M12 17.2v.1"/></symbol></svg><header class="ds-header" id="top"><div class="ds-wrap ds-header-in"><a class="ds-logo" href="index.html"><svg viewBox="0 0 1024 1024" aria-hidden="true"><rect width="1024" height="1024" fill="#00fa27"/><path d="M332.2 211.7L330.1 215.2L189.9 784.5L184.3 811.5L339.3 811.7L396.2 583.2L592.5 582.6L627.8 552.8L624.0 536.8L623.4 524.0L626.0 508.5L631.5 494.7L635.3 516.0L643.4 534.2L653.5 546.2L669.5 556.4L687.2 560.6L714.8 559.9L735.8 566.9L768.8 582.1L781.5 599.5L787.5 602.6L796.8 601.5L815.5 595.5L822.5 592.6L830.0 587.3L839.9 555.5L839.9 550.8L838.0 547.5L761.2 468.3L758.5 464.5L752.4 447.0L643.5 348.4L632.2 339.4L631.4 341.8L639.9 386.5L639.8 391.6L501.5 392.3L500.5 392.8L502.3 394.2L535.2 410.8L545.2 417.3L430.0 447.1L486.3 212.5L484.0 211.7ZM643.5 581.5L588.7 627.5L582.8 633.8L540.2 806.2L540.0 811.8L688.2 812.0L694.8 811.2L744.8 607.5L733.2 601.2L714.0 594.2L707.2 593.1L684.5 593.5L673.5 592.1ZM688.8 211.7L685.4 212.0L684.1 214.8L659.1 320.0L785.5 433.7L800.8 374.5L839.8 212.5Z" fill="#070807"/></svg><span><b>発走前ラボ</b><small>Hassomae Lab</small></span></a><nav class="ds-nav" aria-label="サイト内のページ"><a href="index.html"><span class="en">Ledger</span><span class="jp">帳簿</span></a><a href="guide.html"><span class="en">Guide</span><span class="jp">見方</span></a><a href="showcase.html"><span class="en">Record</span><span class="jp">検証値</span></a><a href="explain.html"><span class="en">System</span><span class="jp">しくみ</span></a><a href="history.html" aria-current="page"><span class="en">History</span><span class="jp">履歴</span></a></nav><div class="ds-ext"><a class="ds-pill ds-pill--sm" href="https://note.com/hassomae_ai" rel="me">note</a><a class="ds-pill ds-pill--ink ds-pill--sm" href="https://x.com/hassomae_ai" rel="me" aria-label="X @hassomae_ai"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M18.24 2.25h3.31l-7.23 8.26 8.5 11.24h-6.65l-5.21-6.82-5.97 6.82H1.68l7.73-8.84L1.25 2.25h6.83l4.71 6.23zm-1.16 17.52h1.83L7.08 4.13H5.12z"/></svg><span class="ds-hide-sm">@hassomae_ai</span></a></div></div></header><section class="ds-hero"><div class="ds-wrap ds-hero-in"><div class="ds-hero-top"><span>History ・ 更新の記録</span><span class="r">Model and service<br>version history</span></div><h1 class="ds-hero-titles"><span><span class="ds-mkline">変えたら、</span></span><span><span class="ds-mkline">全部ここに残す。</span></span></h1><span class="ds-giant" style="--chars:7" aria-hidden="true">History</span><p class="ds-lead">予想するモデル DeepOddsAI と、買い目の出し方やページなどのサービス。2つに別々の番号を付けて、いつ何を変えたかを残しています。モデルの変更には、確率の精度を表す logloss も載せています。</p><div class="ds-hero-foot"><span><span class="hs-case">DeepOddsAI v3.1</span></span><span><span class="hs-case">Service v2.2</span></span><span>Scroll ↓</span></div></div></section><div class="ds-ticker" aria-hidden="true"><div class="ds-ticker-track"><span>Every JRA race, before the start</span><span>No bet deleted</span><span>Value over hits</span><span>AI × odds</span><span>Picks are free on X</span></div></div><main class="ds-wrap ds-main"><section class="ds-sec"><div class="ds-sec-head"><span class="ds-label">01 ・ Now</span><h2 class="ds-jp">いまのバージョン</h2></div><div class="ds-stats"><div class="ds-stat"><span class="ds-stat-k">DeepOddsAI(予想モデル)</span><span class="ds-stat-v">v3.1</span><span class="ds-stat-s">2026/11/03 から。馬ごとの勝率を出す部分</span></div><div class="ds-stat"><span class="ds-stat-k">logloss(いまの版)</span><span class="ds-stat-v">1.8991</span><span class="ds-stat-s">発走6分前のオッズで測った検証値。小さいほど良い</span></div><div class="ds-stat"><span class="ds-stat-k">サービス</span><span class="ds-stat-v">v2.2</span><span class="ds-stat-s">2026/11/09 から。買い目の区分け・金額・投稿・報告・ページ</span></div></div><ul class="hs-list ds-prose"><li>DeepOddsAI は、発走前ラボの予想モデルです(LightGBM・深層学習・オッズの合成)。</li><li>モデルの番号は、予測のしくみ(構造・学び方)が変わると左の数字が、しくみはそのままで入力・合成・本数を変えると右の数字が上がります。</li><li>サービスの番号は、買い目の区分け・金額の決め方・公開のしかたの骨組みが変わると左の数字が、時刻・報告・ページの足し引きで右の数字が上がります。0.x は公開前です。</li><li>番号は2026年11月9日に付けはじめました。それより前の版は、記録をもとにさかのぼって番号を振っています。</li></ul></section><section class="ds-sec"><div class="ds-sec-head"><span class="ds-label">02 ・ Model</span><h2 class="ds-jp">DeepOddsAI の変更履歴</h2></div><p class="ds-prose">logloss は、勝った馬にどれだけ高い確率を付けられていたかを表す数字で、<b>小さいほど良い予想</b>です。全馬に同じ確率を付けると 2.59、発走6分前のオッズだけで見ると 1.9492、確定したオッズだけで見ると 1.910 になります。</p><div class="ds-scroll"><table class="ds-table ds-stack hs-table"><thead><tr><th>版</th><th class="t">変えたこと</th><th>logloss<br>買う時点</th><th>logloss<br>確定オッズ(参考)</th><th>前の版との差</th></tr></thead><tbody><tr class="hs-major"><td colspan="5">v3 ・ 買う時点のオッズを土台に学ぶ</td></tr><tr><td><span class="hs-v">v3.1<span class="ds-tag ds-tag--ink">いま</span></span><span class="hs-d">2026/11/03</span></td><td class="t">過去走の並びから隠した1走を当てる練習(事前学習)をしてから本番の学習をするようにして、深層学習をすべて学び直した。</td><td class="ds-n" data-label="買う時点">1.8991<span class="hs-sub">発走6分前</span></td><td class="ds-n" data-label="確定オッズ(参考)">1.8929</td><td class="ds-n" data-label="前の版との差">−0.0018<span class="hs-sub">買う時点</span></td></tr><tr><td><span class="hs-v">v3.0</span><span class="hs-d">2026/11/02</span></td><td class="t">発走6分前・20分前の予想で、その時点の単勝オッズを土台にして「オッズが外している分」だけを学ぶ深層学習に変えた。</td><td class="ds-n" data-label="買う時点">1.9010<span class="hs-sub">発走6分前</span></td><td class="ds-n" data-label="確定オッズ(参考)">1.8943</td><td class="ds-n" data-label="前の版との差">−0.0137<span class="hs-sub">買う時点</span></td></tr><tr class="hs-major"><td colspan="5">v2 ・ 1〜5着それぞれの強さを出す</td></tr><tr><td><span class="hs-v">v2.6</span><span class="hs-d">2026/11/02</span></td><td class="t">単勝のほかに、複勝と馬連のオッズからも市場の見立てを読むようにした。</td><td class="ds-n" data-label="買う時点">1.9147<span class="hs-sub">発走6分前</span></td><td class="ds-n" data-label="確定オッズ(参考)">1.8943</td><td class="ds-n" data-label="前の版との差">−0.0018<span class="hs-sub">買う時点</span></td></tr><tr><td><span class="hs-v">v2.5</span><span class="hs-d">2026/11/02</span></td><td class="t">同じ形のモデルを乱数を変えて増やし、LightGBM 6本・深層学習 15本の平均にした。</td><td class="ds-n" data-label="買う時点">1.9165<span class="hs-sub">発走6分前</span></td><td class="ds-n" data-label="確定オッズ(参考)">1.8996</td><td class="ds-n" data-label="前の版との差">−0.0003<span class="hs-sub">買う時点</span></td></tr><tr><td><span class="hs-v">v2.4</span><span class="hs-d">2026/10/11</span></td><td class="t">前日・発走20分前・直前で、AIとオッズの混ぜ方を時点ごとに分けた。</td><td class="ds-n" data-label="買う時点">1.9151<span class="hs-sub">発走6分前</span></td><td class="ds-n" data-label="確定オッズ(参考)">1.8983</td><td class="ds-n" data-label="前の版との差">−0.0003<span class="hs-sub">買う時点</span></td></tr><tr><td><span class="hs-v">v2.3</span><span class="hs-d">2026/10/11</span></td><td class="t">過去走が多い馬ほどAIを、少ない馬ほどオッズを信じるように、馬ごとに混ぜ方を変えた。</td><td class="ds-n" data-label="買う時点">1.9154<span class="hs-sub">発走10分前</span></td><td class="ds-n" data-label="確定オッズ(参考)">1.8983</td><td class="ds-n" data-label="前の版との差">−0.0002<span class="hs-sub">買う時点</span></td></tr><tr><td><span class="hs-v">v2.2</span><span class="hs-d">2026/10/11</span></td><td class="t">新馬戦はオッズだけで見立てる形に。直前のオッズの動きと、直前に入ったお金の配分も読むようにした。</td><td class="ds-n" data-label="買う時点">1.9156<span class="hs-sub">発走10分前</span></td><td class="ds-n" data-label="確定オッズ(参考)">1.8989</td><td class="ds-n" data-label="前の版との差">−0.0064<span class="hs-sub">買う時点</span></td></tr><tr><td><span class="hs-v">v2.1</span><span class="hs-d">2026/10/10</span></td><td class="t">同じ日・同じ競馬場で前に終わったレースの、内外の偏りを足した。</td><td class="ds-n" data-label="買う時点">1.9220<span class="hs-sub">発走10分前</span></td><td class="ds-n" data-label="確定オッズ(参考)">1.9005</td><td class="ds-n" data-label="前の版との差">−0.0005<span class="hs-sub">買う時点</span></td></tr><tr><td><span class="hs-v">v2.0</span><span class="hs-d">2026/10/08</span></td><td class="t">1着だけでなく、1〜5着それぞれの強さを別々に出す深層学習に変えた。馬券ごとの確率も、この着ごとの強さから出す。</td><td class="ds-n" data-label="買う時点">1.9225<span class="hs-sub">発走10分前</span></td><td class="ds-n" data-label="確定オッズ(参考)">1.9009</td><td class="ds-n" data-label="前の版との差">−0.0042<span class="hs-sub">買う時点</span></td></tr><tr class="hs-major"><td colspan="5">v1 ・ LightGBM・深層学習・オッズを混ぜる</td></tr><tr><td><span class="hs-v">v1.4</span><span class="hs-d">2026/10/08</span></td><td class="t">発売中のオッズで予想するときは、発走10分前のオッズで決めた混ぜ方を使うようにした。</td><td class="ds-n" data-label="買う時点">1.9267<span class="hs-sub">発走10分前</span></td><td class="ds-n" data-label="確定オッズ(参考)">1.9034</td><td class="ds-n" data-label="前の版との差">−0.0049<span class="hs-sub">買う時点</span></td></tr><tr><td><span class="hs-v">v1.3</span><span class="hs-d">2026/10/07</span></td><td class="t">深層学習に、過去走の上がりの順位や、位置取りのわりに伸びたかをくわしく入れた。</td><td class="ds-n" data-label="買う時点">1.9316<span class="hs-sub">発走10分前</span></td><td class="ds-n" data-label="確定オッズ(参考)">1.9034</td><td class="ds-n" data-label="前の版との差">−0.0005<span class="hs-sub">確定オッズ</span></td></tr><tr><td><span class="hs-v">v1.2</span><span class="hs-d">2026/10/07</span></td><td class="t">手がかりを追加: 同じ条件での成績・似た条件の過去走・好走したときの馬体重・遠征・上がりのレース内の順位。</td><td class="ds-n" data-label="買う時点">—</td><td class="ds-n" data-label="確定オッズ(参考)">1.9041</td><td class="ds-n" data-label="前の版との差">+0.0001<span class="hs-sub">確定オッズ</span></td></tr><tr><td><span class="hs-v">v1.1</span><span class="hs-d">2026/10/06</span></td><td class="t">手がかりを追加: 馬場差を除いたタイム・レースの水準・相手の強さ・開催の偏り。深層学習の学び方も改良した。</td><td class="ds-n" data-label="買う時点">—</td><td class="ds-n" data-label="確定オッズ(参考)">1.9040</td><td class="ds-n" data-label="前の版との差">−0.0029<span class="hs-sub">確定オッズ</span></td></tr><tr><td><span class="hs-v">v1.0</span><span class="hs-d">2026/10/05</span></td><td class="t">最初の本番。LightGBM・深層学習(5本の平均)・オッズの3つを混ぜて勝率を出す形。</td><td class="ds-n" data-label="買う時点">—</td><td class="ds-n" data-label="確定オッズ(参考)">1.9069</td><td class="ds-n" data-label="前の版との差">—</td></tr></tbody></table></div><ul class="hs-list ds-note"><li>すべて検証値です。2022〜2026年のレースを、その年より前のデータだけで学習したモデルで予想して測りました(v2.4 までは約1.6万レース、v2.5 からは 16,153レース・2026年10月25日まで)。</li><li>「買う時点」は、買い目を決めるときに見えているオッズで測った数字です。発走6分前か10分前で測っていて、v1.2 より前は測っていません。「確定オッズ」は締切の後に決まるオッズを使った参考の数字で、実際にはこのオッズを見て買うことはできません。</li><li>「前の版との差」は同じレース・同じ時点で比べた値です。v2.5 でテスト期間を3週間のばしたので、表の数字どうしを引いた値とは合わないことがあります。</li></ul></section><section class="ds-sec"><div class="ds-sec-head"><span class="ds-label">03 ・ Service</span><h2 class="ds-jp">サービスの変更履歴</h2></div><div class="ds-scroll"><table class="ds-table ds-stack hs-table"><thead><tr><th>版</th><th class="t">変えたこと</th></tr></thead><tbody><tr class="hs-major"><td colspan="2">v2 ・ 見た目の作り直しと一部有料の開始</td></tr><tr><td><span class="hs-v">v2.2<span class="ds-tag ds-tag--ink">いま</span></span><span class="hs-d">2026/11/09</span></td><td class="t">予想モデルに DeepOddsAI の名前を付けた。モデルとサービスに別々の番号を付け、このページを追加。帳簿の日ごとの欄に、その日の版を載せた。日ごとの表を買い方ごとに色分けし、スマホの表示を整理した。</td></tr><tr><td><span class="hs-v">v2.1</span><span class="hs-d">2026/11/08</span></td><td class="t">最終予想を締切の1分半前ごろまで遅らせた。成績の報告を、推奨+厳選・厳選のみ・大穴のみ・全部の4つに。全部買った場合の帳簿を追加。的中の報告を元の投稿の引用に。</td></tr><tr><td><span class="hs-v">v2.0</span><span class="hs-d">2026/11/04</span></td><td class="t">サイト・アプリ・X の画像の見た目を白地のデザインに作り直した。メインレースの note の後半を有料にする形を決めた(レースの後に無料。買い目は無料のまま)。</td></tr><tr class="hs-major"><td colspan="2">v1 ・ X で公開</td></tr><tr><td><span class="hs-v">v1.5</span><span class="hs-d">2026/11/03</span></td><td class="t">帳簿サイトを公開。X に出した買い目を、外れも含めて全部載せて採点するようにした。</td></tr><tr><td><span class="hs-v">v1.4</span><span class="hs-d">2026/10/27</span></td><td class="t">1日のまとめの投稿に、成績の画像を付けた。</td></tr><tr><td><span class="hs-v">v1.3</span><span class="hs-d">2026/10/26</span></td><td class="t">G1 の日だけの「当てにいく枠」を追加(勝負の買い目とは別枠)。G1 の傾向の投稿を始めた。</td></tr><tr><td><span class="hs-v">v1.2</span><span class="hs-d">2026/10/24</span></td><td class="t">YouTube 配信用の画面を追加した。</td></tr><tr><td><span class="hs-v">v1.1</span><span class="hs-d">2026/10/19</span></td><td class="t">前夜に、明日の厳選の一覧を投稿するようにした。見送りのレースにも「しいて言うなら」の1点を添えた。</td></tr><tr><td><span class="hs-v">v1.0</span><span class="hs-d">2026/10/17</span></td><td class="t">X で公開を開始。JRA の全レースの買い目を発走前に自動で投稿し、結果とその日のまとめも投稿するようにした。</td></tr><tr class="hs-major"><td colspan="2">v0 ・ 公開前</td></tr><tr><td><span class="hs-v">v0.5</span><span class="hs-d">2026/10/16</span></td><td class="t">金額の決め方を2段階に: 厳選は期待値の上位10%、大穴は上位15%を1,000円、ほかは100円。</td></tr><tr><td><span class="hs-v">v0.4</span><span class="hs-d">2026/10/13</span></td><td class="t">買い目の出し方を作り直した。全レースで期待値の上位5件を、厳選・推奨・検討(買わない)に分け、大穴は別枠に。</td></tr><tr><td><span class="hs-v">v0.3</span><span class="hs-d">2026/10/12</span></td><td class="t">1レース1点の「イチオシ」に金額を付けた(見送り・100円・厳選は100〜300円)。</td></tr><tr><td><span class="hs-v">v0.2</span><span class="hs-d">2026/10/11</span></td><td class="t">最終予想を各レースの締切前に固定する形に。期待値は、予想される最終オッズで計算するようにした。</td></tr><tr><td><span class="hs-v">v0.1</span><span class="hs-d">2026/10/10</span></td><td class="t">実戦の1日目。当日の全レースの予想と買い目を、手元の画面に出す形で始めた。</td></tr></tbody></table></div></section></main><footer class="ds-footer"><div class="ds-wrap ds-footer-in"><div class="ds-foot-grid"><a href="index.html"><span class="en">Ledger</span><span class="jp">帳簿</span></a><a href="guide.html"><span class="en">Guide</span><span class="jp">見方</span></a><a href="showcase.html"><span class="en">Record</span><span class="jp">検証値</span></a><a href="explain.html"><span class="en">System</span><span class="jp">しくみ</span></a><a href="history.html"><span class="en">History</span><span class="jp">履歴</span></a><a href="https://note.com/hassomae_ai"><span class="en">Note</span><span class="jp">G1 の全頭診断</span></a><a href="https://x.com/hassomae_ai"><span class="en">X</span><span class="jp">全レースの予想</span></a></div><div class="ds-foot-pills"><a class="ds-pill ds-pill--signal" href="https://x.com/hassomae_ai" rel="me"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M18.24 2.25h3.31l-7.23 8.26 8.5 11.24h-6.65l-5.21-6.82-5.97 6.82H1.68l7.73-8.84L1.25 2.25h6.83l4.71 6.23zm-1.16 17.52h1.83L7.08 4.13H5.12z"/></svg>X でフォロー</a><a class="ds-pill" href="https://note.com/hassomae_ai" rel="me">note を読む</a></div><p class="ds-foot-note">AIの予想で、的中や利益を約束するものではありません。回収率の数字は過去のデータでの検証値で、実際の成績は帳簿に外れも含めて全部載せています。馬券は20歳になってから。</p><div class="ds-foot-meta"><span>© 2026 Hassomae Lab ・ @hassomae_ai</span><a class="ds-foot-ver" href="history.html">DeepOddsAI v3.1 ・ Service v2.2</a><a href="#top">Page top ↑</a></div><span class="ds-foot-word" aria-hidden="true">Hassomae Lab</span></div></footer><script>/* 発走前ラボ DS の動き(docs/design-system.md「動き」)。読み込んだ時点で中身は全部見えている。ここでするのは飾りだけ:
+   1. 流れる文字の帯(.ds-ticker-track)の中身を2つ並べて、途切れなく回す
+   2. 画面の外にあるマーカー(.ds-mk)を、見えたときに左から引く(明るい表示だけ・動きを減らす設定では何もしない)
+   3. スマホで縦に積む表(table.ds-stack)の各セルに、見出しの文字を data-label で持たせる(CSS が出す。JS で作る表は window.dsStack(表)) */
+(function () {
+  function stack(t) {
+    var heads = [].map.call(t.querySelectorAll("thead tr:last-child th"), function (th) {
+      return [].map.call(th.childNodes, function (n) { return n.textContent.trim(); }).filter(Boolean).join(" ");
+    });
+    [].forEach.call(t.querySelectorAll("tbody tr"), function (tr) {
+      [].forEach.call(tr.children, function (td, i) { if (heads[i] && !td.hasAttribute("data-label")) td.setAttribute("data-label", heads[i]); });
+    });
+  }
+  window.dsStack = stack;
+  document.querySelectorAll("table.ds-stack").forEach(stack);
+  document.querySelectorAll(".ds-ticker-track").forEach(function (t) {
+    if (!t.dataset.dup) { t.innerHTML += t.innerHTML; t.dataset.dup = "1"; }
+  });
+  if (matchMedia("(prefers-reduced-motion: reduce)").matches || !("IntersectionObserver" in window)) return;
+  if (getComputedStyle(document.documentElement).getPropertyValue("--mk-wipe").trim() !== "1") return;
+  var io = new IntersectionObserver(function (es) {
+    es.forEach(function (e) {
+      if (!e.isIntersecting) return;
+      var m = e.target;
+      m.classList.add("is-in");
+      requestAnimationFrame(function () { requestAnimationFrame(function () { m.classList.remove("is-pending"); }); });
+      io.unobserve(m);
+    });
+  }, { rootMargin: "0px 0px -10% 0px" });
+  document.querySelectorAll(".ds-mk").forEach(function (m) {
+    if (m.getBoundingClientRect().top > innerHeight) { m.classList.add("is-pending"); io.observe(m); }
+  });
+})();
+</script></body></html>

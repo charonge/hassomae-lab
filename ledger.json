@@ -1,6 +1,11 @@
 {
  "from": "20261017",
- "built_at": "2026-11-08T20:00:03",
+ "built_at": "2026-11-09T01:53:53",
+ "versions": {
+  "model_name": "DeepOddsAI",
+  "model": "3.1",
+  "service": "2.2"
+ },
  "days": [
   {
    "date": "20261017",
@@ -44,6 +49,11 @@
     "hits": 0,
     "stake": 0,
     "ret": 0
+   },
+   "versions": {
+    "model_name": "DeepOddsAI",
+    "model": "2.4",
+    "service": "1.0"
    }
   },
   {
@@ -88,6 +98,11 @@
     "hits": 0,
     "stake": 0,
     "ret": 0
+   },
+   "versions": {
+    "model_name": "DeepOddsAI",
+    "model": "2.4",
+    "service": "1.0"
    }
   },
   {
@@ -132,6 +147,11 @@
     "hits": 0,
     "stake": 0,
     "ret": 0
+   },
+   "versions": {
+    "model_name": "DeepOddsAI",
+    "model": "2.4",
+    "service": "1.2"
    }
   },
   {
@@ -176,6 +196,11 @@
     "hits": 0,
     "stake": 0,
     "ret": 0
+   },
+   "versions": {
+    "model_name": "DeepOddsAI",
+    "model": "2.4",
+    "service": "1.2"
    }
   },
   {
@@ -220,6 +245,11 @@
     "hits": 0,
     "stake": 0,
     "ret": 0
+   },
+   "versions": {
+    "model_name": "DeepOddsAI",
+    "model": "2.4",
+    "service": "1.4"
    }
   },
   {
@@ -264,6 +294,11 @@
     "hits": 0,
     "stake": 400,
     "ret": 0
+   },
+   "versions": {
+    "model_name": "DeepOddsAI",
+    "model": "2.4",
+    "service": "1.4"
    }
   },
   {
@@ -308,6 +343,11 @@
     "hits": 0,
     "stake": 0,
     "ret": 0
+   },
+   "versions": {
+    "model_name": "DeepOddsAI",
+    "model": "3.1",
+    "service": "2.0"
    }
   },
   {
@@ -352,6 +392,11 @@
     "hits": 0,
     "stake": 0,
     "ret": 0
+   },
+   "versions": {
+    "model_name": "DeepOddsAI",
+    "model": "3.1",
+    "service": "2.0"
    }
   }
  ],
