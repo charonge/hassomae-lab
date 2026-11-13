@@ -1,10 +1,10 @@
 {
  "from": "20261017",
- "built_at": "2026-11-12T21:04:33",
+ "built_at": "2026-11-13T20:00:07",
  "versions": {
   "model_name": "DeepOddsAI",
   "model": "3.1",
-  "service": "2.5"
+  "service": "2.6"
  },
  "days": [
   {
