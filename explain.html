@@ -441,7 +441,7 @@ ol.tl .t { font-family: var(--mono); font-size: 12.5px; color: var(--muted); pad
 ol.tl b { font-family: var(--display); font-size: 16px; } ol.tl li.hl b { color: var(--rec); }
 ol.tl span:not(.t) { font-size: 13px; color: var(--ink-2); }
 @media (max-width: 520px) { ol.tl li { grid-template-columns: 1fr; } ol.tl .t { grid-row: auto; } }
-.courses { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 10px; }
+.courses { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 10px; }   /* 4つの買い方(2026-11-21〜。前は3つ) */
 @media (max-width: 760px) { .courses { grid-template-columns: 1fr; } }
 .course { border: 2px solid var(--line); border-radius: 0; padding: 12px 14px; background: var(--surface); display: flex; flex-direction: column; gap: 4px; min-width: 0; }
 .course.main { border-color: var(--rec); }
@@ -620,46 +620,47 @@ ol.tl span:not(.t) { font-size: 13px; color: var(--ink-2); }
       <div class="box"><span class="k">5-5</span><div><b>締切までのオッズの動きを予想</b><p>AI が市場より高く見ている馬券ほど、締切までに他の人にも買われてオッズが下がる(推奨した馬券は、発走6分前から確定までに中央値で15%下がっていた)。下がった後の「予想される最終オッズ」で期待値を計算</p></div></div>
       <div class="down">↓</div>
       <div class="box result"><b>期待値 = 確率 × 予想される最終オッズ</b><div class="small muted">1より大きければ、平均して払った以上に戻ってくる買い目</div></div>
-      <div class="down">↓<small>レースごとに「買い目リスト」(期待値の高い順に5件)と大穴枠</small></div>
+      <div class="down">↓<small>期待値1.0以上の買い目を、4つの区分に分ける(1レースの点数・金額の上限なし)</small></div>
     </div>
     <div class="tiers">
-      <div class="tier pick"><h3>◆厳選</h3>
-        <ul class="cond"><li>推奨の条件を満たし</li><li>期待値が過去の上位10%の線(直前 約1.72)以上</li><li>1レースに1点まで(線を越えた中で最も高い1点。2点目以降は推奨に)</li></ul>
-        <div class="out"><span class="amt">金額: 100円(◆厳選の中でも期待値が上位10%なら1000円)</span><span class="ver">検証<b data-m="pick">145.0%</b><span data-m="pick.every">約9レースに1回</span></span></div></div>
       <div class="tier rec"><h3>推奨</h3>
-        <ul class="cond"><li>割り引いた期待値 ≥ 1</li><li>控えめな確率でも期待値 ≥ 1</li><li>的中確率が券種ごとの下限以上・ケリー基準で金額が付く</li></ul>
-        <div class="out"><span class="amt">金額: 100円</span><span class="ver">検証<b data-m="rec">114.8%</b>(◆厳選を含む)<span data-m="rec.share">約75%のレース</span></span></div></div>
-      <div class="tier watch"><h3>検討</h3>
-        <ul class="cond"><li>リストの5件のうち</li><li>推奨の条件に届かないもの</li></ul>
-        <div class="out"><span class="amt">金額: 買わない(参考)</span><span class="ver">検証<b data-m="consider">93.9%</b>買うと負ける側</span></div></div>
-      <div class="tier long"><h3>大穴枠(夢枠)</h3>
-        <ul class="cond"><li>控えめな確率で期待値 ≥ 1</li><li>的中確率が下限より低い(めったに当たらない)</li></ul>
-        <div class="out"><span class="amt">金額: 100円(大穴枠の中でも期待値が上位15%なら1000円。1レース最大3点)</span><span class="ver">検証<b data-m="longshot">133.4%</b><span data-m="longshot.every">約39回に1回</span>当たる</span></div></div>
+        <ul class="cond"><li>割り引いた期待値 ≥ 1・控えめな確率でも期待値 ≥ 1</li><li>的中確率 5%以上(全券種同じ。20回に1回以上は当たる)</li></ul>
+        <div class="out"><span class="amt">金額: 100円</span><span class="ver">検証<b data-m="t4.rec1">118.8%</b>約8割のレースに出る</span></div></div>
+      <div class="tier pick"><h3>厳選推奨</h3>
+        <ul class="cond"><li>推奨の条件を満たし</li><li>期待値が厳選の線(直前 約1.72 = 検証年の買い目の上位10%の位置)以上</li></ul>
+        <div class="out"><span class="amt">金額: 500円</span><span class="ver">検証<b data-m="t4.pick">139.3%</b>約9レースに1回</span></div></div>
+      <div class="tier long"><h3>大穴</h3>
+        <ul class="cond"><li>期待値 ≥ 1 の条件は同じ</li><li>的中確率 5%未満(めったに当たらない)</li><li>期待値 1.2以上だけ</li></ul>
+        <div class="out"><span class="amt">金額: 100円</span><span class="ver">検証<b data-m="t4.long1">123.1%</b>約40回に1回当たる</span></div></div>
+      <div class="tier long"><h3>厳選大穴</h3>
+        <ul class="cond"><li>大穴の条件を満たし</li><li>期待値が厳選大穴の線(直前 約1.59 = 検証年の大穴側の上位15%の位置)以上</li></ul>
+        <div class="out"><span class="amt">金額: 1,000円</span><span class="ver">検証<b data-m="t4.lpick">163.1%</b>約39回に1回当たる</span></div></div>
     </div>
-    <p class="small muted">検証 = <span data-m="scope">2022/1/5〜2026/10/25 の 16,153 レース</span>、直前版。発走6分前のオッズで買い目を決め、実際の払戻で精算(本番と同じ流れ。係数はテスト年より前の年だけから推定)。同じ手順で <span data-m="wf.scope">2011〜2026年の16年・53,057 レース</span>に広げた検証では、◆厳選 <span data-m="wf.pick">159.5%</span>・推奨 <span data-m="wf.rec">123.5%</span>・毎レース1位 <span data-m="wf.top1">129.7%</span>・大穴枠 <span data-m="wf.longshot">151.0%</span>(期間ごとの数字は成績表に)。</p>
-    <p class="small muted">買い目リスト = 単勝・複勝・枠連のうち的中確率が券種ごとの下限(単勝 5% ・ 複勝 15% ・ 枠連 4%。「7〜25回に1回は当たる」目安)以上のものを、期待値の高い順に5件(推奨はそれより下でも載せる)。全レースで出る。金額は、100〜1000円の17通りの決め方(一律100円・期待値で3段階や5段階・期待値に比例・ケリー基準など)を、2011年からの3つの期間で比べて選んだ(◆厳選の中でも期待値が上位10%のものほど回収率が高く、どの期間でも同じ傾向だった)。</p>
+    <p class="small muted">検証 = 2011〜2026年の16年・53,057レース(3つの期間。各年はその年より前のデータだけで学習し、厳選の線もそれより前の年の検証から決める)、直前版。発走6分前のオッズで買い目を決め、実際の払戻で精算(本番と同じ流れ)。まとめると 推奨+厳選推奨 <span data-m="t4.main">124.3%</span>・大穴+厳選大穴 <span data-m="t4.long">151.6%</span>・4つ全部 <span data-m="t4.all">142.2%</span>(どれも16年すべてプラス)。2022〜2026年だけなら 推奨+厳選推奨 118.1%・4つ全部 129.9%。期間ごとの数字は成績表に。</p>
+    <p class="small muted">2026年11月21日の開催から、この4区分です。それより前は「買い目リスト」(期待値の高い順に5件)を ◆厳選(1レース1点・100円か1000円)・推奨(100円)・検討(買わない)に分け、別に大穴枠(1レース3点まで・100円か1000円)を出していました。点数の上限で切っていた分も検証では割に合っていた(16年で約123%)ので上限をなくし、推奨と大穴を「当たる確率5%」の1本の線で分ける形にしました。金額は16年で比べて、厳選推奨は一律の500円が年ごとにいちばん安定(16/16年プラス)、厳選大穴は波を受け入れる枠として1000円にしています。</p>
   </section>
 
   <!-- 6. いつ・どう買う -->
   <section class="ds-sec" id="when">
     <div class="ds-sec-head"><span class="ds-label">06</span><h2 class="ds-jp">いつ・どう買う: 最終予測を待って、表示の金額で買う</h2></div>
     <ol class="tl">
-      <li><span class="t">前日 21:00</span><b>前日版</b><span>馬体重などは使わない版。前日のオッズはまだ荒いので見立ての参考に(推奨の回収率 <span data-m="prev.rec">92%</span>)</span></li>
+      <li><span class="t">前日 21:00</span><b>前日版</b><span>馬体重などは使わない版。前日のオッズで割に合ったのは厳選推奨だけ(2022〜2026年で102%)なので、前夜にXへ出すのも厳選推奨の候補だけ。ほかは見立ての参考に</span></li>
       <li><span class="t">当日 朝〜</span><b>モデルの更新・オッズの更新</b><span>10分おきにモデル(特徴量・GBM・DL)、5分おきにオッズから先を計算し直し。この間の買い目は暫定</span></li>
       <li><span class="t">発走20分前〜</span><b>オッズの動きを反映</b><span>時系列オッズの動きの補正と、予想される最終オッズ(20分前用の係数)</span></li>
       <li class="hl"><span class="t">発走4.5分前</span><b>最終予測</b><span>EveryDB3 を更新 → 6分前用の係数で計算し、締切1分半前ごろに確定(以後は変わらない)。レースの画面はその時刻に自動で読み直す</span></li>
       <li><span class="t">発走2分前</span><b>締切</b><span>ここまでに購入</span></li>
     </ol>
-    <p class="small" style="color:var(--ink-2)">全レースで買い目リストが出ます。札(◆厳選・推奨・検討)を見て、好みで次の3つのどれかで買います。<b>「検討」は買いません</b>(回収率は直前6分前での検証)。</p>
+    <p class="small" style="color:var(--ink-2)">全レースで4区分の買い目が出ます(どれも無いレースは見送り。16年で12%)。好みで次の4つのどれかで買います。X の1日のまとめ・帳簿・配信の数字も、いつもこの4つで出します(回収率は直前6分前での16年の検証)。</p>
     <div class="courses">
-      <div class="course main"><h3>厳選コース</h3><span class="roi" data-m="pick">145.0%</span><p>◆厳選の札が付いた1点だけを、画面の金額(100円。◆厳選の中でも期待値が特に高い上位10%は1000円)で。一律100円なら <span data-m="pick_flat">131.1%</span>。画面では青緑で目立たせています。</p><div class="who"><span data-m="pick.per13">1日13Rなら約1.5R(約290円)</span>・ 回数より確度を取りたい人</div></div>
-      <div class="course"><h3>推奨コース</h3><span class="roi" data-m="rec">114.8%</span><p>◆厳選と推奨の札が付いた買い目を全部、画面の金額で(推奨は100円)。一律100円なら <span data-m="rec_flat">112.1%</span>、ケリー基準の金額なら <span data-m="rec_kelly">113.9%</span>。</p><div class="who"><span data-m="rec.per13">1日13Rなら約9.8R・約24点(約2,550円)</span>・ 回数も楽しみたい人</div></div>
-      <div class="course"><h3>毎レース1位コース</h3><span class="roi" data-m="top1">121.5%</span><p>全レースでリストの1位を、1位が◆厳選なら1000円、推奨・検討なら100円で(1位の行に「毎レース1位コースなら○円」と表示)。毎レース100円一律なら <span data-m="top1_flat">111.6%</span>、1位が検討のレースを見送れば <span data-m="top1_rec">122.7%</span>。</p><div class="who"><span data-m="top1.per13">1日13Rなら13R(約2,640円)</span>・ 競馬を楽しむのが主で、毎レース参加したい人</div></div>
+      <div class="course main"><h3>推奨+厳選推奨</h3><span class="roi" data-m="t4.main">124.3%</span><p>推奨(100円)と厳選推奨(500円)を全部。いちばん安定していて、月の8割強がプラス。いつも大きく出す数字はこれ。</p><div class="who">1日36Rなら約64点(約8,200円)・ 回数も楽しみたい人</div></div>
+      <div class="course"><h3>厳選推奨のみ</h3><span class="roi" data-m="t4.pick">139.3%</span><p>厳選推奨の札が付いた買い目だけを500円で。出ない日もある(16年で約7%の日)。</p><div class="who">1日36Rなら約4点(約2,200円)・ 回数より確度を取りたい人</div></div>
+      <div class="course"><h3>大穴+厳選大穴</h3><span class="roi" data-m="t4.long">151.6%</span><p>大穴(100円)と厳選大穴(1,000円)を全部。当たるのは40回に1回くらいで、300回以上外れが続いた時期もある。</p><div class="who">1日36Rなら約56点(約1.6万円)・ 波を受け入れて高配当を待ちたい人</div></div>
+      <div class="course"><h3>4つ全部</h3><span class="roi" data-m="t4.all">142.2%</span><p>全部を画面の金額で。モデルの出来はこの数字で見ています。</p><div class="who">1日36Rなら約120点(約2.4万円)</div></div>
     </div>
-    <p class="small muted">厳選コースは推奨コースの中に入ります(◆厳選は推奨の中の1点で、検証ではいつもリストの1位)。毎レース1位コースは別の切り口で、1位のうち推奨にも入るのは<span data-m="nest.top1_in_rec">75%</span>。大穴枠は別枠の「夢枠」(<span data-m="longshot.every">約39回に1回</span>当たり、回収率 <span data-m="longshot">133.4%</span>)。推奨のあるレースの大穴は <span data-m="long_rec">134%</span>、無いレースは <span data-m="long_norec">126%</span> なので、買うなら推奨のあるレースで。関係のベン図は成績表に。</p>
+    <p class="small muted">厳選推奨のみは推奨+厳選推奨の中に、どれも4つ全部の中に入ります。1レースの点数・金額の上限はないので、買うなら自分で上限を決めてください。G1の日は別に「当てにいく枠」(守り = 複勝の本命、攻め = 単勝か枠連で期待値1.0以上の中から当たりやすい1点。各100円)。16年のG1 361レースで、どちらか当たるのが69.5%・回収率101.8%。</p>
   </section>
 
-  <p class="foot">検証の数字は 2026年10月25日までのレース、モデルの数字は 2026年11月3日時点の本番モデルのもの(学習 2000〜2025年)。特徴量の重要度は直前版の LightGBM の gain、合成の係数は最終予測(発走6分前のオッズ)用。</p>
+  <p class="foot">検証の数字は 2026年10月25日までのレース(4区分の数字は 2026年11月16〜18日に本番と同じ流れで出し直したもの)、モデルの数字は 2026年11月3日時点の本番モデルのもの(学習 2000〜2025年)。特徴量の重要度は直前版の LightGBM の gain、合成の係数は最終予測(発走6分前のオッズ)用。</p>
 </main>
 <footer class="ds-footer"><div class="ds-wrap ds-footer-in"><div class="ds-foot-grid"><a href="index.html"><span class="en">Ledger</span><span class="jp">帳簿</span></a><a href="guide.html"><span class="en">Guide</span><span class="jp">見方</span></a><a href="showcase.html"><span class="en">Record</span><span class="jp">検証値</span></a><a href="explain.html"><span class="en">System</span><span class="jp">しくみ</span></a><a href="history.html"><span class="en">History</span><span class="jp">履歴</span></a><a href="shindan.html"><span class="en">Check</span><span class="jp">本命の診断</span></a><a href="https://note.com/hassomae_ai"><span class="en">Note</span><span class="jp">G1 の全頭診断</span></a><a href="https://x.com/hassomae_ai"><span class="en">X</span><span class="jp">全レースの予想</span></a></div><div class="ds-foot-pills"><a class="ds-pill ds-pill--signal" href="https://x.com/hassomae_ai" rel="me"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M18.24 2.25h3.31l-7.23 8.26 8.5 11.24h-6.65l-5.21-6.82-5.97 6.82H1.68l7.73-8.84L1.25 2.25h6.83l4.71 6.23zm-1.16 17.52h1.83L7.08 4.13H5.12z"/></svg>X でフォロー</a><a class="ds-pill" href="https://note.com/hassomae_ai" rel="me">note を読む</a></div><p class="ds-foot-note">AIの予想で、的中や利益を約束するものではありません。回収率の数字は過去のデータでの検証値で、実際の成績は帳簿に外れも含めて全部載せています。馬券は20歳になってから。</p><div class="ds-foot-meta"><span>© 2026 Hassomae Lab ・ @hassomae_ai</span><a class="ds-foot-ver" href="history.html">DeepOddsAI v3.1 ・ Service v3.0</a><a href="privacy.html">Privacy</a><a href="#top">Page top ↑</a></div><span class="ds-foot-word" aria-hidden="true">Hassomae Lab</span></div></footer>
 <script>/* 発走前ラボ DS の動き(docs/design-system.md「動き」)。読み込んだ時点で中身は全部見えている。ここでするのは飾りだけ:
