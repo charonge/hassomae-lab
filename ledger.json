@@ -1,10 +1,10 @@
 {
  "from": "20261017",
- "built_at": "2026-11-23T20:00:07",
+ "built_at": "2026-11-24T20:00:03",
  "versions": {
   "model_name": "DeepOddsAI",
   "model": "3.1",
-  "service": "3.0"
+  "service": "3.1"
  },
  "days": [
   {
@@ -18787,8 +18787,8 @@
    "posted": true,
    "top3": [
     12,
-    4,
-    13
+    13,
+    4
    ],
    "bets": [
     {
