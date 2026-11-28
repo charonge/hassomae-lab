@@ -1,6 +1,6 @@
 {
  "from": "20261017",
- "built_at": "2026-11-27T21:06:13",
+ "built_at": "2026-11-28T20:00:03",
  "versions": {
   "model_name": "DeepOddsAI",
   "model": "3.1",
@@ -644,6 +644,56 @@
     "model_name": "DeepOddsAI",
     "model": "3.1",
     "service": "3.0"
+   },
+   "list_form": 4
+  },
+  {
+   "date": "20261128",
+   "races": 24,
+   "races_all": 24,
+   "excluded_backfill": 0,
+   "tiers": {
+    "pick": {
+     "bets": 3,
+     "hits": 0,
+     "stake": 1500,
+     "ret": 0
+    },
+    "rec": {
+     "bets": 41,
+     "hits": 6,
+     "stake": 5300,
+     "ret": 4120
+    },
+    "top1": {
+     "bets": 0,
+     "hits": 0,
+     "stake": 0,
+     "ret": 0
+    },
+    "longshots": {
+     "bets": 49,
+     "hits": 1,
+     "stake": 12100,
+     "ret": 6990
+    },
+    "all": {
+     "bets": 90,
+     "hits": 7,
+     "stake": 17400,
+     "ret": 11110
+    }
+   },
+   "g1hit": {
+    "bets": 0,
+    "hits": 0,
+    "stake": 0,
+    "ret": 0
+   },
+   "versions": {
+    "model_name": "DeepOddsAI",
+    "model": "3.1",
+    "service": "3.2"
    },
    "list_form": 4
   }
@@ -20171,6 +20221,1356 @@
      "hit": false,
      "refund": false,
      "odds_now": 49.6
+    }
+   ]
+  },
+  {
+   "date": "20261128",
+   "race_id": "2026112805050701",
+   "course": "東京",
+   "racenum": 1,
+   "name": "2歳未勝利",
+   "grade": "",
+   "post_time": 950,
+   "final_at": "09:46:18",
+   "backfill": false,
+   "posted": true,
+   "top3": [
+    10,
+    6,
+    12
+   ],
+   "bets": [
+    {
+     "tier": "longshot",
+     "bet": "単勝",
+     "kumi": "1",
+     "stake": 100,
+     "ret": 0,
+     "hit": false,
+     "refund": false,
+     "odds_now": 74.4
+    },
+    {
+     "tier": "longshot",
+     "bet": "枠連",
+     "kumi": "1-5",
+     "stake": 100,
+     "ret": 0,
+     "hit": false,
+     "refund": false,
+     "odds_now": 135.70000000000002
+    }
+   ]
+  },
+  {
+   "date": "20261128",
+   "race_id": "2026112808050701",
+   "course": "京都",
+   "racenum": 1,
+   "name": "2歳未勝利",
+   "grade": "",
+   "post_time": 1005,
+   "final_at": "10:01:11",
+   "backfill": false,
+   "posted": true,
+   "top3": [
+    15,
+    12,
+    4
+   ],
+   "bets": [
+    {
+     "tier": "rec",
+     "bet": "枠連",
+     "kumi": "5-6",
+     "stake": 100,
+     "ret": 0,
+     "hit": false,
+     "refund": false,
+     "odds_now": 5.800000000000001
+    },
+    {
+     "tier": "rec",
+     "bet": "枠連",
+     "kumi": "3-5",
+     "stake": 100,
+     "ret": 0,
+     "hit": false,
+     "refund": false,
+     "odds_now": 13.5
+    },
+    {
+     "tier": "longpick",
+     "bet": "枠連",
+     "kumi": "4-5",
+     "stake": 1000,
+     "ret": 0,
+     "hit": false,
+     "refund": false,
+     "odds_now": 37.7
+    },
+    {
+     "tier": "longshot",
+     "bet": "枠連",
+     "kumi": "2-5",
+     "stake": 100,
+     "ret": 0,
+     "hit": false,
+     "refund": false,
+     "odds_now": 56.7
+    },
+    {
+     "tier": "longshot",
+     "bet": "枠連",
+     "kumi": "4-6",
+     "stake": 100,
+     "ret": 0,
+     "hit": false,
+     "refund": false,
+     "odds_now": 54.800000000000004
+    },
+    {
+     "tier": "longshot",
+     "bet": "枠連",
+     "kumi": "1-5",
+     "stake": 100,
+     "ret": 0,
+     "hit": false,
+     "refund": false,
+     "odds_now": 31.8
+    }
+   ]
+  },
+  {
+   "date": "20261128",
+   "race_id": "2026112805050702",
+   "course": "東京",
+   "racenum": 2,
+   "name": "2歳未勝利",
+   "grade": "",
+   "post_time": 1025,
+   "final_at": "10:16:12",
+   "backfill": false,
+   "posted": true,
+   "top3": [
+    13,
+    6,
+    12
+   ],
+   "bets": []
+  },
+  {
+   "date": "20261128",
+   "race_id": "2026112808050702",
+   "course": "京都",
+   "racenum": 2,
+   "name": "2歳未勝利",
+   "grade": "",
+   "post_time": 1035,
+   "final_at": "10:31:13",
+   "backfill": false,
+   "posted": true,
+   "top3": [
+    8,
+    3,
+    7
+   ],
+   "bets": [
+    {
+     "tier": "longpick",
+     "bet": "枠連",
+     "kumi": "2-5",
+     "stake": 1000,
+     "ret": 0,
+     "hit": false,
+     "refund": false,
+     "odds_now": 69.60000000000001
+    },
+    {
+     "tier": "longshot",
+     "bet": "枠連",
+     "kumi": "2-6",
+     "stake": 100,
+     "ret": 0,
+     "hit": false,
+     "refund": false,
+     "odds_now": 115.30000000000001
+    }
+   ]
+  },
+  {
+   "date": "20261128",
+   "race_id": "2026112805050703",
+   "course": "東京",
+   "racenum": 3,
+   "name": "2歳未勝利",
+   "grade": "",
+   "post_time": 1050,
+   "final_at": "10:46:16",
+   "backfill": false,
+   "posted": true,
+   "top3": [
+    9,
+    6,
+    13
+   ],
+   "bets": [
+    {
+     "tier": "rec",
+     "bet": "枠連",
+     "kumi": "3-8",
+     "stake": 100,
+     "ret": 0,
+     "hit": false,
+     "refund": false,
+     "odds_now": 26.900000000000002
+    },
+    {
+     "tier": "rec",
+     "bet": "枠連",
+     "kumi": "3-5",
+     "stake": 100,
+     "ret": 760,
+     "hit": true,
+     "refund": false,
+     "odds_now": 11.700000000000001
+    },
+    {
+     "tier": "rec",
+     "bet": "単勝",
+     "kumi": "6",
+     "stake": 100,
+     "ret": 0,
+     "hit": false,
+     "refund": false,
+     "odds_now": 4.800000000000001
+    },
+    {
+     "tier": "rec",
+     "bet": "枠連",
+     "kumi": "3-7",
+     "stake": 100,
+     "ret": 0,
+     "hit": false,
+     "refund": false,
+     "odds_now": 4.7
+    },
+    {
+     "tier": "longshot",
+     "bet": "枠連",
+     "kumi": "2-3",
+     "stake": 100,
+     "ret": 0,
+     "hit": false,
+     "refund": false,
+     "odds_now": 122.5
+    }
+   ]
+  },
+  {
+   "date": "20261128",
+   "race_id": "2026112808050703",
+   "course": "京都",
+   "racenum": 3,
+   "name": "2歳未勝利",
+   "grade": "",
+   "post_time": 1105,
+   "final_at": "11:01:15",
+   "backfill": false,
+   "posted": true,
+   "top3": [
+    15,
+    4,
+    8
+   ],
+   "bets": [
+    {
+     "tier": "rec",
+     "bet": "枠連",
+     "kumi": "5-8",
+     "stake": 100,
+     "ret": 0,
+     "hit": false,
+     "refund": false,
+     "odds_now": 16.1
+    },
+    {
+     "tier": "rec",
+     "bet": "枠連",
+     "kumi": "3-8",
+     "stake": 100,
+     "ret": 0,
+     "hit": false,
+     "refund": false,
+     "odds_now": 15.700000000000001
+    }
+   ]
+  },
+  {
+   "date": "20261128",
+   "race_id": "2026112805050704",
+   "course": "東京",
+   "racenum": 4,
+   "name": "2歳新馬",
+   "grade": "",
+   "post_time": 1120,
+   "final_at": "11:16:15",
+   "backfill": false,
+   "posted": true,
+   "top3": [
+    3,
+    8,
+    7
+   ],
+   "bets": [
+    {
+     "tier": "longshot",
+     "bet": "単勝",
+     "kumi": "7",
+     "stake": 100,
+     "ret": 0,
+     "hit": false,
+     "refund": false,
+     "odds_now": 59.300000000000004
+    },
+    {
+     "tier": "longshot",
+     "bet": "単勝",
+     "kumi": "5",
+     "stake": 100,
+     "ret": 0,
+     "hit": false,
+     "refund": false,
+     "odds_now": 51.2
+    }
+   ]
+  },
+  {
+   "date": "20261128",
+   "race_id": "2026112808050704",
+   "course": "京都",
+   "racenum": 4,
+   "name": "障害3歳以上未勝利",
+   "grade": "",
+   "post_time": 1135,
+   "final_at": "11:31:12",
+   "backfill": false,
+   "posted": true,
+   "top3": [
+    3,
+    1,
+    4
+   ],
+   "bets": []
+  },
+  {
+   "date": "20261128",
+   "race_id": "2026112805050705",
+   "course": "東京",
+   "racenum": 5,
+   "name": "2歳新馬",
+   "grade": "",
+   "post_time": 1210,
+   "final_at": "12:06:15",
+   "backfill": false,
+   "posted": true,
+   "top3": [
+    3,
+    4,
+    8
+   ],
+   "bets": []
+  },
+  {
+   "date": "20261128",
+   "race_id": "2026112808050705",
+   "course": "京都",
+   "racenum": 5,
+   "name": "2歳新馬",
+   "grade": "",
+   "post_time": 1225,
+   "final_at": "12:21:15",
+   "backfill": false,
+   "posted": true,
+   "top3": [
+    8,
+    3,
+    11
+   ],
+   "bets": []
+  },
+  {
+   "date": "20261128",
+   "race_id": "2026112805050706",
+   "course": "東京",
+   "racenum": 6,
+   "name": "2歳新馬",
+   "grade": "",
+   "post_time": 1240,
+   "final_at": "12:36:15",
+   "backfill": false,
+   "posted": true,
+   "top3": [
+    8,
+    7,
+    3
+   ],
+   "bets": []
+  },
+  {
+   "date": "20261128",
+   "race_id": "2026112808050706",
+   "course": "京都",
+   "racenum": 6,
+   "name": "2歳新馬",
+   "grade": "",
+   "post_time": 1255,
+   "final_at": "12:51:15",
+   "backfill": false,
+   "posted": true,
+   "top3": [
+    12,
+    7,
+    6
+   ],
+   "bets": []
+  },
+  {
+   "date": "20261128",
+   "race_id": "2026112805050707",
+   "course": "東京",
+   "racenum": 7,
+   "name": "3歳以上1勝クラス",
+   "grade": "",
+   "post_time": 1310,
+   "final_at": "13:06:16",
+   "backfill": false,
+   "posted": true,
+   "top3": [
+    11,
+    3,
+    12
+   ],
+   "bets": [
+    {
+     "tier": "rec",
+     "bet": "枠連",
+     "kumi": "8-8",
+     "stake": 100,
+     "ret": 0,
+     "hit": false,
+     "refund": false,
+     "odds_now": 15.100000000000001
+    },
+    {
+     "tier": "rec",
+     "bet": "単勝",
+     "kumi": "11",
+     "stake": 100,
+     "ret": 940,
+     "hit": true,
+     "refund": false,
+     "odds_now": 12.700000000000001
+    },
+    {
+     "tier": "rec",
+     "bet": "枠連",
+     "kumi": "5-8",
+     "stake": 100,
+     "ret": 0,
+     "hit": false,
+     "refund": false,
+     "odds_now": 14.9
+    },
+    {
+     "tier": "rec",
+     "bet": "単勝",
+     "kumi": "6",
+     "stake": 100,
+     "ret": 0,
+     "hit": false,
+     "refund": false,
+     "odds_now": 22.3
+    },
+    {
+     "tier": "longshot",
+     "bet": "枠連",
+     "kumi": "2-8",
+     "stake": 100,
+     "ret": 0,
+     "hit": false,
+     "refund": false,
+     "odds_now": 35.1
+    }
+   ]
+  },
+  {
+   "date": "20261128",
+   "race_id": "2026112808050707",
+   "course": "京都",
+   "racenum": 7,
+   "name": "3歳以上1勝クラス",
+   "grade": "",
+   "post_time": 1325,
+   "final_at": "13:21:15",
+   "backfill": false,
+   "posted": true,
+   "top3": [
+    9,
+    14,
+    3
+   ],
+   "bets": [
+    {
+     "tier": "pick",
+     "bet": "枠連",
+     "kumi": "4-7",
+     "stake": 500,
+     "ret": 0,
+     "hit": false,
+     "refund": false,
+     "odds_now": 36.9
+    },
+    {
+     "tier": "rec",
+     "bet": "枠連",
+     "kumi": "2-4",
+     "stake": 100,
+     "ret": 0,
+     "hit": false,
+     "refund": false,
+     "odds_now": 22.900000000000002
+    },
+    {
+     "tier": "rec",
+     "bet": "単勝",
+     "kumi": "1",
+     "stake": 100,
+     "ret": 0,
+     "hit": false,
+     "refund": false,
+     "odds_now": 25.6
+    },
+    {
+     "tier": "rec",
+     "bet": "単勝",
+     "kumi": "8",
+     "stake": 100,
+     "ret": 0,
+     "hit": false,
+     "refund": false,
+     "odds_now": 15.700000000000001
+    },
+    {
+     "tier": "rec",
+     "bet": "単勝",
+     "kumi": "3",
+     "stake": 100,
+     "ret": 0,
+     "hit": false,
+     "refund": false,
+     "odds_now": 20.200000000000003
+    },
+    {
+     "tier": "longpick",
+     "bet": "単勝",
+     "kumi": "10",
+     "stake": 1000,
+     "ret": 0,
+     "hit": false,
+     "refund": false,
+     "odds_now": 78.2
+    },
+    {
+     "tier": "longshot",
+     "bet": "枠連",
+     "kumi": "4-5",
+     "stake": 100,
+     "ret": 0,
+     "hit": false,
+     "refund": false,
+     "odds_now": 63.900000000000006
+    },
+    {
+     "tier": "longshot",
+     "bet": "枠連",
+     "kumi": "1-4",
+     "stake": 100,
+     "ret": 0,
+     "hit": false,
+     "refund": false,
+     "odds_now": 63.7
+    },
+    {
+     "tier": "longshot",
+     "bet": "枠連",
+     "kumi": "5-5",
+     "stake": 100,
+     "ret": 0,
+     "hit": false,
+     "refund": false,
+     "odds_now": 239.9
+    }
+   ]
+  },
+  {
+   "date": "20261128",
+   "race_id": "2026112805050708",
+   "course": "東京",
+   "racenum": 8,
+   "name": "3歳以上2勝クラス",
+   "grade": "",
+   "post_time": 1340,
+   "final_at": "13:36:30",
+   "backfill": false,
+   "posted": true,
+   "top3": [
+    2,
+    15,
+    7
+   ],
+   "bets": [
+    {
+     "tier": "rec",
+     "bet": "単勝",
+     "kumi": "9",
+     "stake": 100,
+     "ret": 0,
+     "hit": false,
+     "refund": false,
+     "odds_now": 14.200000000000001
+    },
+    {
+     "tier": "longshot",
+     "bet": "単勝",
+     "kumi": "14",
+     "stake": 100,
+     "ret": 0,
+     "hit": false,
+     "refund": false,
+     "odds_now": 89.2
+    },
+    {
+     "tier": "longshot",
+     "bet": "枠連",
+     "kumi": "5-6",
+     "stake": 100,
+     "ret": 0,
+     "hit": false,
+     "refund": false,
+     "odds_now": 48.900000000000006
+    },
+    {
+     "tier": "longshot",
+     "bet": "単勝",
+     "kumi": "12",
+     "stake": 100,
+     "ret": 0,
+     "hit": false,
+     "refund": false,
+     "odds_now": 58.300000000000004
+    }
+   ]
+  },
+  {
+   "date": "20261128",
+   "race_id": "2026112808050708",
+   "course": "京都",
+   "racenum": 8,
+   "name": "3歳以上2勝クラス",
+   "grade": "",
+   "post_time": 1355,
+   "final_at": "13:51:15",
+   "backfill": false,
+   "posted": true,
+   "top3": [
+    12,
+    3,
+    6
+   ],
+   "bets": [
+    {
+     "tier": "pick",
+     "bet": "単勝",
+     "kumi": "3",
+     "stake": 500,
+     "ret": 0,
+     "hit": false,
+     "refund": false,
+     "odds_now": 22.6
+    },
+    {
+     "tier": "rec",
+     "bet": "枠連",
+     "kumi": "4-5",
+     "stake": 100,
+     "ret": 0,
+     "hit": false,
+     "refund": false,
+     "odds_now": 24.3
+    },
+    {
+     "tier": "rec",
+     "bet": "枠連",
+     "kumi": "5-6",
+     "stake": 100,
+     "ret": 0,
+     "hit": false,
+     "refund": false,
+     "odds_now": 17.1
+    },
+    {
+     "tier": "rec",
+     "bet": "複勝",
+     "kumi": "3",
+     "stake": 100,
+     "ret": 530,
+     "hit": true,
+     "refund": false,
+     "odds_now": 4.7
+    },
+    {
+     "tier": "rec",
+     "bet": "単勝",
+     "kumi": "6",
+     "stake": 100,
+     "ret": 0,
+     "hit": false,
+     "refund": false,
+     "odds_now": 14.0
+    },
+    {
+     "tier": "rec",
+     "bet": "単勝",
+     "kumi": "11",
+     "stake": 100,
+     "ret": 0,
+     "hit": false,
+     "refund": false,
+     "odds_now": 9.9
+    },
+    {
+     "tier": "rec",
+     "bet": "複勝",
+     "kumi": "5",
+     "stake": 100,
+     "ret": 0,
+     "hit": false,
+     "refund": false,
+     "odds_now": 9.700000000000001
+    },
+    {
+     "tier": "longpick",
+     "bet": "枠連",
+     "kumi": "4-6",
+     "stake": 1000,
+     "ret": 0,
+     "hit": false,
+     "refund": false,
+     "odds_now": 64.5
+    },
+    {
+     "tier": "longshot",
+     "bet": "枠連",
+     "kumi": "1-6",
+     "stake": 100,
+     "ret": 0,
+     "hit": false,
+     "refund": false,
+     "odds_now": 193.9
+    },
+    {
+     "tier": "longshot",
+     "bet": "単勝",
+     "kumi": "5",
+     "stake": 100,
+     "ret": 0,
+     "hit": false,
+     "refund": false,
+     "odds_now": 53.6
+    },
+    {
+     "tier": "longshot",
+     "bet": "枠連",
+     "kumi": "1-4",
+     "stake": 100,
+     "ret": 0,
+     "hit": false,
+     "refund": false,
+     "odds_now": 206.4
+    },
+    {
+     "tier": "longshot",
+     "bet": "単勝",
+     "kumi": "1",
+     "stake": 100,
+     "ret": 0,
+     "hit": false,
+     "refund": false,
+     "odds_now": 48.7
+    }
+   ]
+  },
+  {
+   "date": "20261128",
+   "race_id": "2026112805050709",
+   "course": "東京",
+   "racenum": 9,
+   "name": "セレブレイション賞",
+   "grade": "E",
+   "post_time": 1415,
+   "final_at": "14:11:44",
+   "backfill": false,
+   "posted": true,
+   "top3": [
+    11,
+    10,
+    14
+   ],
+   "bets": [
+    {
+     "tier": "pick",
+     "bet": "枠連",
+     "kumi": "6-8",
+     "stake": 500,
+     "ret": 0,
+     "hit": false,
+     "refund": false,
+     "odds_now": 12.9
+    },
+    {
+     "tier": "rec",
+     "bet": "枠連",
+     "kumi": "4-8",
+     "stake": 100,
+     "ret": 0,
+     "hit": false,
+     "refund": false,
+     "odds_now": 11.0
+    },
+    {
+     "tier": "rec",
+     "bet": "枠連",
+     "kumi": "5-8",
+     "stake": 100,
+     "ret": 0,
+     "hit": false,
+     "refund": false,
+     "odds_now": 27.1
+    },
+    {
+     "tier": "rec",
+     "bet": "単勝",
+     "kumi": "14",
+     "stake": 100,
+     "ret": 0,
+     "hit": false,
+     "refund": false,
+     "odds_now": 4.5
+    },
+    {
+     "tier": "rec",
+     "bet": "複勝",
+     "kumi": "14",
+     "stake": 100,
+     "ret": 130,
+     "hit": true,
+     "refund": false,
+     "odds_now": 1.6
+    }
+   ]
+  },
+  {
+   "date": "20261128",
+   "race_id": "2026112808050709",
+   "course": "京都",
+   "racenum": 9,
+   "name": "栂尾特別",
+   "grade": "E",
+   "post_time": 1431,
+   "final_at": "14:26:12",
+   "backfill": false,
+   "posted": true,
+   "top3": [
+    12,
+    1,
+    13
+   ],
+   "bets": [
+    {
+     "tier": "rec",
+     "bet": "枠連",
+     "kumi": "2-5",
+     "stake": 100,
+     "ret": 0,
+     "hit": false,
+     "refund": false,
+     "odds_now": 33.800000000000004
+    },
+    {
+     "tier": "rec",
+     "bet": "単勝",
+     "kumi": "2",
+     "stake": 100,
+     "ret": 0,
+     "hit": false,
+     "refund": false,
+     "odds_now": 14.200000000000001
+    },
+    {
+     "tier": "rec",
+     "bet": "複勝",
+     "kumi": "2",
+     "stake": 100,
+     "ret": 0,
+     "hit": false,
+     "refund": false,
+     "odds_now": 4.0
+    },
+    {
+     "tier": "longpick",
+     "bet": "枠連",
+     "kumi": "2-8",
+     "stake": 1000,
+     "ret": 0,
+     "hit": false,
+     "refund": false,
+     "odds_now": 46.900000000000006
+    },
+    {
+     "tier": "longshot",
+     "bet": "枠連",
+     "kumi": "2-7",
+     "stake": 100,
+     "ret": 0,
+     "hit": false,
+     "refund": false,
+     "odds_now": 55.7
+    },
+    {
+     "tier": "longshot",
+     "bet": "枠連",
+     "kumi": "1-2",
+     "stake": 100,
+     "ret": 0,
+     "hit": false,
+     "refund": false,
+     "odds_now": 29.700000000000003
+    }
+   ]
+  },
+  {
+   "date": "20261128",
+   "race_id": "2026112805050710",
+   "course": "東京",
+   "racenum": 10,
+   "name": "シャングリラステークス",
+   "grade": "E",
+   "post_time": 1450,
+   "final_at": "14:46:15",
+   "backfill": false,
+   "posted": true,
+   "top3": [
+    6,
+    14,
+    7
+   ],
+   "bets": [
+    {
+     "tier": "rec",
+     "bet": "単勝",
+     "kumi": "5",
+     "stake": 100,
+     "ret": 0,
+     "hit": false,
+     "refund": false,
+     "odds_now": 20.6
+    },
+    {
+     "tier": "rec",
+     "bet": "枠連",
+     "kumi": "3-5",
+     "stake": 100,
+     "ret": 0,
+     "hit": false,
+     "refund": false,
+     "odds_now": 14.200000000000001
+    },
+    {
+     "tier": "rec",
+     "bet": "枠連",
+     "kumi": "3-3",
+     "stake": 100,
+     "ret": 0,
+     "hit": false,
+     "refund": false,
+     "odds_now": 12.9
+    }
+   ]
+  },
+  {
+   "date": "20261128",
+   "race_id": "2026112808050710",
+   "course": "京都",
+   "racenum": 10,
+   "name": "東山ステークス",
+   "grade": "E",
+   "post_time": 1505,
+   "final_at": "15:01:16",
+   "backfill": false,
+   "posted": true,
+   "top3": [
+    11,
+    15,
+    2
+   ],
+   "bets": [
+    {
+     "tier": "rec",
+     "bet": "単勝",
+     "kumi": "5",
+     "stake": 100,
+     "ret": 0,
+     "hit": false,
+     "refund": false,
+     "odds_now": 21.700000000000003
+    },
+    {
+     "tier": "rec",
+     "bet": "枠連",
+     "kumi": "2-3",
+     "stake": 100,
+     "ret": 0,
+     "hit": false,
+     "refund": false,
+     "odds_now": 18.6
+    },
+    {
+     "tier": "rec",
+     "bet": "枠連",
+     "kumi": "2-4",
+     "stake": 100,
+     "ret": 0,
+     "hit": false,
+     "refund": false,
+     "odds_now": 22.0
+    },
+    {
+     "tier": "longshot",
+     "bet": "枠連",
+     "kumi": "4-4",
+     "stake": 100,
+     "ret": 0,
+     "hit": false,
+     "refund": false,
+     "odds_now": 330.6
+    },
+    {
+     "tier": "longshot",
+     "bet": "枠連",
+     "kumi": "3-3",
+     "stake": 100,
+     "ret": 0,
+     "hit": false,
+     "refund": false,
+     "odds_now": 213.10000000000002
+    },
+    {
+     "tier": "longshot",
+     "bet": "枠連",
+     "kumi": "3-4",
+     "stake": 100,
+     "ret": 0,
+     "hit": false,
+     "refund": false,
+     "odds_now": 62.400000000000006
+    },
+    {
+     "tier": "longshot",
+     "bet": "単勝",
+     "kumi": "6",
+     "stake": 100,
+     "ret": 0,
+     "hit": false,
+     "refund": false,
+     "odds_now": 62.2
+    }
+   ]
+  },
+  {
+   "date": "20261128",
+   "race_id": "2026112805050711",
+   "course": "東京",
+   "racenum": 11,
+   "name": "フランスギャロ賞キャピタルステークス",
+   "grade": "L",
+   "post_time": 1525,
+   "final_at": "15:21:15",
+   "backfill": false,
+   "posted": true,
+   "top3": [
+    16,
+    8,
+    4
+   ],
+   "bets": [
+    {
+     "tier": "longpick",
+     "bet": "単勝",
+     "kumi": "12",
+     "stake": 1000,
+     "ret": 0,
+     "hit": false,
+     "refund": false,
+     "odds_now": 327.8
+    },
+    {
+     "tier": "longpick",
+     "bet": "単勝",
+     "kumi": "13",
+     "stake": 1000,
+     "ret": 0,
+     "hit": false,
+     "refund": false,
+     "odds_now": 112.2
+    },
+    {
+     "tier": "longpick",
+     "bet": "複勝",
+     "kumi": "12",
+     "stake": 1000,
+     "ret": 0,
+     "hit": false,
+     "refund": false,
+     "odds_now": 45.300000000000004
+    },
+    {
+     "tier": "longshot",
+     "bet": "枠連",
+     "kumi": "4-8",
+     "stake": 100,
+     "ret": 6990,
+     "hit": true,
+     "refund": false,
+     "odds_now": 71.4
+    },
+    {
+     "tier": "longshot",
+     "bet": "単勝",
+     "kumi": "18",
+     "stake": 100,
+     "ret": 0,
+     "hit": false,
+     "refund": false,
+     "odds_now": 232.0
+    },
+    {
+     "tier": "longshot",
+     "bet": "枠連",
+     "kumi": "4-6",
+     "stake": 100,
+     "ret": 0,
+     "hit": false,
+     "refund": false,
+     "odds_now": 81.9
+    },
+    {
+     "tier": "longshot",
+     "bet": "単勝",
+     "kumi": "9",
+     "stake": 100,
+     "ret": 0,
+     "hit": false,
+     "refund": false,
+     "odds_now": 98.30000000000001
+    },
+    {
+     "tier": "longshot",
+     "bet": "枠連",
+     "kumi": "6-8",
+     "stake": 100,
+     "ret": 0,
+     "hit": false,
+     "refund": false,
+     "odds_now": 31.0
+    }
+   ]
+  },
+  {
+   "date": "20261128",
+   "race_id": "2026112808050711",
+   "course": "京都",
+   "racenum": 11,
+   "name": "ラジオＮＩＫＫＥＩ杯京都２歳ステークス",
+   "grade": "C",
+   "post_time": 1540,
+   "final_at": "15:36:15",
+   "backfill": false,
+   "posted": true,
+   "top3": [
+    6,
+    8,
+    3
+   ],
+   "bets": [
+    {
+     "tier": "rec",
+     "bet": "枠連",
+     "kumi": "6-7",
+     "stake": 100,
+     "ret": 940,
+     "hit": true,
+     "refund": false,
+     "odds_now": 13.100000000000001
+    },
+    {
+     "tier": "longshot",
+     "bet": "枠連",
+     "kumi": "1-7",
+     "stake": 100,
+     "ret": 0,
+     "hit": false,
+     "refund": false,
+     "odds_now": 47.7
+    }
+   ]
+  },
+  {
+   "date": "20261128",
+   "race_id": "2026112805050712",
+   "course": "東京",
+   "racenum": 12,
+   "name": "3歳以上1勝クラス",
+   "grade": "",
+   "post_time": 1601,
+   "final_at": "15:56:12",
+   "backfill": false,
+   "posted": true,
+   "top3": [
+    10,
+    8,
+    16
+   ],
+   "bets": [
+    {
+     "tier": "rec",
+     "bet": "枠連",
+     "kumi": "4-5",
+     "stake": 100,
+     "ret": 820,
+     "hit": true,
+     "refund": false,
+     "odds_now": 10.8
+    },
+    {
+     "tier": "longshot",
+     "bet": "単勝",
+     "kumi": "17",
+     "stake": 100,
+     "ret": 0,
+     "hit": false,
+     "refund": false,
+     "odds_now": 119.30000000000001
+    },
+    {
+     "tier": "longshot",
+     "bet": "枠連",
+     "kumi": "2-5",
+     "stake": 100,
+     "ret": 0,
+     "hit": false,
+     "refund": false,
+     "odds_now": 39.800000000000004
+    },
+    {
+     "tier": "longshot",
+     "bet": "単勝",
+     "kumi": "6",
+     "stake": 100,
+     "ret": 0,
+     "hit": false,
+     "refund": false,
+     "odds_now": 108.30000000000001
+    },
+    {
+     "tier": "longshot",
+     "bet": "枠連",
+     "kumi": "1-5",
+     "stake": 100,
+     "ret": 0,
+     "hit": false,
+     "refund": false,
+     "odds_now": 57.0
+    },
+    {
+     "tier": "longshot",
+     "bet": "枠連",
+     "kumi": "2-4",
+     "stake": 100,
+     "ret": 0,
+     "hit": false,
+     "refund": false,
+     "odds_now": 49.0
+    }
+   ]
+  },
+  {
+   "date": "20261128",
+   "race_id": "2026112808050712",
+   "course": "京都",
+   "racenum": 12,
+   "name": "3歳以上2勝クラス",
+   "grade": "",
+   "post_time": 1615,
+   "final_at": "16:11:12",
+   "backfill": false,
+   "posted": true,
+   "top3": [
+    13,
+    2,
+    5
+   ],
+   "bets": [
+    {
+     "tier": "longshot",
+     "bet": "単勝",
+     "kumi": "1",
+     "stake": 100,
+     "ret": 0,
+     "hit": false,
+     "refund": false,
+     "odds_now": 70.2
+    },
+    {
+     "tier": "longshot",
+     "bet": "単勝",
+     "kumi": "17",
+     "stake": 100,
+     "ret": 0,
+     "hit": false,
+     "refund": false,
+     "odds_now": 90.2
+    },
+    {
+     "tier": "longshot",
+     "bet": "枠連",
+     "kumi": "4-7",
+     "stake": 100,
+     "ret": 0,
+     "hit": false,
+     "refund": false,
+     "odds_now": 27.400000000000002
+    },
+    {
+     "tier": "longshot",
+     "bet": "枠連",
+     "kumi": "2-7",
+     "stake": 100,
+     "ret": 0,
+     "hit": false,
+     "refund": false,
+     "odds_now": 39.7
     }
    ]
   }
